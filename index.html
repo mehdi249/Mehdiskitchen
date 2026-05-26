@@ -54,7 +54,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.9);backdrop-fil
 .bnav-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 24px;color:var(--text3);font-size:10px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;transition:color .2s;}
 .bnav-item.on{color:var(--gold);}
 .bnav-icon{width:20px;height:20px;display:flex;align-items:center;justify-content:center;}
-.bnav-add{width:48px;height:48px;border-radius:14px;background:linear-gradient(145deg,#c8a96e,#9a7340);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(200,169,110,0.3);transition:transform .1s;}
+.bnav-add{width:48px;height:48px;border-radius:14px;background:linear-gradient(145deg,#c8a96e,#9a7340);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(200,169,110,0.3);}
 .bnav-add:active{transform:scale(.93);}
 .plus-svg{width:22px;height:22px;stroke:#0a0a0a;stroke-width:2.5;fill:none;}
 .home-wrap{padding:20px 0 0;}
@@ -109,7 +109,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.9);backdrop-fil
 .detail-hero{position:relative;height:280px;overflow:hidden;background:var(--bg3);}
 .detail-hero img{width:100%;height:100%;object-fit:cover;}
 .detail-hero-grad{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(8,8,8,0.35) 0%,transparent 45%,rgba(8,8,8,0.92) 100%);}
-.detail-back{position:absolute;top:calc(14px + var(--safe-top));left:18px;width:36px;height:36px;border-radius:50%;background:rgba(8,8,8,0.55);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);}
+.detail-back{position:absolute;top:calc(14px + var(--safe-top));left:18px;width:36px;height:36px;border-radius:50%;background:rgba(8,8,8,0.55);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;}
 .back-svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;}
 .detail-admin-row{position:absolute;top:calc(14px + var(--safe-top));right:18px;display:flex;gap:8px;}
 .d-btn{padding:6px 14px;border-radius:100px;font-size:12px;font-weight:500;backdrop-filter:blur(12px);}
@@ -161,7 +161,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.9);backdrop-fil
 .pin-sheet{padding:28px 24px calc(28px + var(--safe-bot));}
 .pin-title{font-family:var(--serif);font-size:22px;font-weight:400;margin-bottom:6px;}
 .pin-sub{font-size:13px;color:var(--text2);margin-bottom:22px;}
-.pin-input{font-size:26px;letter-spacing:10px;text-align:center;padding:15px;border-radius:12px;width:100%;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text);font-weight:600;margin-bottom:0;}
+.pin-input{font-size:26px;letter-spacing:10px;text-align:center;padding:15px;border-radius:12px;width:100%;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text);font-weight:600;margin-bottom:14px;}
 .pin-input.err{border-color:var(--red);}
 .pin-err{font-size:12px;color:var(--red);text-align:center;min-height:18px;margin-bottom:14px;}
 .sheet-btns{display:flex;gap:10px;}
@@ -184,7 +184,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.9);backdrop-fil
 .dtog.on{border-color:var(--gold-border);color:var(--gold);background:var(--gold2);}
 .img-prev{width:100%;height:130px;object-fit:cover;border-radius:10px;margin-top:8px;}
 .ing-block{background:var(--bg3);border-radius:11px;padding:12px;margin-bottom:9px;}
-.ing-sec-inp{background:none;border:none;border-bottom:1px solid var(--border2);border-radius:0;padding:0 0 5px;color:var(--gold);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;}
+.ing-sec-inp{background:none;border:none;border-bottom:1px solid var(--border2);border-radius:0;padding:0 0 5px;color:var(--gold);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;width:100%;outline:none;}
 .ing-line{display:flex;gap:7px;margin-bottom:6px;align-items:center;}
 .ing-line input{margin-bottom:0;flex:1;}
 .step-edit{display:flex;gap:9px;margin-bottom:7px;align-items:flex-start;}
@@ -202,7 +202,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.9);backdrop-fil
 .spin{width:28px;height:28px;border:1.5px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:rot .7s linear infinite;}
 @keyframes rot{to{transform:rotate(360deg);}}
 .load-txt{font-size:13px;color:var(--text3);letter-spacing:0.05em;font-family:var(--serif);}
-.toast{position:fixed;z-index:300;bottom:calc(90px + var(--safe-bot));left:50%;transform:translateX(-50%);background:var(--gold);color:#080808;padding:11px 22px;border-radius:100px;font-size:13px;font-weight:500;animation:tin .3s cubic-bezier(.34,1.56,.64,1);}
+.toast{position:fixed;z-index:300;bottom:calc(90px + var(--safe-bot));left:50%;transform:translateX(-50%);background:var(--gold);color:#080808;padding:11px 22px;border-radius:100px;font-size:13px;font-weight:500;animation:tin .3s ease;}
 @keyframes tin{from{opacity:0;transform:translateX(-50%) translateY(10px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
 </style>
 </head>
@@ -210,7 +210,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.9);backdrop-fil
 <div id="app"></div>
 <script>
 const SB_URL="https://uarjjjvrzzwsewrcprcc.supabase.co";
-const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmpqanZyenp3c2V3cmNwcmNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Mjg5NTEsImV4cCI6MjA5NTMwNDk1MX0.6I1GWrJeLa1rh7rUg6GTfFMHs4oVzAXMFBqiHfb1wAg";
+const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmpqanZyenp3c2V3cmNwcmNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Mjg5NTEsImV4cCI6MjA5NTMwNDk1MX0.6I1GWrJeLa1rh7rUg6GTfLdFIWVQrS5WBKTxl7-ZM7s";
 const ADMIN_PIN="1234";
 const sbH={"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY};
 const CUISINE_COLORS={Peruvian:"#e8825a",Mexican:"#e05555",Italian:"#4caf72",Asian:"#d4a017",American:"#4a7fd4",Mediterranean:"#8e5fd4","Middle Eastern":"#d45fa0",Other:"#888"};
@@ -219,29 +219,41 @@ const TAG_OPTIONS=["High Protein","Quick","Meal Prep","Vegetarian","Vegan","Low 
 const TYPE_OPTIONS=["Main Course","Breakfast","Appetizer","Side Dish","Dessert","Snack","Beverage","Other"];
 const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 const SEED=[
-  {id:"cowboy-butter-chicken-sandwich",name:"Cowboy Butter Chicken Sandwich",cuisine:"American",tags:["High Protein","Quick"],type:"Main Course",schedule:["Wednesday"],image:"https://images.unsplash.com/photo-1562547256-06f5d4d0e89f?w=400&h=300&fit=crop"},
-  {id:"chipotle-honey-chicken-tacos",name:"Chipotle Honey Chicken Tacos",cuisine:"Mexican",tags:["High Protein"],type:"Main Course",schedule:["Tuesday"],image:"https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400&h=300&fit=crop"},
-  {id:"peruvian-chicken-aji-verde",name:"Peruvian Chicken with Aji Verde & Coconut Rice",cuisine:"Peruvian",tags:["High Protein","Meal Prep"],type:"Main Course",schedule:["Monday"],image:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop"},
-  {id:"3",name:"Moroccan Style Cauliflower",cuisine:"Mediterranean",tags:["Vegetarian","Meal Prep"],type:"Main Course",schedule:["Thursday"],image:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop"}
+  {id:"cowboy-butter-chicken-sandwich",name:"Cowboy Butter Chicken Sandwich",cuisine:"American",tags:["High Protein","Quick"],type:"Main Course",schedule:["Wednesday"],image:"https://images.unsplash.com/photo-1562547256-c5fca8e50602?w=400"},
+  {id:"chipotle-honey-chicken-tacos",name:"Chipotle Honey Chicken Tacos",cuisine:"Mexican",tags:["High Protein"],type:"Main Course",schedule:["Tuesday"],image:"https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400"},
+  {id:"peruvian-chicken-aji-verde",name:"Peruvian Chicken with Aji Verde & Coconut Rice",cuisine:"Peruvian",tags:["High Protein","Meal Prep"],type:"Main Course",schedule:["Monday"],image:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400"},
+  {id:"3",name:"Moroccan Style Cauliflower",cuisine:"Mediterranean",tags:["Vegetarian","Meal Prep"],type:"Main Course",schedule:["Thursday"],image:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"}
 ];
 
 // ── SUPABASE (with fallback) ──────────────────────────────
 async function sbFetch(){
   try{
     const r=await fetch(SB_URL+"/rest/v1/recipes?select=*&order=created_at.asc",{headers:{...sbH,"Accept":"application/json"}});
-    if(!r.ok)return null;
+    if(!r.ok){console.error("sbFetch error:",r.status,r.statusText);return null;}
     const d=await r.json();
     return Array.isArray(d)&&d.length>0?d:null;
   }catch(e){console.error("sbFetch error:",e);return null;}
 }
 async function sbInsert(recipe){
-  try{const r=await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(recipe)});return r.ok;}catch{return false;}
+  try{
+    const r=await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(recipe)});
+    if(!r.ok){console.error("sbInsert error:",r.status,await r.text());return false;}
+    return true;
+  }catch(e){console.error("sbInsert error:",e);return false;}
 }
 async function sbUpdate(recipe){
-  try{const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+recipe.id,{method:"PATCH",headers:sbH,body:JSON.stringify(recipe)});return r.ok;}catch{return false;}
+  try{
+    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+recipe.id,{method:"PATCH",headers:sbH,body:JSON.stringify(recipe)});
+    if(!r.ok){console.error("sbUpdate error:",r.status,await r.text());return false;}
+    return true;
+  }catch(e){console.error("sbUpdate error:",e);return false;}
 }
 async function sbDelete(id){
-  try{const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+id,{method:"DELETE",headers:sbH});return r.ok;}catch{return false;}
+  try{
+    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+id,{method:"DELETE",headers:sbH});
+    if(!r.ok){console.error("sbDelete error:",r.status,await r.text());return false;}
+    return true;
+  }catch(e){console.error("sbDelete error:",e);return false;}
 }
 async function sbSeed(){
   try{await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(SEED)});}catch{}
@@ -283,12 +295,12 @@ function showToast(msg){
 }
 function cutlerySVG(){
   const d=el("div","day-thumb-empty");
-  d.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3a3a3a" stroke-width="1.5"><path d="M3 2v7c0 1.1.9 2 2 2h1v11h2V11h1c1.1 0 2-.9 2-2V2"/><path d="M16 2c-1.66 0-3 1.34-3 3 0 2.5 3 5.42 3 5.42s3-2.92 3-5.42c0-1.66-1.34-3-3-3z"/></svg>';
+  d.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3a3a3a" stroke-width="1.5"><path d="M3 2v7c0 1.1.9 2 2 2h1v11h2V11h1c1.1 0 2-.9 2-2V2"/><path d="M16 2c-1.66 0-3 1.34-3 3v6h9V5c0-1.66-1.34-3-3-3z"/></svg>';
   return d;
 }
 function imgFb(cls){
   const d=el("div",cls||"rcard-img-fb");
-  d.innerHTML='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3a3a3a" stroke-width="1.5"><path d="M3 2v7c0 1.1.9 2 2 2h1v11h2V11h1c1.1 0 2-.9 2-2V2"/><path d="M16 2c-1.66 0-3 1.34-3 3 0 2.5 3 5.42 3 5.42s3-2.92 3-5.42c0-1.66-1.34-3-3-3z"/></svg>';
+  d.innerHTML='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3a3a3a" stroke-width="1.5"><path d="M3 2v7c0 1.1.9 2 2 2h1v11h2V11h1c1.1 0 2-.9 2-2V2"/><path d="M16 2c-1.66 0-3 1.34-3 3v6h9V5c0-1.66-1.34-3-3-3z"/></svg>';
   return d;
 }
 
@@ -513,8 +525,18 @@ function buildDetail(recipe){
       recipe.schedule=newSched;
       pill.className="sched-pill saving";
       const ok=await sbUpdate(Object.assign({},recipe,{schedule:newSched}));
-      if(ok){S.recipes=S.recipes.map(function(r){return r.id===recipe.id?Object.assign({},r,{schedule:newSched}):r;});S.selected=Object.assign({},recipe,{schedule:newSched});pill.className="sched-pill"+(newSched.includes(day)?" on":"");render();}
-      else{recipe.schedule=wasOn?[...newSched,day]:newSched.filter(function(d){return d!==day;});pill.className="sched-pill"+(wasOn?" on":"");showToast("Failed to update");}
+      if(ok){
+        S.recipes=S.recipes.map(function(r){return r.id===recipe.id?Object.assign({},r,{schedule:newSched}):r;});
+        S.selected=Object.assign({},recipe,{schedule:newSched});
+        pill.className="sched-pill"+(wasOn?"":"on");
+        render();
+        showToast("Schedule updated");
+      }
+      else{
+        recipe.schedule=wasOn?[...newSched,day]:newSched.filter(function(d){return d!==day;});
+        pill.className="sched-pill"+(wasOn?" on":"");
+        showToast("Failed to update");
+      }
     });
     schedDays.appendChild(pill);
   });
@@ -630,12 +652,22 @@ function buildEditorModal(recipe){
     // Tags
     const s2=el("div","esec");s2.appendChild(Object.assign(el("p","esec-title"),{textContent:"Tags"}));
     const tg=el("div","tgrid");
-    TAG_OPTIONS.forEach(function(t){tg.appendChild(btn(t,"ttog"+((form.tags||[]).includes(t)?" on":""),function(){form.tags=(form.tags||[]).includes(t)?(form.tags||[]).filter(function(x){return x!==t;}):([...(form.tags||[]),t]);rebuild();}));});
+    TAG_OPTIONS.forEach(function(t){
+      const includesTag=(form.tags||[]).includes(t);
+      tg.appendChild(btn(t,"ttog"+(includesTag?" on":""),function(){
+        form.tags=includesTag?(form.tags||[]).filter(function(x){return x!==t;}):[...(form.tags||[]),t];
+      }));
+    });
     s2.appendChild(tg);body.appendChild(s2);
     // Schedule
     const s3=el("div","esec");s3.appendChild(Object.assign(el("p","esec-title"),{textContent:"Schedule"}));
     const dg=el("div","tgrid");
-    DAYS.forEach(function(d){dg.appendChild(btn(d.slice(0,3),"dtog"+((form.schedule||[]).includes(d)?" on":""),function(){form.schedule=(form.schedule||[]).includes(d)?(form.schedule||[]).filter(function(x){return x!==d;}):([...(form.schedule||[]),d]);rebuild();}));});
+    DAYS.forEach(function(d){
+      const includesDay=(form.schedule||[]).includes(d);
+      dg.appendChild(btn(d.slice(0,3),"dtog"+(includesDay?" on":""),function(){
+        form.schedule=includesDay?(form.schedule||[]).filter(function(x){return x!==d;}):[...(form.schedule||[]),d];
+      }));
+    });
     s3.appendChild(dg);body.appendChild(s3);
     // Ingredients
     const s4=el("div","esec");s4.appendChild(Object.assign(el("p","esec-title"),{textContent:"Ingredients"}));
@@ -643,7 +675,19 @@ function buildEditorModal(recipe){
       const sec=entry[0],items=entry[1];
       const block=el("div","ing-block");
       const sn=document.createElement("input");sn.className="ing-sec-inp";sn.type="text";sn.value=sec;sn.placeholder="Section name";
-      sn.oninput=function(e){const ents=Object.entries(form.ingredients);const idx=ents.findIndex(function(x){return x[0]===sec;});if(idx>-1){ents[idx]=[e.target.value,ents[idx][1]];form.ingredients=Object.fromEntries(ents);}};
+      sn.oninput=function(e){
+        const ents=Object.entries(form.ingredients);
+        const idx=ents.findIndex(function(x){return x[0]===sec;});
+        if(idx>-1){
+          const oldKey=ents[idx][0];
+          ents[idx]=[e.target.value,ents[idx][1]];
+          form.ingredients=Object.assign({},form.ingredients);
+          if(oldKey!==e.target.value){
+            delete form.ingredients[oldKey];
+            form.ingredients[e.target.value]=ents[idx][1];
+          }
+        }
+      };
       block.appendChild(sn);
       items.forEach(function(item,i){
         const row=el("div","ing-line");
@@ -686,8 +730,16 @@ function buildEditorModal(recipe){
     if(!form.id)form.id=Date.now().toString();
     saveB.textContent="Saving...";saveB.disabled=true;
     const ok=(!isNew)?await sbUpdate(form):await sbInsert(form);
-    if(ok){const recipes=await sbFetch();ss({recipes:recipes||S.recipes,showEditor:false,editingRecipe:null});showToast(isNew?"Recipe added":"Changes saved");}
-    else{saveB.textContent=isNew?"Add Recipe":"Save Changes";saveB.disabled=false;alert("Failed to save.");}
+    if(ok){
+      const recipes=await sbFetch();
+      ss({recipes:recipes||S.recipes,showEditor:false,editingRecipe:null});
+      showToast(isNew?"Recipe added":"Changes saved");
+    }
+    else{
+      saveB.textContent=isNew?"Add Recipe":"Save Changes";
+      saveB.disabled=false;
+      showToast("Failed to save. Check browser console.");
+    }
   });
   footer.append(btn("Cancel","sbtn-cancel",function(){ss({showEditor:false,editingRecipe:null});}),saveB);
   sheet.append(el("div","sheet-handle"),hdr,body,footer);
@@ -711,7 +763,6 @@ async function init(){
   try{
     let recipes=await sbFetch();
     if(!recipes){
-      // Supabase unavailable — use seed as fallback and try to seed in background
       console.log("Supabase fetch failed, using seed data");
       sbSeed();
       recipes=SEED;

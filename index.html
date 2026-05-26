@@ -1095,14 +1095,69 @@ async function confirmDelete(id){
   }
 }
 
-// ── INIT ──────────────────────────────────────────────────
+<!-- REPLACE EVERYTHING FROM LINE 1098 TO THE END OF YOUR FILE WITH THIS BLOCK -->
+// ── INIT ──
 async function init(){
   render();
   let recipes=await sbFetch();
   if(!recipes||recipes.length===0){await sbSeed();recipes=await sbFetch();}
   recipes=await checkUrlImport(recipes||[]);
   ss({recipes:recipes||[],loading:false});
+
+  // ── PULL TO REFRESH INDEPENDENT CONTROLLER ──
+  let startY = 0;
+  let currentY = 0;
+  
+  // Inject the visual pull indicator element dynamically so you don't have to find the body tag
+  let ptr = document.getElementById("ptr-indicator");
+  if (!ptr) {
+    ptr = document.createElement("div");
+    ptr.id = "ptr-indicator";
+    ptr.style.cssText = "position:fixed;top:0;left:0;width:100%;height:50px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#c8a96e;font-family:var(--sans);transform:translateY(-50px);transition:transform 0.15s,opacity 0.15s;pointer-events:none;z-index:1000;background:rgba(8,8,8,0.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border);";
+    document.body.prepend(ptr);
+  }
+
+  window.addEventListener("touchstart", (e) => {
+    if (window.scrollY === 0) {
+      startY = e.touches.pageY;
+    } else {
+      startY = 0;
+    }
+  }, { passive: true });
+
+  window.addEventListener("touchmove", (e) => {
+    if (startY === 0) return;
+    currentY = e.touches.pageY;
+    const diff = currentY - startY;
+
+    if (diff > 0 && diff < 80) {
+      ptr.style.transform = `translateY(${diff - 50}px)`;
+      ptr.style.opacity = diff / 80;
+      ptr.innerText = diff > 60 ? "🔄 Release to refresh" : "⬇️ Pull to refresh";
+    }
+  }, { passive: true });
+
+  window.addEventListener("touchend", async () => {
+    const diff = currentY - startY;
+    startY = 0;
+    currentY = 0;
+
+    if (diff > 60) {
+      ptr.innerText = "⚡ Refreshing...";
+      ptr.style.transform = "translateY(0px)";
+      
+      let freshRecipes = await sbFetch();
+      ss({ recipes: freshRecipes || [], loading: false });
+      
+      setTimeout(() => {
+        ptr.style.transform = "translateY(-50px)";
+      }, 600);
+    } else {
+      ptr.style.transform = "translateY(-50px)";
+    }
+  });
 }
+
 init();
 </script>
 </body>

@@ -236,7 +236,10 @@ const SEED=[
 
 async function sbFetch(){
   try{
-    const r=await fetch(SB_URL+"/rest/v1/recipes?select=*&order=created_at.asc",{headers:{...sbH,"Accept":"application/json"}});
+    const ctrl=new AbortController();
+    const tid=setTimeout(function(){ctrl.abort();},6000);
+    const r=await fetch(SB_URL+"/rest/v1/recipes?select=*&order=created_at.asc",{headers:{...sbH,"Accept":"application/json"},signal:ctrl.signal});
+    clearTimeout(tid);
     if(!r.ok){console.error("sbFetch error:",r.status,r.statusText);return null;}
     const d=await r.json();
     return Array.isArray(d)?d:null;
@@ -417,23 +420,30 @@ function buildDbWarn(){
 // ─── Render ───────────────────────────────────────────────────────────────────
 
 function render(){
-  const app=document.getElementById("app");app.innerHTML="";
-  if(S.view!=="detail")app.appendChild(buildHeader());
-  const main=el("main");
-  if(S.loading){
-    const d=el("div","loading");
-    d.append(el("div","spin"),Object.assign(el("p","load-txt"),{textContent:"Loading your kitchen..."}));
-    main.appendChild(d);
-  } else if(S.view==="home")   main.appendChild(buildHome());
-  else if(S.view==="recipes")  main.appendChild(buildRecipesPage());
-  else if(S.view==="detail"&&S.selected) main.appendChild(buildDetail(S.selected));
-  else if(S.view==="planner")  main.appendChild(buildPlanner());
-  // RLS warning banner (shown on any view when dbError is set)
-  if(S.dbError==="rls"&&S.view!=="detail") main.appendChild(buildDbWarn());
-  app.appendChild(main);
-  if(S.view!=="detail")app.appendChild(buildBnav());
-  if(S.showPin)app.appendChild(buildPinModal());
-  if(S.showEditor)app.appendChild(buildEditorModal(S.editingRecipe));
+  try{
+    const app=document.getElementById("app");app.innerHTML="";
+    if(S.view!=="detail")app.appendChild(buildHeader());
+    const main=el("main");
+    try{
+      if(S.loading){
+        const d=el("div","loading");
+        d.append(el("div","spin"),Object.assign(el("p","load-txt"),{textContent:"Loading your kitchen..."}));
+        main.appendChild(d);
+      } else if(S.view==="home")   main.appendChild(buildHome());
+      else if(S.view==="recipes")  main.appendChild(buildRecipesPage());
+      else if(S.view==="detail"&&S.selected) main.appendChild(buildDetail(S.selected));
+      else if(S.view==="planner")  main.appendChild(buildPlanner());
+      // RLS warning banner (shown on any view when dbError is set)
+      if(S.dbError==="rls"&&S.view!=="detail") main.appendChild(buildDbWarn());
+    }catch(e){
+      console.error("Content render error:",e);
+      main.appendChild(Object.assign(el("p","empty-sub"),{textContent:"Something went wrong. Try refreshing."}));
+    }
+    app.appendChild(main);
+    if(S.view!=="detail")app.appendChild(buildBnav());
+    if(S.showPin)app.appendChild(buildPinModal());
+    if(S.showEditor)app.appendChild(buildEditorModal(S.editingRecipe));
+  }catch(e){console.error("Render error:",e);}
 }
 
 function buildHeader(){
@@ -898,16 +908,20 @@ async function confirmDelete(id){
 }
 
 async function init(){
+  // Show seed data immediately — screen is never blank while DB loads
+  S.recipes=SEED;
+  S.loading=false;
   render();
+  // Fetch real data from Supabase in background and swap in if successful
   try{
     let recipes=await sbFetch();
-    if(recipes===null){console.warn("Supabase unavailable, using local seed");ss({recipes:SEED,loading:false});return;}
+    if(recipes===null){return;}  // stay with seed
     if(recipes.length===0){await sbSeed();recipes=await sbFetch()||SEED;}
     recipes=await checkUrlImport(recipes);
-    ss({recipes:recipes,loading:false});
+    ss({recipes:recipes});
   }catch(e){
     console.error("Init error:",e);
-    ss({recipes:SEED,loading:false});
+    // already showing seed data — nothing more to do
   }
 }
 init();

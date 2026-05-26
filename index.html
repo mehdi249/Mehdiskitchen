@@ -301,12 +301,18 @@ header{
 .mac:last-child{border-right:none;}
 .mac-v{font-family:var(--serif);font-size:22px;font-weight:400;color:var(--gold);display:block;}
 .mac-l{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:0.1em;margin-top:2px;}
-.sched-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px;}
+.sched-row{margin-bottom:22px;}
+.sched-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text2);margin-bottom:8px;}
+.sched-days{display:flex;gap:6px;flex-wrap:wrap;}
 .sched-pill{
-  font-size:11px;font-weight:500;padding:4px 12px;border-radius:100px;
-  background:var(--gold2);border:1px solid var(--gold-border);color:var(--gold);
-  letter-spacing:0.06em;
+  font-size:11px;font-weight:500;padding:6px 13px;border-radius:100px;
+  border:1px solid var(--border2);color:var(--text2);background:var(--bg3);
+  letter-spacing:0.06em;transition:all .18s;cursor:pointer;
 }
+.sched-pill.on{
+  background:var(--gold2);border-color:var(--gold-border);color:var(--gold);
+}
+.sched-pill.saving{opacity:0.5;pointer-events:none;}
 .d-sec{margin-bottom:26px;}
 .d-sec-title{
   font-family:var(--serif);font-size:18px;font-weight:400;color:var(--text);
@@ -830,11 +836,39 @@ function buildDetail(recipe){
     });
     top.appendChild(mb);
   }
-  if(recipe.schedule&&recipe.schedule.length){
-    const sp=el("div","sched-row");
-    recipe.schedule.forEach(d=>{const p=el("span","sched-pill");p.textContent=d;sp.appendChild(p);});
-    top.appendChild(sp);
-  }
+  // ── Interactive day scheduler ──
+  const schedWrap=el("div","sched-row");
+  const schedLbl=el("p","sched-label");schedLbl.textContent="Schedule for";
+  const schedDays=el("div","sched-days");
+  DAYS.forEach(day=>{
+    const isOn=(recipe.schedule||[]).includes(day);
+    const pill=btn(day.slice(0,3),"sched-pill"+(isOn?" on":""),async()=>{
+      // Optimistic UI update
+      const wasOn=(recipe.schedule||[]).includes(day);
+      const newSched=wasOn?(recipe.schedule||[]).filter(d=>d!==day):[...(recipe.schedule||[]),day];
+      // Update in local state immediately
+      recipe.schedule=newSched;
+      pill.className="sched-pill saving";
+      // Persist to Supabase
+      const updated={...recipe,schedule:newSched};
+      const ok=await sbUpdate(updated);
+      if(ok){
+        // Update recipes array in state
+        S.recipes=S.recipes.map(r=>r.id===recipe.id?{...r,schedule:newSched}:r);
+        S.selected={...recipe,schedule:newSched};
+        pill.className="sched-pill"+(newSched.includes(day)?" on":"");
+        showToast(newSched.includes(day)?"✦ Added to "+day:"Removed from "+day);
+      } else {
+        // Revert on failure
+        recipe.schedule=wasOn?[...(newSched),day]:newSched.filter(d=>d!==day);
+        pill.className="sched-pill"+(wasOn?" on":"");
+        showToast("Failed to update");
+      }
+    });
+    schedDays.appendChild(pill);
+  });
+  schedWrap.append(schedLbl,schedDays);
+  top.appendChild(schedWrap);
   body.appendChild(top);
   // Ingredients
   if(recipe.ingredients&&Object.keys(recipe.ingredients).length){

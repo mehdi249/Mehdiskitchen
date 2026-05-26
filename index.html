@@ -92,4 +92,689 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.9);backdrop-fil
 .rcard-type{font-size:11px;color:var(--text3);font-style:italic;font-family:var(--serif);}
 .rcard-day{font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);}
 .grid-wrap{padding:16px;}
-.rgrid{display:grid;grid-template-co
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.gcard{border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--bg2);cursor:pointer;transition:transform .18s;}
+.gcard:active{transform:scale(.98);}
+.gcard-img{position:relative;height:130px;overflow:hidden;background:var(--bg3);}
+.gcard-img img{width:100%;height:100%;object-fit:cover;}
+.gcard-img-fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.gcard-bar{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.65));padding:18px 10px 7px;display:flex;align-items:center;gap:5px;}
+.cuisine-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.cuisine-lbl{font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;}
+.gcard-body{padding:10px 11px 12px;}
+.gcard-name{font-family:var(--serif);font-size:15px;font-weight:400;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:7px;}
+.gcard-tags{display:flex;flex-wrap:wrap;gap:4px;}
+.gtag{font-size:10px;padding:2px 8px;border-radius:100px;border:1px solid var(--border2);color:var(--text2);}
+.gtag.gold{border-color:var(--gold-border);color:var(--gold);background:var(--gold2);}
+.detail-hero{position:relative;height:280px;overflow:hidden;background:var(--bg3);}
+.detail-hero img{width:100%;height:100%;object-fit:cover;}
+.detail-hero-grad{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(8,8,8,0.35) 0%,transparent 45%,rgba(8,8,8,0.92) 100%);}
+.detail-back{position:absolute;top:calc(14px + var(--safe-top));left:18px;width:36px;height:36px;border-radius:50%;background:rgba(8,8,8,0.55);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;}
+.back-svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;}
+.detail-admin-row{position:absolute;top:calc(14px + var(--safe-top));right:18px;display:flex;gap:8px;}
+.d-btn{padding:6px 14px;border-radius:100px;font-size:12px;font-weight:500;backdrop-filter:blur(12px);}
+.d-btn.edit{background:rgba(8,8,8,0.55);color:var(--text);}
+.d-btn.del{background:rgba(224,85,85,0.18);color:var(--red);}
+.detail-body{padding:0 20px 32px;}
+.detail-top{padding:18px 0 16px;}
+.detail-meta-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.d-cuisine{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;border:1px solid var(--border2);background:var(--bg3);font-size:11px;font-weight:600;letter-spacing:0.08em;}
+.d-type{padding:4px 12px;border-radius:100px;border:1px solid var(--border2);background:var(--bg3);font-size:12px;color:var(--text2);font-style:italic;font-family:var(--serif);}
+.detail-title{font-family:var(--serif);font-size:30px;font-weight:400;line-height:1.15;letter-spacing:0.01em;margin-bottom:12px;}
+.detail-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;}
+.d-tag{padding:4px 12px;border-radius:100px;font-size:11px;font-weight:500;border:1px solid var(--gold-border);color:var(--gold);background:var(--gold2);}
+.macros-row{display:grid;grid-template-columns:repeat(4,1fr);background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:22px;}
+.mac{padding:12px 6px;text-align:center;border-right:1px solid var(--border);}
+.mac:last-child{border-right:none;}
+.mac-v{font-family:var(--serif);font-size:22px;font-weight:400;color:var(--gold);display:block;}
+.mac-l{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:0.1em;margin-top:2px;}
+.sched-row{margin-bottom:22px;}
+.sched-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text2);margin-bottom:8px;}
+.sched-days{display:flex;gap:6px;flex-wrap:wrap;}
+.sched-pill{font-size:11px;font-weight:500;padding:6px 13px;border-radius:100px;border:1px solid var(--border2);color:var(--text2);background:var(--bg3);letter-spacing:0.06em;transition:all .18s;cursor:pointer;}
+.sched-pill.on{background:var(--gold2);border-color:var(--gold-border);color:var(--gold);}
+.sched-pill.saving{opacity:0.5;pointer-events:none;}
+.d-sec{margin-bottom:26px;}
+.d-sec-title{font-family:var(--serif);font-size:18px;font-weight:400;padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:14px;letter-spacing:0.02em;}
+.d-sub{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin:14px 0 8px;}
+.ing-row{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:14px;line-height:1.5;}
+.ing-row:last-child{border:none;}
+.ing-bullet{width:4px;height:4px;border-radius:50%;background:var(--gold);margin-top:8px;flex-shrink:0;opacity:0.7;}
+.step-r{display:flex;gap:16px;margin-bottom:18px;align-items:flex-start;}
+.step-n{font-family:var(--serif);font-size:28px;font-weight:300;color:var(--gold);opacity:0.5;line-height:1;min-width:28px;margin-top:-2px;}
+.step-t{font-size:14px;line-height:1.65;padding-top:3px;}
+.planner-wrap{padding:20px 16px;}
+.pl-day{margin-bottom:18px;}
+.pl-day-hdr{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:11px;margin-bottom:8px;}
+.pl-day-name{font-size:13px;font-weight:500;color:var(--text2);letter-spacing:0.04em;}
+.pl-day-name.today{color:var(--gold);}
+.today-badge{font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold-border);background:var(--gold2);padding:2px 8px;border-radius:100px;}
+.pl-recipe{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;cursor:pointer;transition:border-color .15s;margin-bottom:8px;}
+.pl-recipe:active{border-color:var(--gold-border);}
+.pl-thumb{width:46px;height:46px;border-radius:9px;object-fit:cover;flex-shrink:0;background:var(--bg3);}
+.pl-name{font-family:var(--serif);font-size:15px;flex:1;}
+.pl-cuis{font-size:11px;margin-top:1px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;}
+.pl-none{font-size:13px;color:var(--text3);padding:4px 2px;font-style:italic;font-family:var(--serif);}
+.overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.72);backdrop-filter:blur(10px);display:flex;align-items:flex-end;justify-content:center;}
+.sheet{background:var(--bg2);border:1px solid var(--border2);border-radius:22px 22px 0 0;width:100%;max-width:520px;}
+.sheet-handle{width:36px;height:3px;background:var(--border2);border-radius:2px;margin:14px auto 0;}
+.pin-sheet{padding:28px 24px calc(28px + var(--safe-bot));}
+.pin-title{font-family:var(--serif);font-size:22px;font-weight:400;margin-bottom:6px;}
+.pin-sub{font-size:13px;color:var(--text2);margin-bottom:22px;}
+.pin-input{font-size:26px;letter-spacing:10px;text-align:center;padding:15px;border-radius:12px;width:100%;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text);font-weight:600;margin-bottom:14px;}
+.pin-input.err{border-color:var(--red);}
+.pin-err{font-size:12px;color:var(--red);text-align:center;min-height:18px;margin-bottom:14px;}
+.sheet-btns{display:flex;gap:10px;}
+.sbtn-cancel{flex:1;padding:14px;border-radius:11px;border:1px solid var(--border2);color:var(--text2);font-size:14px;}
+.sbtn-ok{flex:2;padding:14px;border-radius:11px;background:var(--gold);color:#080808;font-size:14px;font-weight:600;}
+.editor-sheet{max-height:92vh;display:flex;flex-direction:column;}
+.editor-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.editor-title-text{font-family:var(--serif);font-size:20px;font-weight:400;}
+.close-x{width:30px;height:30px;border-radius:50%;background:var(--bg3);color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:17px;}
+.editor-body{flex:1;overflow-y:auto;padding:18px 20px;}
+.esec{margin-bottom:22px;}
+.esec-title{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.flbl{display:block;font-size:12px;color:var(--text2);margin-bottom:5px;margin-top:10px;}
+.flbl:first-child{margin-top:0;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.tgrid{display:flex;flex-wrap:wrap;gap:6px;}
+.ttog{padding:5px 13px;border-radius:100px;font-size:12px;border:1px solid var(--border2);color:var(--text2);transition:all .12s;}
+.ttog.on{border-color:var(--gold-border);color:var(--gold);background:var(--gold2);}
+.dtog{padding:5px 11px;border-radius:100px;font-size:12px;border:1px solid var(--border2);color:var(--text2);transition:all .12s;}
+.dtog.on{border-color:var(--gold-border);color:var(--gold);background:var(--gold2);}
+.img-prev{width:100%;height:130px;object-fit:cover;border-radius:10px;margin-top:8px;}
+.ing-block{background:var(--bg3);border-radius:11px;padding:12px;margin-bottom:9px;}
+.ing-sec-inp{background:none;border:none;border-bottom:1px solid var(--border2);border-radius:0;padding:0 0 5px;color:var(--gold);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;width:100%;outline:none;}
+.ing-line{display:flex;gap:7px;margin-bottom:6px;align-items:center;}
+.ing-line input{margin-bottom:0;flex:1;}
+.step-edit{display:flex;gap:9px;margin-bottom:7px;align-items:flex-start;}
+.step-no{width:26px;height:26px;border-radius:50%;background:var(--gold2);color:var(--gold);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.step-edit textarea{flex:1;resize:vertical;min-height:58px;}
+.del-x{width:26px;height:26px;border-radius:50%;flex-shrink:0;background:rgba(224,85,85,0.08);color:var(--red);font-size:15px;display:flex;align-items:center;justify-content:center;}
+.ghost{font-size:13px;color:var(--gold);padding:7px 0;letter-spacing:0.03em;}
+.ghost::before{content:"+ ";}
+.macros-g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.editor-footer{padding:14px 20px calc(14px + var(--safe-bot));border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0;}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 30px;text-align:center;}
+.empty-title{font-family:var(--serif);font-size:20px;font-weight:300;color:var(--text2);margin-bottom:6px;}
+.empty-sub{font-size:13px;color:var(--text3);}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;gap:14px;}
+.spin{width:28px;height:28px;border:1.5px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:rot .7s linear infinite;}
+@keyframes rot{to{transform:rotate(360deg);}}
+.load-txt{font-size:13px;color:var(--text3);letter-spacing:0.05em;font-family:var(--serif);}
+.toast{position:fixed;z-index:300;bottom:calc(90px + var(--safe-bot));left:50%;transform:translateX(-50%);background:var(--gold);color:#080808;padding:11px 22px;border-radius:100px;font-size:13px;font-weight:500;animation:tin .3s ease;}
+@keyframes tin{from{opacity:0;transform:translateX(-50%) translateY(10px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const SB_URL="https://uarjjjvrzzwsewrcprcc.supabase.co";
+const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmpqanZyenp3c2V3cmNwcmNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Mjg5NTEsImV4cCI6MjA5NTMwNDk1MX0.6I1GWrJeLa1rh7rUg6GTfLdFIWVQrS5WBKTxl7-ZM7s";
+const ADMIN_PIN="1234";
+const sbH={"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY};
+const CUISINE_COLORS={Peruvian:"#e8825a",Mexican:"#e05555",Italian:"#4caf72",Asian:"#d4a017",American:"#4a7fd4",Mediterranean:"#8e5fd4","Middle Eastern":"#d45fa0",Other:"#888"};
+const CUISINE_OPTIONS=["Peruvian","Mexican","Italian","Asian","American","Mediterranean","Middle Eastern","Other"];
+const TAG_OPTIONS=["High Protein","Quick","Meal Prep","Vegetarian","Vegan","Low Fat","Make Ahead","No Cook"];
+const TYPE_OPTIONS=["Main Course","Breakfast","Appetizer","Side Dish","Dessert","Snack","Beverage","Other"];
+const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const SEED=[
+  {id:"cowboy-butter-chicken-sandwich",name:"Cowboy Butter Chicken Sandwich",cuisine:"American",tags:["High Protein","Quick"],type:"Main Course",schedule:["Wednesday"],image:"https://images.unsplash.com/photo-1562547256-c5fca8e50602?w=400"},
+  {id:"chipotle-honey-chicken-tacos",name:"Chipotle Honey Chicken Tacos",cuisine:"Mexican",tags:["High Protein"],type:"Main Course",schedule:["Tuesday"],image:"https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400"},
+  {id:"peruvian-chicken-aji-verde",name:"Peruvian Chicken with Aji Verde & Coconut Rice",cuisine:"Peruvian",tags:["High Protein","Meal Prep"],type:"Main Course",schedule:["Monday"],image:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400"},
+  {id:"3",name:"Moroccan Style Cauliflower",cuisine:"Mediterranean",tags:["Vegetarian","Meal Prep"],type:"Main Course",schedule:["Thursday"],image:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"}
+];
+
+// ── SUPABASE (with fallback) ──────────────────────────────
+async function sbFetch(){
+  try{
+    const r=await fetch(SB_URL+"/rest/v1/recipes?select=*&order=created_at.asc",{headers:{...sbH,"Accept":"application/json"}});
+    if(!r.ok){console.error("sbFetch error:",r.status,r.statusText);return null;}
+    const d=await r.json();
+    return Array.isArray(d)&&d.length>0?d:null;
+  }catch(e){console.error("sbFetch error:",e);return null;}
+}
+async function sbInsert(recipe){
+  try{
+    const r=await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(recipe)});
+    if(!r.ok){console.error("sbInsert error:",r.status,await r.text());return false;}
+    return true;
+  }catch(e){console.error("sbInsert error:",e);return false;}
+}
+async function sbUpdate(recipe){
+  try{
+    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+recipe.id,{method:"PATCH",headers:sbH,body:JSON.stringify(recipe)});
+    if(!r.ok){console.error("sbUpdate error:",r.status,await r.text());return false;}
+    return true;
+  }catch(e){console.error("sbUpdate error:",e);return false;}
+}
+async function sbDelete(id){
+  try{
+    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+id,{method:"DELETE",headers:sbH});
+    if(!r.ok){console.error("sbDelete error:",r.status,await r.text());return false;}
+    return true;
+  }catch(e){console.error("sbDelete error:",e);return false;}
+}
+async function sbSeed(){
+  try{await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(SEED)});}catch{}
+}
+
+// ── STATE ─────────────────────────────────────────────────
+let S={recipes:[],loading:true,view:"home",selected:null,prevView:"home",isAdmin:false,filterCuisine:"All",filterTag:"All",search:"",showPin:false,showEditor:false,editingRecipe:null};
+function ss(u){try{Object.assign(S,u);render();}catch(e){console.error("Render error:",e);}}
+
+function todayIdx(){const d=new Date().getDay();return d===0?6:d-1;}
+function orderedDays(){const i=todayIdx();return[...DAYS.slice(i),...DAYS.slice(0,i)];}
+function todayName(){return DAYS[todayIdx()];}
+
+async function checkUrlImport(recipes){
+  try{
+    const p=new URLSearchParams(window.location.search);
+    const enc=p.get("recipe");
+    if(!enc)return recipes;
+    const recipe=JSON.parse(atob(decodeURIComponent(enc)));
+    if(!recipe||!recipe.name)return recipes;
+    if(!recipes.find(r=>r.id===recipe.id)){
+      await sbInsert(recipe);
+      const fresh=await sbFetch();
+      if(fresh)recipes=fresh;
+      else recipes=[...recipes,recipe];
+      showToast("Added: "+recipe.name);
+    }
+    window.history.replaceState({},"",window.location.pathname);
+    return recipes;
+  }catch{return recipes;}
+}
+
+function el(t,c){const e=document.createElement(t);if(c)e.className=c;return e;}
+function btn(t,c,fn){const b=el("button",c);b.textContent=t;if(fn)b.onclick=fn;return b;}
+function showToast(msg){
+  document.querySelectorAll(".toast").forEach(x=>x.remove());
+  const t=el("div","toast");t.textContent=msg;document.body.appendChild(t);
+  setTimeout(()=>t.remove(),3000);
+}
+function cutlerySVG(){
+  const d=el("div","day-thumb-empty");
+  d.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3a3a3a" stroke-width="1.5"><path d="M3 2v7c0 1.1.9 2 2 2h1v11h2V11h1c1.1 0 2-.9 2-2V2"/><path d="M16 2c-1.66 0-3 1.34-3 3v6h9V5c0-1.66-1.34-3-3-3z"/></svg>';
+  return d;
+}
+function imgFb(cls){
+  const d=el("div",cls||"rcard-img-fb");
+  d.innerHTML='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3a3a3a" stroke-width="1.5"><path d="M3 2v7c0 1.1.9 2 2 2h1v11h2V11h1c1.1 0 2-.9 2-2V2"/><path d="M16 2c-1.66 0-3 1.34-3 3v6h9V5c0-1.66-1.34-3-3-3z"/></svg>';
+  return d;
+}
+
+// ── RENDER ────────────────────────────────────────────────
+function render(){
+  const app=document.getElementById("app");
+  app.innerHTML="";
+  if(S.view!=="detail")app.appendChild(buildHeader());
+  const main=el("main");
+  if(S.loading){
+    const d=el("div","loading");
+    d.append(el("div","spin"),Object.assign(el("p","load-txt"),{textContent:"Loading your kitchen..."}));
+    main.appendChild(d);
+  } else if(S.view==="home")main.appendChild(buildHome());
+  else if(S.view==="recipes")main.appendChild(buildRecipesPage());
+  else if(S.view==="detail"&&S.selected)main.appendChild(buildDetail(S.selected));
+  else if(S.view==="planner")main.appendChild(buildPlanner());
+  app.appendChild(main);
+  if(S.view!=="detail")app.appendChild(buildBnav());
+  if(S.showPin)app.appendChild(buildPinModal());
+  if(S.showEditor)app.appendChild(buildEditorModal(S.editingRecipe));
+}
+
+function buildHeader(){
+  const hdr=el("header");
+  const inner=el("div","hdr");
+  const logo=el("div","logo");
+  logo.append(Object.assign(el("span","logo-mark"),{textContent:"✦"}),Object.assign(el("span","logo-text"),{textContent:"Mehdi's Kitchen"}));
+  logo.onclick=()=>ss({view:"home",selected:null});
+  const right=el("div","hdr-right");
+  right.appendChild(btn(S.isAdmin?"✦ Admin":"Admin",S.isAdmin?"admin-btn on":"admin-btn",()=>S.isAdmin?ss({isAdmin:false}):ss({showPin:true})));
+  inner.append(logo,right);
+  hdr.appendChild(inner);
+  if(S.view==="recipes"){
+    const sw=el("div","search-wrap");
+    const si=el("div","search-inner");
+    const inp=document.createElement("input");
+    inp.type="text";inp.placeholder="recipe, cuisine...";inp.value=S.search;
+    inp.oninput=e=>ss({search:e.target.value});
+    si.append(Object.assign(el("span","search-lbl"),{textContent:"Search"}),inp);
+    sw.appendChild(si);hdr.appendChild(sw);
+    const chips=el("div","chips");
+    chips.appendChild(btn("All","chip"+(S.filterCuisine==="All"&&S.filterTag==="All"?" on":""),()=>ss({filterCuisine:"All",filterTag:"All"})));
+    CUISINE_OPTIONS.forEach(c=>chips.appendChild(btn(c,"chip"+(S.filterCuisine===c?" on":""),()=>ss({filterCuisine:c,filterTag:"All"}))));
+    TAG_OPTIONS.forEach(t=>chips.appendChild(btn(t,"chip"+(S.filterTag===t?" on":""),()=>ss({filterTag:t,filterCuisine:"All"}))));
+    hdr.appendChild(chips);
+  }
+  return hdr;
+}
+
+function buildBnav(){
+  const nav=el("div","bnav");
+  const hi=el("button","bnav-item"+(S.view==="home"?" on":""));
+  hi.innerHTML='<span class="bnav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span>';
+  hi.onclick=()=>ss({view:"home",selected:null});
+  const addB=el("button","bnav-add");
+  addB.innerHTML='<svg class="plus-svg" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+  addB.onclick=()=>S.isAdmin?ss({showEditor:true,editingRecipe:null}):ss({showPin:true});
+  const ri=el("button","bnav-item"+(S.view==="recipes"?" on":""));
+  ri.innerHTML='<span class="bnav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span><span>Recipes</span>';
+  ri.onclick=()=>ss({view:"recipes",selected:null});
+  nav.append(hi,addB,ri);
+  return nav;
+}
+
+function buildHome(){
+  const page=el("div","home-wrap");
+  // Week row
+  const ws=el("div");
+  const wh=el("div","sec-hdr");
+  const wt=el("span","sec-title");wt.innerHTML='This Week <span>starting today</span>';
+  wh.append(wt,btn("See all","sec-link",()=>ss({view:"planner"})));
+  ws.appendChild(wh);
+  const weekRow=el("div","week-row");
+  const today=todayName();
+  orderedDays().forEach(function(day){
+    const recipe=S.recipes.find(function(r){return r.schedule&&r.schedule.includes(day);});
+    const tile=el("div","day-tile"+(day===today?" today":"")+(recipe?" has-recipe":""));
+    if(recipe){
+      const img=document.createElement("img");
+      img.className="day-thumb";img.src=recipe.image||"";img.alt=recipe.name;
+      img.onerror=function(){try{img.replaceWith(cutlerySVG());}catch{}};
+      tile.appendChild(img);
+      tile.onclick=function(){ss({view:"detail",selected:recipe,prevView:"home"});};
+    } else {
+      tile.appendChild(cutlerySVG());
+    }
+    const foot=el("div","day-foot");
+    foot.appendChild(Object.assign(el("p","day-label"),{textContent:day.slice(0,3)}));
+    if(recipe)foot.appendChild(Object.assign(el("p","day-rname"),{textContent:recipe.name}));
+    else foot.appendChild(Object.assign(el("p","day-empty-lbl"),{textContent:"No recipe"}));
+    tile.appendChild(foot);
+    weekRow.appendChild(tile);
+  });
+  ws.appendChild(weekRow);
+  page.appendChild(ws);
+  // Saved recipes
+  const rs=el("div","recipes-section");
+  const rh=el("div","sec-hdr");
+  rh.append(Object.assign(el("span","sec-title"),{textContent:"Saved Recipes"}),btn("See all","sec-link",()=>ss({view:"recipes"})));
+  rs.appendChild(rh);
+  if(!S.recipes||S.recipes.length===0){
+    const e=el("div","empty");
+    e.append(Object.assign(el("p","empty-title"),{textContent:"No recipes yet"}),Object.assign(el("p","empty-sub"),{textContent:"Tap + to add your first recipe"}));
+    rs.appendChild(e);
+  } else {
+    const col=el("div","recipe-col");
+    S.recipes.slice().reverse().forEach(function(r){col.appendChild(buildRcard(r));});
+    rs.appendChild(col);
+  }
+  page.appendChild(rs);
+  return page;
+}
+
+function buildRcard(recipe){
+  const card=el("div","rcard");
+  const imgWrap=el("div","rcard-img");
+  const img=document.createElement("img");
+  img.src=recipe.image||"";img.alt=recipe.name||"";
+  img.style.cssText="width:100%;height:100%;object-fit:cover;";
+  img.onerror=function(){try{img.replaceWith(imgFb());}catch{}};
+  imgWrap.appendChild(img);
+  const body=el("div","rcard-body");
+  const top=el("div","rcard-top");
+  if(recipe.cuisine){const cc=el("p","rcard-cuisine");cc.style.color=CUISINE_COLORS[recipe.cuisine]||"#888";cc.textContent=recipe.cuisine;top.appendChild(cc);}
+  top.appendChild(Object.assign(el("p","rcard-name"),{textContent:recipe.name||""}));
+  body.appendChild(top);
+  const meta=el("div","rcard-meta");
+  (recipe.tags||[]).forEach(function(t){meta.appendChild(Object.assign(el("span","rcard-tag gold"),{textContent:t}));});
+  if(recipe.type)meta.appendChild(Object.assign(el("span","rcard-type"),{textContent:recipe.type}));
+  if(recipe.schedule&&recipe.schedule.length)meta.appendChild(Object.assign(el("span","rcard-day"),{textContent:recipe.schedule.join(", ")}));
+  body.appendChild(meta);
+  card.append(imgWrap,body);
+  card.onclick=function(){ss({view:"detail",selected:recipe,prevView:"home"});};
+  return card;
+}
+
+function buildRecipesPage(){
+  const page=el("div","grid-wrap");
+  let filtered=S.recipes||[];
+  if(S.search)filtered=filtered.filter(function(r){return(r.name||"").toLowerCase().includes(S.search.toLowerCase())||(r.cuisine||"").toLowerCase().includes(S.search.toLowerCase());});
+  if(S.filterCuisine!=="All")filtered=filtered.filter(function(r){return r.cuisine===S.filterCuisine;});
+  if(S.filterTag!=="All")filtered=filtered.filter(function(r){return r.tags&&r.tags.includes(S.filterTag);});
+  if(filtered.length===0){
+    const e=el("div","empty");
+    e.append(Object.assign(el("p","empty-title"),{textContent:"Nothing found"}),Object.assign(el("p","empty-sub"),{textContent:"Try a different search or filter"}));
+    page.appendChild(e);return page;
+  }
+  const grid=el("div","rgrid");
+  filtered.forEach(function(recipe){
+    const card=el("div","gcard");
+    const imgW=el("div","gcard-img");
+    const img=document.createElement("img");img.src=recipe.image||"";img.alt=recipe.name||"";
+    img.onerror=function(){imgW.innerHTML="";imgW.appendChild(imgFb("gcard-img-fb"));};
+    const bar=el("div","gcard-bar");
+    const dot=el("span","cuisine-dot");dot.style.background=CUISINE_COLORS[recipe.cuisine]||"#888";
+    const cl=el("span","cuisine-lbl");cl.style.color=CUISINE_COLORS[recipe.cuisine]||"#aaa";cl.textContent=recipe.cuisine||"";
+    bar.append(dot,cl);imgW.append(img,bar);
+    const body=el("div","gcard-body");
+    const nm=Object.assign(el("p","gcard-name"),{textContent:recipe.name||""});
+    const tags=el("div","gcard-tags");
+    (recipe.tags||[]).forEach(function(t){tags.appendChild(Object.assign(el("span","gtag gold"),{textContent:t}));});
+    if(recipe.type)tags.appendChild(Object.assign(el("span","gtag"),{textContent:recipe.type}));
+    body.append(nm,tags);card.append(imgW,body);
+    card.onclick=function(){ss({view:"detail",selected:recipe,prevView:"recipes"});};
+    grid.appendChild(card);
+  });
+  page.appendChild(grid);return page;
+}
+
+function buildDetail(recipe){
+  const page=el("div");
+  const hdr=el("header");
+  const inner=el("div","hdr");
+  const backB=btn("","detail-back",function(){ss({view:S.prevView||"home",selected:null});});
+  backB.innerHTML='<svg class="back-svg" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>';
+  inner.appendChild(backB);
+  if(S.isAdmin){
+    const ar=el("div","detail-admin-row");
+    ar.append(btn("Edit","d-btn edit",function(){ss({showEditor:true,editingRecipe:recipe});}),btn("Delete","d-btn del",function(){confirmDelete(recipe.id);}));
+    inner.appendChild(ar);
+  }
+  hdr.appendChild(inner);page.appendChild(hdr);
+  const hero=el("div","detail-hero");
+  const img=document.createElement("img");img.src=recipe.image||"";img.alt=recipe.name||"";
+  img.onerror=function(){hero.style.background="var(--bg3)";};
+  hero.append(img,el("div","detail-hero-grad"));page.appendChild(hero);
+  const body=el("div","detail-body");
+  const top=el("div","detail-top");
+  const metaRow=el("div","detail-meta-row");
+  if(recipe.cuisine){
+    const cp=el("div","d-cuisine");
+    const dot=el("span");dot.style.cssText="width:7px;height:7px;border-radius:50%;background:"+(CUISINE_COLORS[recipe.cuisine]||"#888")+";";
+    const ct=el("span");ct.style.color=CUISINE_COLORS[recipe.cuisine]||"#888";ct.textContent=recipe.cuisine;
+    cp.append(dot,ct);metaRow.appendChild(cp);
+  }
+  if(recipe.type)metaRow.appendChild(Object.assign(el("div","d-type"),{textContent:recipe.type}));
+  top.appendChild(metaRow);
+  top.appendChild(Object.assign(el("h1","detail-title"),{textContent:recipe.name||""}));
+  if(recipe.tags&&recipe.tags.length){
+    const tr=el("div","detail-tags");
+    recipe.tags.forEach(function(t){tr.appendChild(Object.assign(el("span","d-tag"),{textContent:t}));});
+    top.appendChild(tr);
+  }
+  if(recipe.macros){
+    const mb=el("div","macros-row");
+    [{v:recipe.macros.calories,l:"Cal"},{v:(recipe.macros.protein||0)+"g",l:"Protein"},{v:(recipe.macros.carbs||0)+"g",l:"Carbs"},{v:(recipe.macros.fat||0)+"g",l:"Fat"}].forEach(function(m){
+      const mc=el("div","mac");
+      mc.append(Object.assign(el("span","mac-v"),{textContent:m.v}),Object.assign(el("span","mac-l"),{textContent:m.l}));
+      mb.appendChild(mc);
+    });
+    top.appendChild(mb);
+  }
+  const schedWrap=el("div","sched-row");
+  schedWrap.appendChild(Object.assign(el("p","sched-label"),{textContent:"Schedule for"}));
+  const schedDays=el("div","sched-days");
+  DAYS.forEach(function(day){
+    const isOn=(recipe.schedule||[]).includes(day);
+    const pill=btn(day.slice(0,3),"sched-pill"+(isOn?" on":""),async function(){
+      const wasOn=(recipe.schedule||[]).includes(day);
+      const newSched=wasOn?(recipe.schedule||[]).filter(function(d){return d!==day;}):[...(recipe.schedule||[]),day];
+      recipe.schedule=newSched;
+      pill.className="sched-pill saving";
+      const ok=await sbUpdate(Object.assign({},recipe,{schedule:newSched}));
+      if(ok){
+        S.recipes=S.recipes.map(function(r){return r.id===recipe.id?Object.assign({},r,{schedule:newSched}):r;});
+        S.selected=Object.assign({},recipe,{schedule:newSched});
+        pill.className="sched-pill"+(wasOn?"":"on");
+        render();
+        showToast("Schedule updated");
+      }
+      else{
+        recipe.schedule=wasOn?[...newSched,day]:newSched.filter(function(d){return d!==day;});
+        pill.className="sched-pill"+(wasOn?" on":"");
+        showToast("Failed to update");
+      }
+    });
+    schedDays.appendChild(pill);
+  });
+  schedWrap.appendChild(schedDays);top.appendChild(schedWrap);body.appendChild(top);
+  if(recipe.ingredients&&Object.keys(recipe.ingredients).length){
+    const sec=el("div","d-sec");
+    sec.appendChild(Object.assign(el("p","d-sec-title"),{textContent:"Ingredients"}));
+    Object.entries(recipe.ingredients).forEach(function(entry){
+      const s=entry[0],items=entry[1];
+      if(s)sec.appendChild(Object.assign(el("p","d-sub"),{textContent:s}));
+      (items||[]).forEach(function(item){
+        const row=el("div","ing-row");
+        row.append(el("span","ing-bullet"),Object.assign(el("span"),{textContent:item}));
+        sec.appendChild(row);
+      });
+    });
+    body.appendChild(sec);
+  }
+  if(recipe.steps&&recipe.steps.length){
+    const sec=el("div","d-sec");
+    sec.appendChild(Object.assign(el("p","d-sec-title"),{textContent:"Method"}));
+    recipe.steps.forEach(function(step,i){
+      const row=el("div","step-r");
+      row.append(Object.assign(el("span","step-n"),{textContent:i+1}),Object.assign(el("span","step-t"),{textContent:step}));
+      sec.appendChild(row);
+    });
+    body.appendChild(sec);
+  }
+  page.appendChild(body);page.appendChild(buildBnav());
+  return page;
+}
+
+function buildPlanner(){
+  const page=el("div","planner-wrap");
+  const ph=el("div","sec-hdr");ph.style.padding="0 4px";
+  const pt=el("span","sec-title");pt.innerHTML='Weekly Planner <span>starting today</span>';
+  ph.appendChild(pt);page.appendChild(ph);
+  const today=todayName();
+  orderedDays().forEach(function(day){
+    const dw=el("div","pl-day");
+    const dh=el("div","pl-day-hdr");
+    dh.appendChild(Object.assign(el("span","pl-day-name"+(day===today?" today":"")),{textContent:day}));
+    if(day===today)dh.appendChild(Object.assign(el("span","today-badge"),{textContent:"Today"}));
+    dw.appendChild(dh);
+    const recipes=S.recipes.filter(function(r){return r.schedule&&r.schedule.includes(day);});
+    if(!recipes.length)dw.appendChild(Object.assign(el("p","pl-none"),{textContent:"Nothing planned"}));
+    else recipes.forEach(function(r){
+      const row=el("div","pl-recipe");
+      const thumb=document.createElement("img");thumb.className="pl-thumb";thumb.src=r.image||"";thumb.alt=r.name||"";
+      thumb.onerror=function(){thumb.style.display="none";};
+      const info=el("div");
+      info.append(Object.assign(el("p","pl-name"),{textContent:r.name||""}),Object.assign(el("p","pl-cuis"),{textContent:r.cuisine||"",style:"color:"+(CUISINE_COLORS[r.cuisine]||"#888")}));
+      row.append(thumb,info);
+      row.onclick=function(){ss({view:"detail",selected:r,prevView:"planner"});};
+      dw.appendChild(row);
+    });
+    page.appendChild(dw);
+  });
+  return page;
+}
+
+function buildPinModal(){
+  const ov=el("div","overlay");
+  const sheet=el("div","sheet");
+  const body=el("div","pin-sheet");
+  body.append(Object.assign(el("h2","pin-title"),{textContent:"Admin Access"}),Object.assign(el("p","pin-sub"),{textContent:"Enter your PIN to continue"}));
+  const inp=document.createElement("input");
+  inp.type="password";inp.maxLength=4;inp.placeholder="...";inp.className="pin-input";inp.inputMode="numeric";
+  const err=Object.assign(el("p","pin-err"),{textContent:""});
+  const btns=el("div","sheet-btns");
+  const ok=btn("Enter","sbtn-ok",function(){
+    if(inp.value===ADMIN_PIN)ss({isAdmin:true,showPin:false});
+    else{inp.className="pin-input err";err.textContent="Incorrect PIN";inp.value="";setTimeout(function(){inp.className="pin-input";err.textContent="";},1400);}
+  });
+  inp.onkeydown=function(e){if(e.key==="Enter")ok.click();};
+  btns.append(btn("Cancel","sbtn-cancel",function(){ss({showPin:false});}),ok);
+  body.append(inp,err,btns);
+  sheet.append(el("div","sheet-handle"),body);
+  ov.appendChild(sheet);
+  ov.onclick=function(e){if(e.target===ov)ss({showPin:false});};
+  setTimeout(function(){inp.focus();},80);
+  return ov;
+}
+
+function buildEditorModal(recipe){
+  const isNew=!recipe;
+  let form=recipe?JSON.parse(JSON.stringify(recipe)):{name:"",cuisine:"",tags:[],type:"Main Course",schedule:[],image:"",ingredients:{"":[""]},steps:[""],macros:null};
+  const ov=el("div","overlay");
+  const sheet=el("div","sheet editor-sheet");
+  const hdr=el("div","editor-hdr");
+  hdr.append(Object.assign(el("h2","editor-title-text"),{textContent:isNew?"New Recipe":"Edit Recipe"}),btn("x","close-x",function(){ss({showEditor:false,editingRecipe:null});}));
+  const body=el("div","editor-body");
+  function rebuild(){
+    body.innerHTML="";
+    // Basic info
+    const s1=el("div","esec");s1.appendChild(Object.assign(el("p","esec-title"),{textContent:"Basic Info"}));
+    s1.appendChild(Object.assign(el("label","flbl"),{textContent:"Recipe Name"}));
+    const ni=document.createElement("input");ni.type="text";ni.value=form.name;ni.oninput=function(e){form.name=e.target.value;};s1.appendChild(ni);
+    s1.appendChild(Object.assign(el("label","flbl"),{textContent:"Image URL"}));
+    const ii=document.createElement("input");ii.type="text";ii.value=form.image||"";ii.placeholder="https://...";
+    ii.oninput=function(e){form.image=e.target.value;rebuild();};s1.appendChild(ii);
+    if(form.image){const p=document.createElement("img");p.src=form.image;p.className="img-prev";p.onerror=function(){p.remove();};s1.appendChild(p);}
+    const tc=el("div","two");
+    const cw=el("div");cw.appendChild(Object.assign(el("label","flbl"),{textContent:"Cuisine"}));
+    const cs=document.createElement("select");
+    cs.innerHTML='<option value="">Select...</option>'+CUISINE_OPTIONS.map(function(c){return'<option value="'+c+'"'+(form.cuisine===c?' selected':'')+'>'+c+'</option>';}).join("");
+    cs.onchange=function(e){form.cuisine=e.target.value;};cw.appendChild(cs);tc.appendChild(cw);
+    const tw=el("div");tw.appendChild(Object.assign(el("label","flbl"),{textContent:"Type"}));
+    const ts=document.createElement("select");
+    ts.innerHTML=TYPE_OPTIONS.map(function(t){return'<option value="'+t+'"'+(form.type===t?' selected':'')+'>'+t+'</option>';}).join("");
+    ts.onchange=function(e){form.type=e.target.value;};tw.appendChild(ts);tc.appendChild(tw);
+    s1.appendChild(tc);body.appendChild(s1);
+    // Tags
+    const s2=el("div","esec");s2.appendChild(Object.assign(el("p","esec-title"),{textContent:"Tags"}));
+    const tg=el("div","tgrid");
+    TAG_OPTIONS.forEach(function(t){
+      const includesTag=(form.tags||[]).includes(t);
+      tg.appendChild(btn(t,"ttog"+(includesTag?" on":""),function(){
+        form.tags=includesTag?(form.tags||[]).filter(function(x){return x!==t;}):[...(form.tags||[]),t];
+      }));
+    });
+    s2.appendChild(tg);body.appendChild(s2);
+    // Schedule
+    const s3=el("div","esec");s3.appendChild(Object.assign(el("p","esec-title"),{textContent:"Schedule"}));
+    const dg=el("div","tgrid");
+    DAYS.forEach(function(d){
+      const includesDay=(form.schedule||[]).includes(d);
+      dg.appendChild(btn(d.slice(0,3),"dtog"+(includesDay?" on":""),function(){
+        form.schedule=includesDay?(form.schedule||[]).filter(function(x){return x!==d;}):[...(form.schedule||[]),d];
+      }));
+    });
+    s3.appendChild(dg);body.appendChild(s3);
+    // Ingredients
+    const s4=el("div","esec");s4.appendChild(Object.assign(el("p","esec-title"),{textContent:"Ingredients"}));
+    Object.entries(form.ingredients).forEach(function(entry){
+      const sec=entry[0],items=entry[1];
+      const block=el("div","ing-block");
+      const sn=document.createElement("input");sn.className="ing-sec-inp";sn.type="text";sn.value=sec;sn.placeholder="Section name";
+      sn.oninput=function(e){
+        const ents=Object.entries(form.ingredients);
+        const idx=ents.findIndex(function(x){return x[0]===sec;});
+        if(idx>-1){
+          const oldKey=ents[idx][0];
+          ents[idx]=[e.target.value,ents[idx][1]];
+          form.ingredients=Object.assign({},form.ingredients);
+          if(oldKey!==e.target.value){
+            delete form.ingredients[oldKey];
+            form.ingredients[e.target.value]=ents[idx][1];
+          }
+        }
+      };
+      block.appendChild(sn);
+      items.forEach(function(item,i){
+        const row=el("div","ing-line");
+        const inp=document.createElement("input");inp.type="text";inp.value=item;inp.placeholder="e.g. 2 cups flour";
+        inp.oninput=function(e){const l=form.ingredients[sec].slice();l[i]=e.target.value;form.ingredients=Object.assign({},form.ingredients);form.ingredients[sec]=l;};
+        const dx=btn("x","del-x",function(){form.ingredients=Object.assign({},form.ingredients);form.ingredients[sec]=form.ingredients[sec].filter(function(_,j){return j!==i;});rebuild();});
+        row.append(inp,dx);block.appendChild(row);
+      });
+      block.appendChild(btn("Add ingredient","ghost",function(){form.ingredients=Object.assign({},form.ingredients);form.ingredients[sec]=[...items,""];rebuild();}));
+      s4.appendChild(block);
+    });
+    s4.appendChild(btn("Add section","ghost",function(){form.ingredients=Object.assign({},form.ingredients);form.ingredients["New Section"]=[""];rebuild();}));
+    body.appendChild(s4);
+    // Steps
+    const s5=el("div","esec");s5.appendChild(Object.assign(el("p","esec-title"),{textContent:"Method"}));
+    (form.steps||[]).forEach(function(step,i){
+      const row=el("div","step-edit");
+      const num=Object.assign(el("span","step-no"),{textContent:i+1});
+      const ta=document.createElement("textarea");ta.value=step;ta.placeholder="Step "+(i+1);ta.oninput=function(e){form.steps[i]=e.target.value;};
+      const dx=btn("x","del-x",function(){form.steps=form.steps.filter(function(_,j){return j!==i;});rebuild();});
+      row.append(num,ta,dx);s5.appendChild(row);
+    });
+    s5.appendChild(btn("Add step","ghost",function(){form.steps=[...(form.steps||[]),""];rebuild();}));
+    body.appendChild(s5);
+    // Macros
+    const s6=el("div","esec");s6.appendChild(Object.assign(el("p","esec-title"),{textContent:"Macros (per serving)"}));
+    const mg=el("div","macros-g");const m=form.macros||{};
+    [{k:"calories",l:"Calories"},{k:"protein",l:"Protein"},{k:"carbs",l:"Carbs"},{k:"fat",l:"Fat"}].forEach(function(x){
+      const w=el("div");w.appendChild(Object.assign(el("label","flbl"),{textContent:x.l}));
+      const inp=document.createElement("input");inp.type="number";inp.value=m[x.k]||"";inp.inputMode="numeric";
+      inp.oninput=function(e){form.macros=Object.assign({},form.macros||{});form.macros[x.k]=Number(e.target.value)||0;};
+      w.appendChild(inp);mg.appendChild(w);
+    });
+    s6.appendChild(mg);body.appendChild(s6);
+  }
+  rebuild();
+  const footer=el("div","editor-footer");
+  const saveB=btn(isNew?"Add Recipe":"Save Changes","sbtn-ok",async function(){
+    if(!form.name.trim()){alert("Recipe name required");return;}
+    if(!form.id)form.id=Date.now().toString();
+    saveB.textContent="Saving...";saveB.disabled=true;
+    const ok=(!isNew)?await sbUpdate(form):await sbInsert(form);
+    if(ok){
+      const recipes=await sbFetch();
+      ss({recipes:recipes||S.recipes,showEditor:false,editingRecipe:null});
+      showToast(isNew?"Recipe added":"Changes saved");
+    }
+    else{
+      saveB.textContent=isNew?"Add Recipe":"Save Changes";
+      saveB.disabled=false;
+      showToast("Failed to save. Check browser console.");
+    }
+  });
+  footer.append(btn("Cancel","sbtn-cancel",function(){ss({showEditor:false,editingRecipe:null});}),saveB);
+  sheet.append(el("div","sheet-handle"),hdr,body,footer);
+  ov.appendChild(sheet);
+  ov.onclick=function(e){if(e.target===ov)ss({showEditor:false,editingRecipe:null});};
+  return ov;
+}
+
+async function confirmDelete(id){
+  if(confirm("Delete this recipe?")){
+    await sbDelete(id);
+    const recipes=await sbFetch();
+    ss({recipes:recipes||S.recipes,view:"home",selected:null});
+    showToast("Recipe deleted");
+  }
+}
+
+// ── INIT (with local fallback) ────────────────────────────
+async function init(){
+  render();
+  try{
+    let recipes=await sbFetch();
+    if(!recipes){
+      console.log("Supabase fetch failed, using seed data");
+      sbSeed();
+      recipes=SEED;
+    }
+    recipes=await checkUrlImport(recipes);
+    ss({recipes:recipes,loading:false});
+  }catch(e){
+    console.error("Init error:",e);
+    ss({recipes:SEED,loading:false});
+  }
+}
+init();
+</script>
+</body>
+</html>

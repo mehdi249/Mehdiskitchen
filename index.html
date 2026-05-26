@@ -739,7 +739,7 @@ function buildRcard(recipe){
   (recipe.tags||[]).forEach(t=>{const tg=el("span","rcard-tag gold");tg.textContent=t;meta.appendChild(tg);});
   if(recipe.type){const ty=el("span","rcard-type");ty.textContent=recipe.type;meta.appendChild(ty);}
   if(recipe.schedule&&recipe.schedule.length){
-    const dy=el("span","rcard-day");dy.textContent=recipe.schedule.join(", ");meta.appendChild(dy);
+  const dy=el("span","rcard-day");dy.textContent=Array.isArray(recipe.schedule)?recipe.schedule.join(", "):(recipe.schedule||"");meta.appendChild(dy);
   }
   body.appendChild(meta);
   card.append(imgWrap,body);

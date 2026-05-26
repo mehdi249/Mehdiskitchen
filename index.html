@@ -415,212 +415,361 @@ function buildHome(){
   return page;
 }
 
-function buildRcard(recipe){
-  const card=el("div","rcard");
-  const imgWrap=el("div","rcard-img");
-  const img=document.createElement("img");
-  img.src=recipe.image||"";img.alt=recipe.name||"";
-  img.style.cssText="width:100%;height:100%;object-fit:cover;";
-  img.onerror=function(){try{img.replaceWith(imgFb());}catch{}};
-  imgWrap.appendChild(img);
-  const body=el("div","rcard-body");
-  const top=el("div","rcard-top");
-  if(recipe.cuisine){const cc=el("p","rcard-cuisine");cc.style.color=CUISINE_COLORS[recipe.cuisine]||"#888";cc.textContent=recipe.cuisine;top.appendChild(cc);}
-  top.appendChild(Object.assign(el("p","rcard-name"),{textContent:recipe.name||""}));
-  body.appendChild(top);
-  const meta=el("div","rcard-meta");
-  (recipe.tags||[]).forEach(function(t){meta.appendChild(Object.assign(el("span","rcard-tag gold"),{textContent:t}));});
-  if(recipe.type)meta.appendChild(Object.assign(el("span","rcard-type"),{textContent:recipe.type}));
-  if(recipe.schedule&&recipe.schedule.length)meta.appendChild(Object.assign(el("span","rcard-day"),{textContent:recipe.schedule.join(", ")}));
-  body.appendChild(meta);
-  card.append(imgWrap,body);
-  card.onclick=function(){ss({view:"detail",selected:recipe,prevView:"home"});};
-  return card;
-}
+function buildEditorModal(recipe){
 
-function buildRecipesPage(){
-  const page=el("div","grid-wrap");
-  let filtered=S.recipes||[];
-  if(S.search)filtered=filtered.filter(function(r){return(r.name||"").toLowerCase().includes(S.search.toLowerCase())||(r.cuisine||"").toLowerCase().includes(S.search.toLowerCase());});
-  if(S.filterCuisine!=="All")filtered=filtered.filter(function(r){return r.cuisine===S.filterCuisine;});
-  if(S.filterTag!=="All")filtered=filtered.filter(function(r){return r.tags&&r.tags.includes(S.filterTag);});
-  if(filtered.length===0){
-    const e=el("div","empty");
-    e.append(Object.assign(el("p","empty-title"),{textContent:"Nothing found"}),Object.assign(el("p","empty-sub"),{textContent:"Try a different search or filter"}));
-    page.appendChild(e);return page;
-  }
-  const grid=el("div","rgrid");
-  filtered.forEach(function(recipe){
-    const card=el("div","gcard");
-    const imgW=el("div","gcard-img");
-    const img=document.createElement("img");img.src=recipe.image||"";img.alt=recipe.name||"";
-    img.onerror=function(){imgW.innerHTML="";imgW.appendChild(imgFb("gcard-img-fb"));};
-    const bar=el("div","gcard-bar");
-    const dot=el("span","cuisine-dot");dot.style.background=CUISINE_COLORS[recipe.cuisine]||"#888";
-    const cl=el("span","cuisine-lbl");cl.style.color=CUISINE_COLORS[recipe.cuisine]||"#aaa";cl.textContent=recipe.cuisine||"";
-    bar.append(dot,cl);imgW.append(img,bar);
-    const body=el("div","gcard-body");
-    const nm=Object.assign(el("p","gcard-name"),{textContent:recipe.name||""});
-    const tags=el("div","gcard-tags");
-    (recipe.tags||[]).forEach(function(t){tags.appendChild(Object.assign(el("span","gtag gold"),{textContent:t}));});
-    if(recipe.type)tags.appendChild(Object.assign(el("span","gtag"),{textContent:recipe.type}));
-    body.append(nm,tags);card.append(imgW,body);
-    card.onclick=function(){ss({view:"detail",selected:recipe,prevView:"recipes"});};
-    grid.appendChild(card);
-  });
-  page.appendChild(grid);return page;
-}
+  const isNew = !recipe;
 
-function buildDetail(recipe){
-  const page=el("div");
-  const hdr=el("header");
-  const inner=el("div","hdr");
-  const backB=btn("","detail-back",function(){ss({view:S.prevView||"home",selected:null});});
-  backB.innerHTML='<svg class="back-svg" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>';
-  inner.appendChild(backB);
-  if(S.isAdmin){
-    const ar=el("div","detail-admin-row");
-    ar.append(btn("Edit","d-btn edit",function(){ss({showEditor:true,editingRecipe:recipe});}),btn("Delete","d-btn del",function(){confirmDelete(recipe.id);}));
-    inner.appendChild(ar);
-  }
-  hdr.appendChild(inner);page.appendChild(hdr);
-  const hero=el("div","detail-hero");
-  const img=document.createElement("img");img.src=recipe.image||"";img.alt=recipe.name||"";
-  img.onerror=function(){hero.style.background="var(--bg3)";};
-  hero.append(img,el("div","detail-hero-grad"));page.appendChild(hero);
-  const body=el("div","detail-body");
-  const top=el("div","detail-top");
-  const metaRow=el("div","detail-meta-row");
-  if(recipe.cuisine){
-    const cp=el("div","d-cuisine");
-    const dot=el("span");dot.style.cssText="width:7px;height:7px;border-radius:50%;background:"+(CUISINE_COLORS[recipe.cuisine]||"#888")+";";
-    const ct=el("span");ct.style.color=CUISINE_COLORS[recipe.cuisine]||"#888";ct.textContent=recipe.cuisine;
-    cp.append(dot,ct);metaRow.appendChild(cp);
-  }
-  if(recipe.type)metaRow.appendChild(Object.assign(el("div","d-type"),{textContent:recipe.type}));
-  top.appendChild(metaRow);
-  top.appendChild(Object.assign(el("h1","detail-title"),{textContent:recipe.name||""}));
-  if(recipe.tags&&recipe.tags.length){
-    const tr=el("div","detail-tags");
-    recipe.tags.forEach(function(t){tr.appendChild(Object.assign(el("span","d-tag"),{textContent:t}));});
-    top.appendChild(tr);
-  }
-  if(recipe.macros){
-    const mb=el("div","macros-row");
-    [{v:recipe.macros.calories,l:"Cal"},{v:(recipe.macros.protein||0)+"g",l:"Protein"},{v:(recipe.macros.carbs||0)+"g",l:"Carbs"},{v:(recipe.macros.fat||0)+"g",l:"Fat"}].forEach(function(m){
-      const mc=el("div","mac");
-      mc.append(Object.assign(el("span","mac-v"),{textContent:m.v}),Object.assign(el("span","mac-l"),{textContent:m.l}));
-      mb.appendChild(mc);
-    });
-    top.appendChild(mb);
-  }
-  const schedWrap=el("div","sched-row");
-  schedWrap.appendChild(Object.assign(el("p","sched-label"),{textContent:"Schedule for"}));
-  const schedDays=el("div","sched-days");
-  DAYS.forEach(function(day){
-    const isOn=(recipe.schedule||[]).includes(day);
-    const pill=btn(day.slice(0,3),"sched-pill"+(isOn?" on":""),async function(){
-      const wasOn=(recipe.schedule||[]).includes(day);
-      const newSched=wasOn?(recipe.schedule||[]).filter(function(d){return d!==day;}):[...(recipe.schedule||[]),day];
-      recipe.schedule=newSched;
-      pill.className="sched-pill saving";
-      const ok=await sbUpdate(Object.assign({},recipe,{schedule:newSched}));
-      if(ok){
-        S.recipes=S.recipes.map(function(r){return r.id===recipe.id?Object.assign({},r,{schedule:newSched}):r;});
-        S.selected=Object.assign({},recipe,{schedule:newSched});
-        pill.className="sched-pill"+(wasOn?"":"on");
-        render();
-        showToast("Schedule updated");
-      }
-      else{
-        recipe.schedule=wasOn?[...newSched,day]:newSched.filter(function(d){return d!==day;});
-        pill.className="sched-pill"+(wasOn?" on":"");
-        showToast("Failed to update");
-      }
-    });
-    schedDays.appendChild(pill);
-  });
-  schedWrap.appendChild(schedDays);top.appendChild(schedWrap);body.appendChild(top);
-  if(recipe.ingredients&&Object.keys(recipe.ingredients).length){
-    const sec=el("div","d-sec");
-    sec.appendChild(Object.assign(el("p","d-sec-title"),{textContent:"Ingredients"}));
-    Object.entries(recipe.ingredients).forEach(function(entry){
-      const s=entry[0],items=entry[1];
-      if(s)sec.appendChild(Object.assign(el("p","d-sub"),{textContent:s}));
-      (items||[]).forEach(function(item){
-        const row=el("div","ing-row");
-        row.append(el("span","ing-bullet"),Object.assign(el("span"),{textContent:item}));
-        sec.appendChild(row);
+  let form = recipe
+    ? JSON.parse(JSON.stringify(recipe))
+    : {
+        name:"",
+        cuisine:"",
+        tags:[],
+        type:"Main Course",
+        schedule:[],
+        image:"",
+        ingredients:{"":[""]},
+        steps:[""],
+        macros:null
+      };
+
+  const ov = el("div","overlay");
+
+  const sheet = el("div","sheet editor-sheet");
+
+  const hdr = el("div","editor-hdr");
+
+  hdr.append(
+    Object.assign(el("h2","editor-title-text"),{
+      textContent:isNew ? "New Recipe" : "Edit Recipe"
+    }),
+    btn("x","close-x",function(){
+      ss({
+        showEditor:false,
+        editingRecipe:null
       });
-    });
-    body.appendChild(sec);
-  }
-  if(recipe.steps&&recipe.steps.length){
-    const sec=el("div","d-sec");
-    sec.appendChild(Object.assign(el("p","d-sec-title"),{textContent:"Method"}));
-    recipe.steps.forEach(function(step,i){
-      const row=el("div","step-r");
-      row.append(Object.assign(el("span","step-n"),{textContent:i+1}),Object.assign(el("span","step-t"),{textContent:step}));
-      sec.appendChild(row);
-    });
-    body.appendChild(sec);
-  }
-  page.appendChild(body);page.appendChild(buildBnav());
-  return page;
-}
+    })
+  );
 
-function buildPlanner(){
-  const page=el("div","planner-wrap");
-  const ph=el("div","sec-hdr");ph.style.padding="0 4px";
-  const pt=el("span","sec-title");pt.innerHTML='Weekly Planner <span>starting today</span>';
-  ph.appendChild(pt);page.appendChild(ph);
-  const today=todayName();
-  orderedDays().forEach(function(day){
-    const dw=el("div","pl-day");
-    const dh=el("div","pl-day-hdr");
-    dh.appendChild(Object.assign(el("span","pl-day-name"+(day===today?" today":"")),{textContent:day}));
-    if(day===today)dh.appendChild(Object.assign(el("span","today-badge"),{textContent:"Today"}));
-    dw.appendChild(dh);
-    const recipes=S.recipes.filter(function(r){return r.schedule&&r.schedule.includes(day);});
-    if(!recipes.length)dw.appendChild(Object.assign(el("p","pl-none"),{textContent:"Nothing planned"}));
-    else recipes.forEach(function(r){
-      const row=el("div","pl-recipe");
-      const thumb=document.createElement("img");thumb.className="pl-thumb";thumb.src=r.image||"";thumb.alt=r.name||"";
-      thumb.onerror=function(){thumb.style.display="none";};
-      const info=el("div");
-      info.append(Object.assign(el("p","pl-name"),{textContent:r.name||""}),Object.assign(el("p","pl-cuis"),{textContent:r.cuisine||"",style:"color:"+(CUISINE_COLORS[r.cuisine]||"#888")}));
-      row.append(thumb,info);
-      row.onclick=function(){ss({view:"detail",selected:r,prevView:"planner"});};
-      dw.appendChild(row);
-    });
-    page.appendChild(dw);
-  });
-  return page;
-}
+  const body = el("div","editor-body");
 
-function buildPinModal(){
-  const ov=el("div","overlay");
-  const sheet=el("div","sheet");
-  const body=el("div","pin-sheet");
-  body.append(Object.assign(el("h2","pin-title"),{textContent:"Admin Access"}),Object.assign(el("p","pin-sub"),{textContent:"Enter your PIN to continue"}));
-  const inp=document.createElement("input");
-  inp.type="password";inp.maxLength=4;inp.placeholder="...";inp.className="pin-input";inp.inputMode="numeric";
-  const err=Object.assign(el("p","pin-err"),{textContent:""});
-  const btns=el("div","sheet-btns");
-  const ok=btn("Enter","sbtn-ok",function(){
-    if(inp.value===ADMIN_PIN)ss({isAdmin:true,showPin:false});
-    else{inp.className="pin-input err";err.textContent="Incorrect PIN";inp.value="";setTimeout(function(){inp.className="pin-input";err.textContent="";},1400);}
-  });
-  inp.onkeydown=function(e){if(e.key==="Enter")ok.click();};
-  btns.append(btn("Cancel","sbtn-cancel",function(){ss({showPin:false});}),ok);
-  body.append(inp,err,btns);
-  sheet.append(el("div","sheet-handle"),body);
+  function rebuild(){
+
+    body.innerHTML = "";
+
+    // ─────────────────────────────
+    // BASIC INFO
+    // ─────────────────────────────
+
+    const s1 = el("div","esec");
+
+    s1.appendChild(
+      Object.assign(el("p","esec-title"),{
+        textContent:"Basic Info"
+      })
+    );
+
+    s1.appendChild(
+      Object.assign(el("label","flbl"),{
+        textContent:"Recipe Name"
+      })
+    );
+
+    const ni = document.createElement("input");
+
+    ni.type = "text";
+    ni.value = form.name;
+
+    ni.oninput = function(e){
+      form.name = e.target.value;
+    };
+
+    s1.appendChild(ni);
+
+    s1.appendChild(
+      Object.assign(el("label","flbl"),{
+        textContent:"Image URL"
+      })
+    );
+
+    const ii = document.createElement("input");
+
+    ii.type = "text";
+    ii.value = form.image || "";
+    ii.placeholder = "https://...";
+
+    ii.oninput = function(e){
+      form.image = e.target.value;
+      rebuild();
+    };
+
+    s1.appendChild(ii);
+
+    if(form.image){
+
+      const p = document.createElement("img");
+
+      p.src = form.image;
+      p.className = "img-prev";
+
+      p.onerror = function(){
+        p.remove();
+      };
+
+      s1.appendChild(p);
+    }
+
+    const tc = el("div","two");
+
+    // Cuisine
+
+    const cw = el("div");
+
+    cw.appendChild(
+      Object.assign(el("label","flbl"),{
+        textContent:"Cuisine"
+      })
+    );
+
+    const cs = document.createElement("select");
+
+    cs.innerHTML =
+      '<option value="">Select...</option>' +
+      CUISINE_OPTIONS.map(function(c){
+        return '<option value="' + c + '"' +
+          (form.cuisine === c ? ' selected' : '') +
+          '>' + c + '</option>';
+      }).join("");
+
+    cs.onchange = function(e){
+      form.cuisine = e.target.value;
+    };
+
+    cw.appendChild(cs);
+
+    tc.appendChild(cw);
+
+    // Type
+
+    const tw = el("div");
+
+    tw.appendChild(
+      Object.assign(el("label","flbl"),{
+        textContent:"Type"
+      })
+    );
+
+    const ts = document.createElement("select");
+
+    ts.innerHTML =
+      TYPE_OPTIONS.map(function(t){
+        return '<option value="' + t + '"' +
+          (form.type === t ? ' selected' : '') +
+          '>' + t + '</option>';
+      }).join("");
+
+    ts.onchange = function(e){
+      form.type = e.target.value;
+    };
+
+    tw.appendChild(ts);
+
+    tc.appendChild(tw);
+
+    s1.appendChild(tc);
+
+    body.appendChild(s1);
+
+    // ─────────────────────────────
+    // TAGS
+    // ─────────────────────────────
+
+    const s2 = el("div","esec");
+
+    s2.appendChild(
+      Object.assign(el("p","esec-title"),{
+        textContent:"Tags"
+      })
+    );
+
+    const tg = el("div","tgrid");
+
+    TAG_OPTIONS.forEach(function(t){
+
+      const isSelected =
+        (form.tags || []).includes(t);
+
+      const tagBtn = btn(
+        t,
+        "ttog" + (isSelected ? " on" : ""),
+        function(){
+
+          if((form.tags || []).includes(t)){
+
+            form.tags =
+              form.tags.filter(function(x){
+                return x !== t;
+              });
+
+          } else {
+
+            form.tags = [
+              ...(form.tags || []),
+              t
+            ];
+          }
+
+          rebuild();
+        }
+      );
+
+      tg.appendChild(tagBtn);
+    });
+
+    s2.appendChild(tg);
+
+    body.appendChild(s2);
+
+    // ─────────────────────────────
+    // SCHEDULE
+    // ─────────────────────────────
+
+    const s3 = el("div","esec");
+
+    s3.appendChild(
+      Object.assign(el("p","esec-title"),{
+        textContent:"Schedule"
+      })
+    );
+
+    const dg = el("div","tgrid");
+
+    DAYS.forEach(function(d){
+
+      const isSelected =
+        (form.schedule || []).includes(d);
+
+      const dayBtn = btn(
+        d.slice(0,3),
+        "dtog" + (isSelected ? " on" : ""),
+        function(){
+
+          if((form.schedule || []).includes(d)){
+
+            form.schedule =
+              form.schedule.filter(function(x){
+                return x !== d;
+              });
+
+          } else {
+
+            form.schedule = [
+              ...(form.schedule || []),
+              d
+            ];
+          }
+
+          rebuild();
+        }
+      );
+
+      dg.appendChild(dayBtn);
+    });
+
+    s3.appendChild(dg);
+
+    body.appendChild(s3);
+  }
+
+  rebuild();
+
+  const footer = el("div","editor-footer");
+
+  const saveB = btn(
+    isNew ? "Add Recipe" : "Save Changes",
+    "sbtn-ok",
+    async function(){
+
+      if(!form.name.trim()){
+        alert("Recipe name required");
+        return;
+      }
+
+      if(!form.id){
+        form.id = Date.now().toString();
+      }
+
+      saveB.textContent = "Saving...";
+      saveB.disabled = true;
+
+      const ok = (!isNew)
+        ? await sbUpdate(form)
+        : await sbInsert(form);
+
+      if(ok){
+
+        const recipes = await sbFetch();
+
+        ss({
+          recipes:recipes || S.recipes,
+          showEditor:false,
+          editingRecipe:null
+        });
+
+        showToast(
+          isNew
+            ? "Recipe added"
+            : "Changes saved"
+        );
+
+      } else {
+
+        saveB.textContent =
+          isNew
+            ? "Add Recipe"
+            : "Save Changes";
+
+        saveB.disabled = false;
+
+        showToast(
+          "Failed to save. Check console."
+        );
+      }
+    }
+  );
+
+  footer.append(
+    btn("Cancel","sbtn-cancel",function(){
+      ss({
+        showEditor:false,
+        editingRecipe:null
+      });
+    }),
+    saveB
+  );
+
+  sheet.append(
+    el("div","sheet-handle"),
+    hdr,
+    body,
+    footer
+  );
+
   ov.appendChild(sheet);
-  ov.onclick=function(e){if(e.target===ov)ss({showPin:false});};
-  setTimeout(function(){inp.focus();},80);
+
+  ov.onclick = function(e){
+
+    if(e.target === ov){
+
+      ss({
+        showEditor:false,
+        editingRecipe:null
+      });
+    }
+  };
+
   return ov;
 }
-
 function buildEditorModal(recipe){
   const isNew=!recipe;
   let form=recipe?JSON.parse(JSON.stringify(recipe)):{name:"",cuisine:"",tags:[],type:"Main Course",schedule:[],image:"",ingredients:{"":[""]},steps:[""],macros:null};

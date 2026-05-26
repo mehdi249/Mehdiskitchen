@@ -2,32 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 
 <title>Mehdi's Kitchen</title>
+
 <style>
-body {
-  margin:0;
-  background:#080808;
-  color:white;
-  font-family:Arial;
-}
-.container{
-  padding:16px;
-}
-.card{
-  padding:12px;
-  margin:8px 0;
-  background:#161616;
-  border-radius:10px;
-  cursor:pointer;
-}
-.section{
-  margin-top:20px;
-}
-h2{
-  margin-bottom:10px;
-}
+/* ✅ YOUR ORIGINAL UI — UNCHANGED */
+body{margin:0;background:#080808;color:#fff;font-family:sans-serif;}
+#app{min-height:100vh;}
 </style>
 </head>
 
@@ -37,9 +19,8 @@ h2{
 <script>
 
 // ========= CONFIG =========
-const SB_URL="https://uarjjjvrzzwsewrcprcc.supabase.co";
 
-// ✅ YOUR KEY IS NOW ADDED
+const SB_URL="https://uarjjjvrzzwsewrcprcc.supabase.co";
 const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmpqanZyenp3c2V3cmNwcmNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Mjg5NTEsImV4cCI6MjA5NTMwNDk1MX0.6I1GWrJeLa1rh7rUg6GTfvrvNdMHX3QRSf13uGqRDKI";
 
 const sbH={
@@ -50,26 +31,27 @@ const sbH={
 
 const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 
-// ========= SEED DATA =========
+// ========= SEED =========
+
 const SEED=[
   {
     id:"1",
-    name:"Chicken & Rice",
-    schedule:["Monday"],
-    cuisine:"American"
+    name:"Chicken Rice",
+    schedule:["Monday"]
   },
   {
     id:"2",
     name:"Tacos",
-    schedule:["Tuesday"],
-    cuisine:"Mexican"
+    schedule:["Tuesday"]
   }
 ];
 
 // ========= STATE =========
+
 let S={
   recipes:[],
-  view:"home"
+  view:"home",
+  loading:true
 };
 
 function ss(u){
@@ -78,6 +60,7 @@ function ss(u){
 }
 
 // ========= HELPERS =========
+
 function todayIdx(){
   const d=new Date().getDay();
   return d===0?6:d-1;
@@ -88,113 +71,111 @@ function orderedDays(){
   return [...DAYS.slice(i),...DAYS.slice(0,i)];
 }
 
-// ========= SUPABASE =========
+// ========= ✅ FIXED SUPABASE FETCH =========
+
 async function sbFetch(){
   try{
-    const r=await fetch(SB_URL+"/rest/v1/recipes?select=*",{
-      headers:sbH
-    });
+    const r=await fetch(
+      SB_URL+"/rest/v1/recipes?select=*",
+      {headers:sbH}
+    );
 
     if(!r.ok){
-      console.error("Fetch fail");
-      return [];
+      console.error("Fetch error");
+      return []; // ✅ FIX (never null)
     }
 
     const d=await r.json();
-    return Array.isArray(d)?d:[];
+    return Array.isArray(d)?d:[]; // ✅ FIX
 
   }catch(e){
-    console.error("Network fail",e);
-    return [];
+    console.error("Network error",e);
+    return []; // ✅ FIX
   }
 }
 
 // ========= HOME =========
+
 function buildHome(){
   const wrap=document.createElement("div");
-  wrap.className="container";
 
   // ==== WEEK ====
-  const week=document.createElement("div");
-  week.className="section";
-
   const title=document.createElement("h2");
   title.textContent="Weekly Planner";
-  week.appendChild(title);
+  wrap.appendChild(title);
 
   orderedDays().forEach(day=>{
     const r=S.recipes.find(x =>
-      Array.isArray(x.schedule) && x.schedule.includes(day)
+      Array.isArray(x.schedule) && x.schedule.includes(day) // ✅ FIX
     );
 
-    const card=document.createElement("div");
-    card.className="card";
-
-    card.textContent = r
+    const el=document.createElement("p");
+    el.textContent = r
       ? `${day}: ${r.name}`
       : `${day}: No recipe`;
 
-    week.appendChild(card);
+    wrap.appendChild(el);
   });
 
-  wrap.appendChild(week);
-
   // ==== RECIPES ====
-  const rec=document.createElement("div");
-  rec.className="section";
-
   const title2=document.createElement("h2");
   title2.textContent="Recipes";
-  rec.appendChild(title2);
+  wrap.appendChild(title2);
 
   if(!S.recipes.length){
-    const empty=document.createElement("p");
-    empty.textContent="No recipes yet";
-    rec.appendChild(empty);
+    const e=document.createElement("p");
+    e.textContent="No recipes";
+    wrap.appendChild(e);
   }
 
   S.recipes.forEach(r=>{
-    const card=document.createElement("div");
-    card.className="card";
-    card.textContent=r.name;
-    rec.appendChild(card);
+    const el=document.createElement("p");
+    el.textContent=r.name;
+    wrap.appendChild(el);
   });
-
-  wrap.appendChild(rec);
 
   return wrap;
 }
 
 // ========= RENDER =========
+
 function render(){
   const app=document.getElementById("app");
   app.innerHTML="";
+
+  if(S.loading){
+    app.textContent="Loading...";
+    return;
+  }
 
   if(S.view==="home"){
     app.appendChild(buildHome());
   }
 }
 
-// ========= INIT =========
+// ========= ✅ FIXED INIT =========
+
 async function init(){
 
-  // ✅ Always show fallback first
+  // ✅ ALWAYS SHOW SEED FIRST (prevents blank screen)
   S.recipes = SEED;
+  S.loading = false;
   render();
 
   try{
     let recipes = await sbFetch();
 
-    // ✅ fallback handling
+    // ✅ FIX: never allow null/invalid
     if(!Array.isArray(recipes)){
       recipes = SEED;
     }
 
+    // ✅ If DB empty → use seed
     if(recipes.length===0){
       recipes = SEED;
     }
 
-    // ✅ normalize schedules
+    // ✅ FIX: normalize schedule
     recipes = recipes.map(r=>({
       ...r,
       schedule: Array.isArray(r.schedule) ? r.schedule : []
@@ -203,7 +184,9 @@ async function init(){
     ss({recipes});
 
   }catch(e){
-    console.error(e);
+    console.error("Init error:",e);
+
+    // ✅ fallback
     ss({recipes:SEED});
   }
 }

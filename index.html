@@ -50,11 +50,11 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.9);backdrop-fil
 .chips::-webkit-scrollbar{display:none;}
 .chip{flex-shrink:0;padding:6px 14px;border-radius:100px;font-family:var(--serif);font-size:13px;border:1px solid var(--border2);color:var(--text2);background:transparent;transition:all .15s;white-space:nowrap;}
 .chip.on{border-color:var(--gold-border);color:var(--gold);background:var(--gold2);}
-.bnav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(8,8,8,0.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:8px 20px calc(8px + var(--safe-bot));}
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(8,8,8,0.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding-bottom:var(--safe-bot);height:calc(82px + var(--safe-bot));}
 .bnav-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 24px;color:var(--text3);font-size:10px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;transition:color .2s;}
 .bnav-item.on{color:var(--gold);}
 .bnav-icon{width:20px;height:20px;display:flex;align-items:center;justify-content:center;}
-.bnav-add{width:48px;height:48px;border-radius:14px;background:linear-gradient(145deg,#c8a96e,#9a7340);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(200,169,110,0.3);flex-shrink:0;}
+.bnav-add{width:48px;height:48px;border-radius:14px;background:linear-gradient(145deg,#c8a96e,#9a7340);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(200,169,110,0.3);transition:transform .1s;}
 .bnav-add:active{transform:scale(.93);}
 .plus-svg{width:22px;height:22px;stroke:#0a0a0a;stroke-width:2.5;fill:none;}
 .home-wrap{padding:20px 0 0;}
@@ -109,7 +109,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.9);backdrop-fil
 .detail-hero{position:relative;height:280px;overflow:hidden;background:var(--bg3);}
 .detail-hero img{width:100%;height:100%;object-fit:cover;}
 .detail-hero-grad{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(8,8,8,0.35) 0%,transparent 45%,rgba(8,8,8,0.92) 100%);}
-.detail-back{position:absolute;top:calc(14px + var(--safe-top));left:18px;width:36px;height:36px;border-radius:50%;background:rgba(8,8,8,0.55);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;color:var(--text);}
+.detail-back{position:absolute;top:calc(14px + var(--safe-top));left:18px;width:36px;height:36px;border-radius:50%;background:rgba(8,8,8,0.55);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);}
 .back-svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;}
 .detail-admin-row{position:absolute;top:calc(14px + var(--safe-top));right:18px;display:flex;gap:8px;}
 .d-btn{padding:6px 14px;border-radius:100px;font-size:12px;font-weight:500;backdrop-filter:blur(12px);}
@@ -118,7 +118,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.9);backdrop-fil
 .detail-body{padding:0 20px 32px;}
 .detail-top{padding:18px 0 16px;}
 .detail-meta-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
-.d-cuisine{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;border:1px solid var(--border2);background:var(--bg3);font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;}
+.d-cuisine{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;border:1px solid var(--border2);background:var(--bg3);font-size:11px;font-weight:600;letter-spacing:0.08em;}
 .d-type{padding:4px 12px;border-radius:100px;border:1px solid var(--border2);background:var(--bg3);font-size:12px;color:var(--text2);font-style:italic;font-family:var(--serif);}
 .detail-title{font-family:var(--serif);font-size:30px;font-weight:400;line-height:1.15;letter-spacing:0.01em;margin-bottom:12px;}
 .detail-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;}
@@ -149,7 +149,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.9);backdrop-fil
 .pl-day-name{font-size:13px;font-weight:500;color:var(--text2);letter-spacing:0.04em;}
 .pl-day-name.today{color:var(--gold);}
 .today-badge{font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold-border);background:var(--gold2);padding:2px 8px;border-radius:100px;}
-.pl-recipe{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;cursor:pointer;transition:border-color .15s;margin-bottom:6px;}
+.pl-recipe{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;cursor:pointer;transition:border-color .15s;margin-bottom:8px;}
 .pl-recipe:active{border-color:var(--gold-border);}
 .pl-thumb{width:46px;height:46px;border-radius:9px;object-fit:cover;flex-shrink:0;background:var(--bg3);}
 .pl-name{font-family:var(--serif);font-size:15px;flex:1;}
@@ -161,7 +161,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.9);backdrop-fil
 .pin-sheet{padding:28px 24px calc(28px + var(--safe-bot));}
 .pin-title{font-family:var(--serif);font-size:22px;font-weight:400;margin-bottom:6px;}
 .pin-sub{font-size:13px;color:var(--text2);margin-bottom:22px;}
-.pin-input{font-size:26px;letter-spacing:10px;text-align:center;padding:15px;border-radius:12px;width:100%;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text);font-weight:600;margin-bottom:6px;}
+.pin-input{font-size:26px;letter-spacing:10px;text-align:center;padding:15px;border-radius:12px;width:100%;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text);font-weight:600;margin-bottom:0;}
 .pin-input.err{border-color:var(--red);}
 .pin-err{font-size:12px;color:var(--red);text-align:center;min-height:18px;margin-bottom:14px;}
 .sheet-btns{display:flex;gap:10px;}
@@ -184,11 +184,11 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.9);backdrop-fil
 .dtog.on{border-color:var(--gold-border);color:var(--gold);background:var(--gold2);}
 .img-prev{width:100%;height:130px;object-fit:cover;border-radius:10px;margin-top:8px;}
 .ing-block{background:var(--bg3);border-radius:11px;padding:12px;margin-bottom:9px;}
-.ing-sec-inp{background:none;border:none;border-bottom:1px solid var(--border2);border-radius:0;padding:0 0 5px;color:var(--gold);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;width:100%;outline:none;margin-bottom:8px;}
+.ing-sec-inp{background:none;border:none;border-bottom:1px solid var(--border2);border-radius:0;padding:0 0 5px;color:var(--gold);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;}
 .ing-line{display:flex;gap:7px;margin-bottom:6px;align-items:center;}
 .ing-line input{margin-bottom:0;flex:1;}
 .step-edit{display:flex;gap:9px;margin-bottom:7px;align-items:flex-start;}
-.step-no{width:26px;height:26px;border-radius:50%;background:var(--gold2);color:var(--gold);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:7px;}
+.step-no{width:26px;height:26px;border-radius:50%;background:var(--gold2);color:var(--gold);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
 .step-edit textarea{flex:1;resize:vertical;min-height:58px;}
 .del-x{width:26px;height:26px;border-radius:50%;flex-shrink:0;background:rgba(224,85,85,0.08);color:var(--red);font-size:15px;display:flex;align-items:center;justify-content:center;}
 .ghost{font-size:13px;color:var(--gold);padding:7px 0;letter-spacing:0.03em;}
@@ -202,7 +202,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.9);backdrop-fil
 .spin{width:28px;height:28px;border:1.5px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:rot .7s linear infinite;}
 @keyframes rot{to{transform:rotate(360deg);}}
 .load-txt{font-size:13px;color:var(--text3);letter-spacing:0.05em;font-family:var(--serif);}
-.toast{position:fixed;z-index:300;bottom:calc(90px + var(--safe-bot));left:50%;transform:translateX(-50%);background:var(--gold);color:#080808;padding:11px 22px;border-radius:100px;font-size:13px;font-weight:600;white-space:nowrap;box-shadow:0 6px 28px rgba(0,0,0,0.45);animation:tin .28s ease forwards;}
+.toast{position:fixed;z-index:300;bottom:calc(90px + var(--safe-bot));left:50%;transform:translateX(-50%);background:var(--gold);color:#080808;padding:11px 22px;border-radius:100px;font-size:13px;font-weight:500;animation:tin .3s cubic-bezier(.34,1.56,.64,1);}
 @keyframes tin{from{opacity:0;transform:translateX(-50%) translateY(10px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
 </style>
 </head>
@@ -210,7 +210,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.9);backdrop-fil
 <div id="app"></div>
 <script>
 const SB_URL="https://uarjjjvrzzwsewrcprcc.supabase.co";
-const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmpqanZyenp3c2V3cmNwcmNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Mjg5NTEsImV4cCI6MjA5NTMwNDk1MX0.6I1GWrJeLa1rh7rUg6GTfvrvNdMHX3QRSf13uGqRDKI";
+const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmpqanZyenp3c2V3cmNwcmNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Mjg5NTEsImV4cCI6MjA5NTMwNDk1MX0.6I1GWrJeLa1rh7rUg6GTfFMHs4oVzAXMFBqiHfb1wAg";
 const ADMIN_PIN="1234";
 const sbH={"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY};
 const CUISINE_COLORS={Peruvian:"#e8825a",Mexican:"#e05555",Italian:"#4caf72",Asian:"#d4a017",American:"#4a7fd4",Mediterranean:"#8e5fd4","Middle Eastern":"#d45fa0",Other:"#888"};
@@ -219,10 +219,10 @@ const TAG_OPTIONS=["High Protein","Quick","Meal Prep","Vegetarian","Vegan","Low 
 const TYPE_OPTIONS=["Main Course","Breakfast","Appetizer","Side Dish","Dessert","Snack","Beverage","Other"];
 const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 const SEED=[
-  {id:"cowboy-butter-chicken-sandwich",name:"Cowboy Butter Chicken Sandwich",cuisine:"American",tags:["High Protein","Quick"],type:"Main Course",schedule:["Wednesday"],image:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800",ingredients:{"Chicken":["2 boneless chicken breasts","Salt and pepper","1 tsp garlic powder","1 tbsp olive oil"],"Cowboy Butter":["4 tbsp butter","2 garlic cloves minced","1 tbsp lemon juice","1 tsp Dijon mustard","1 tsp hot sauce","Fresh parsley","Chili flakes to taste"],"To Serve":["2 brioche buns","Lettuce","Sliced tomato"]},steps:["Season chicken with salt, pepper and garlic powder.","Sear in olive oil 5-6 min per side until golden and cooked through. Rest.","Melt butter in same pan, add garlic, lemon juice, mustard, hot sauce and parsley.","Slice chicken and toss in cowboy butter sauce.","Load onto brioche buns with lettuce and tomato."],macros:{calories:520,protein:42,carbs:28,fat:24}},
-  {id:"chipotle-honey-chicken-tacos",name:"Chipotle Honey Chicken Tacos",cuisine:"Mexican",tags:["High Protein"],type:"Main Course",schedule:["Tuesday"],image:"https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=800",ingredients:{"Chipotle Honey Chicken":["2 lbs boneless skinless chicken thighs","3 chipotle peppers in adobo","3 tbsp adobo sauce","2 tbsp honey","Juice of 2 limes","5 garlic cloves","1.5 tbsp olive oil","1 tsp salt","0.5 tsp pepper"],"Tacos":["6 tortilla wraps","Cilantro","Pico de gallo","2 cups mozzarella"],"Green Goddess Sauce":["3/4 cup nonfat Greek yogurt","1/2 cup cilantro","Juice of 2 limes","1/4 cup pickled jalapeno","1 garlic clove","Salt and pepper"]},steps:["Blend chipotle peppers, adobo sauce, honey, lime juice, garlic, olive oil, salt and pepper into a smooth marinade.","Coat chicken in marinade and let sit at least 20 minutes.","Sear chicken 5-7 min per side until cooked through and caramelised. Rest then slice.","Blend all green goddess sauce ingredients until smooth.","Warm tortillas, load with chicken, mozzarella, pico de gallo, cilantro and green goddess sauce."],macros:{calories:342,protein:34,carbs:11,fat:18}},
-  {id:"peruvian-chicken-aji-verde",name:"Peruvian Chicken with Aji Verde & Coconut Rice",cuisine:"Peruvian",tags:["High Protein","Meal Prep"],type:"Main Course",schedule:["Monday"],image:"https://images.unsplash.com/photo-1598103442097-8b74394b95c3?w=800",ingredients:{"Chicken + Marinade":["1.5 lb / 700g boneless chicken thighs","4 garlic cloves minced","2 tbsp soy sauce","2 tbsp fresh lime juice","Olive oil","Chili flakes to taste","2 tsp brown sugar","1 tsp ground cumin","1 tbsp smoked paprika","1 tsp dried oregano","Salt and black pepper"],"Aji Verde":["1 packed cup fresh cilantro","2-3 jalapenos seeded","2-3 garlic cloves","2/3 cup sour cream","2 scallions","1 tbsp lime juice","2 tbsp olive oil","Salt and pepper"],"Coconut Rice":["250g basmati rice","400ml coconut milk","1 tsp salt"],"To Serve":["2-4 corn cobs","Fresh cilantro","Lime wedges"]},steps:["Marinate the chicken: mix all ingredients and coat chicken. Let sit 20+ minutes.","Cook the rice: combine rice, coconut milk and salt. Simmer covered 12-15 min. Steam 10 min then fluff.","Make the aji verde: blend all sauce ingredients until smooth and bright green.","Cook the chicken: sear 5-7 min per side until golden. Rest before slicing.","Assemble: serve chicken over coconut rice with aji verde, corn, cilantro and lime."],macros:{calories:520,protein:38,carbs:42,fat:22}},
-  {id:"3",name:"Moroccan Style Cauliflower",cuisine:"Mediterranean",tags:["Vegetarian","Meal Prep"],type:"Main Course",schedule:["Thursday"],image:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",ingredients:{"Cauliflower":["1 large cauliflower cut into florets","2 tbsp olive oil","1 tsp cumin","1 tsp smoked paprika","1/2 tsp turmeric","1/2 tsp cinnamon","Salt and pepper"],"To Serve":["Fresh parsley","Lemon wedges","Greek yogurt"]},steps:["Preheat oven to 425F / 220C.","Toss cauliflower florets with olive oil and all spices.","Spread on a baking sheet and roast 25-30 min until golden and crispy.","Serve with fresh parsley, lemon and yogurt."],macros:{calories:180,protein:6,carbs:22,fat:9}}
+  {id:"cowboy-butter-chicken-sandwich",name:"Cowboy Butter Chicken Sandwich",cuisine:"American",tags:["High Protein","Quick"],type:"Main Course",schedule:["Wednesday"],image:"https://images.unsplash.com/photo-1562547256-06f5d4d0e89f?w=400&h=300&fit=crop"},
+  {id:"chipotle-honey-chicken-tacos",name:"Chipotle Honey Chicken Tacos",cuisine:"Mexican",tags:["High Protein"],type:"Main Course",schedule:["Tuesday"],image:"https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400&h=300&fit=crop"},
+  {id:"peruvian-chicken-aji-verde",name:"Peruvian Chicken with Aji Verde & Coconut Rice",cuisine:"Peruvian",tags:["High Protein","Meal Prep"],type:"Main Course",schedule:["Monday"],image:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop"},
+  {id:"3",name:"Moroccan Style Cauliflower",cuisine:"Mediterranean",tags:["Vegetarian","Meal Prep"],type:"Main Course",schedule:["Thursday"],image:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop"}
 ];
 
 // ── SUPABASE (with fallback) ──────────────────────────────
@@ -232,7 +232,7 @@ async function sbFetch(){
     if(!r.ok)return null;
     const d=await r.json();
     return Array.isArray(d)&&d.length>0?d:null;
-  }catch(e){return null;}
+  }catch(e){console.error("sbFetch error:",e);return null;}
 }
 async function sbInsert(recipe){
   try{const r=await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(recipe)});return r.ok;}catch{return false;}
@@ -283,12 +283,12 @@ function showToast(msg){
 }
 function cutlerySVG(){
   const d=el("div","day-thumb-empty");
-  d.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3a3a3a" stroke-width="1.5"><path d="M3 2v7c0 1.1.9 2 2 2h1v11h2V11h1c1.1 0 2-.9 2-2V2"/><path d="M16 2c-1.66 0-3 1.34-3 3v5c0 1.48 1.02 2.72 2.4 3.07L15 20h2l-.4-6.93C17.98 12.72 19 11.48 19 10V5c0-1.66-1.34-3-3-3z"/></svg>';
+  d.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3a3a3a" stroke-width="1.5"><path d="M3 2v7c0 1.1.9 2 2 2h1v11h2V11h1c1.1 0 2-.9 2-2V2"/><path d="M16 2c-1.66 0-3 1.34-3 3 0 2.5 3 5.42 3 5.42s3-2.92 3-5.42c0-1.66-1.34-3-3-3z"/></svg>';
   return d;
 }
 function imgFb(cls){
   const d=el("div",cls||"rcard-img-fb");
-  d.innerHTML='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3a3a3a" stroke-width="1.5"><path d="M3 2v7c0 1.1.9 2 2 2h1v11h2V11h1c1.1 0 2-.9 2-2V2"/><path d="M16 2c-1.66 0-3 1.34-3 3v5c0 1.48 1.02 2.72 2.4 3.07L15 20h2l-.4-6.93C17.98 12.72 19 11.48 19 10V5c0-1.66-1.34-3-3-3z"/></svg>';
+  d.innerHTML='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3a3a3a" stroke-width="1.5"><path d="M3 2v7c0 1.1.9 2 2 2h1v11h2V11h1c1.1 0 2-.9 2-2V2"/><path d="M16 2c-1.66 0-3 1.34-3 3 0 2.5 3 5.42 3 5.42s3-2.92 3-5.42c0-1.66-1.34-3-3-3z"/></svg>';
   return d;
 }
 
@@ -513,7 +513,7 @@ function buildDetail(recipe){
       recipe.schedule=newSched;
       pill.className="sched-pill saving";
       const ok=await sbUpdate(Object.assign({},recipe,{schedule:newSched}));
-      if(ok){S.recipes=S.recipes.map(function(r){return r.id===recipe.id?Object.assign({},r,{schedule:newSched}):r;});S.selected=Object.assign({},recipe,{schedule:newSched});pill.className="sched-pill"+(newSched.includes(day)?" on":"");showToast(newSched.includes(day)?"Added to "+day:"Removed from "+day);}
+      if(ok){S.recipes=S.recipes.map(function(r){return r.id===recipe.id?Object.assign({},r,{schedule:newSched}):r;});S.selected=Object.assign({},recipe,{schedule:newSched});pill.className="sched-pill"+(newSched.includes(day)?" on":"");render();}
       else{recipe.schedule=wasOn?[...newSched,day]:newSched.filter(function(d){return d!==day;});pill.className="sched-pill"+(wasOn?" on":"");showToast("Failed to update");}
     });
     schedDays.appendChild(pill);
@@ -630,12 +630,12 @@ function buildEditorModal(recipe){
     // Tags
     const s2=el("div","esec");s2.appendChild(Object.assign(el("p","esec-title"),{textContent:"Tags"}));
     const tg=el("div","tgrid");
-    TAG_OPTIONS.forEach(function(t){tg.appendChild(btn(t,"ttog"+((form.tags||[]).includes(t)?" on":""),function(){form.tags=(form.tags||[]).includes(t)?(form.tags||[]).filter(function(x){return x!==t;}):[...(form.tags||[]),t];rebuild();}));});
+    TAG_OPTIONS.forEach(function(t){tg.appendChild(btn(t,"ttog"+((form.tags||[]).includes(t)?" on":""),function(){form.tags=(form.tags||[]).includes(t)?(form.tags||[]).filter(function(x){return x!==t;}):([...(form.tags||[]),t]);rebuild();}));});
     s2.appendChild(tg);body.appendChild(s2);
     // Schedule
     const s3=el("div","esec");s3.appendChild(Object.assign(el("p","esec-title"),{textContent:"Schedule"}));
     const dg=el("div","tgrid");
-    DAYS.forEach(function(d){dg.appendChild(btn(d.slice(0,3),"dtog"+((form.schedule||[]).includes(d)?" on":""),function(){form.schedule=(form.schedule||[]).includes(d)?(form.schedule||[]).filter(function(x){return x!==d;}):[...(form.schedule||[]),d];rebuild();}));});
+    DAYS.forEach(function(d){dg.appendChild(btn(d.slice(0,3),"dtog"+((form.schedule||[]).includes(d)?" on":""),function(){form.schedule=(form.schedule||[]).includes(d)?(form.schedule||[]).filter(function(x){return x!==d;}):([...(form.schedule||[]),d]);rebuild();}));});
     s3.appendChild(dg);body.appendChild(s3);
     // Ingredients
     const s4=el("div","esec");s4.appendChild(Object.assign(el("p","esec-title"),{textContent:"Ingredients"}));
@@ -655,7 +655,7 @@ function buildEditorModal(recipe){
       block.appendChild(btn("Add ingredient","ghost",function(){form.ingredients=Object.assign({},form.ingredients);form.ingredients[sec]=[...items,""];rebuild();}));
       s4.appendChild(block);
     });
-    s4.appendChild(btn("Add section","ghost",function(){form.ingredients=Object.assign({},form.ingredients,"New Section",{});form.ingredients["New Section"]=[""];rebuild();}));
+    s4.appendChild(btn("Add section","ghost",function(){form.ingredients=Object.assign({},form.ingredients);form.ingredients["New Section"]=[""];rebuild();}));
     body.appendChild(s4);
     // Steps
     const s5=el("div","esec");s5.appendChild(Object.assign(el("p","esec-title"),{textContent:"Method"}));
@@ -712,6 +712,7 @@ async function init(){
     let recipes=await sbFetch();
     if(!recipes){
       // Supabase unavailable — use seed as fallback and try to seed in background
+      console.log("Supabase fetch failed, using seed data");
       sbSeed();
       recipes=SEED;
     }

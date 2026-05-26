@@ -347,6 +347,7 @@ async function testWritePermission(){
 let S={recipes:[],loading:true,view:"home",selected:null,prevView:"home",
        isAdmin:false,filterCuisine:"All",filterTag:"All",search:"",
        showPin:false,showEditor:false,editingRecipe:null,
+       pinIntent:null, // "addRecipe" when + triggered the PIN modal
        dbError:null // "rls" | null
       };
 
@@ -451,7 +452,7 @@ function buildHeader(){
   right.appendChild(btn(
     S.isAdmin?"✦ Admin":"Admin",
     S.isAdmin?"admin-btn on":"admin-btn",
-    function(){S.isAdmin?ss({isAdmin:false}):ss({showPin:true});}
+    function(){S.isAdmin?ss({isAdmin:false}):ss({showPin:true,pinIntent:null});}
   ));
   inner.append(logo,right);hdr.appendChild(inner);
   if(S.view==="recipes"){
@@ -476,7 +477,7 @@ function buildBnav(){
   hi.onclick=function(){ss({view:"home",selected:null});};
   const addB=el("button","bnav-add");
   addB.innerHTML='<svg class="plus-svg" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
-  addB.onclick=function(){S.isAdmin?ss({showEditor:true,editingRecipe:null}):ss({showPin:true});};
+  addB.onclick=function(){S.isAdmin?ss({showEditor:true,editingRecipe:null}):ss({showPin:true,pinIntent:"addRecipe"});};
   const ri=el("button","bnav-item"+(S.view==="recipes"?" on":""));
   ri.innerHTML='<span class="bnav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span><span>Recipes</span>';
   ri.onclick=function(){ss({view:"recipes",selected:null});};
@@ -742,16 +743,19 @@ function buildPinModal(){
   const err=Object.assign(el("p","pin-err"),{textContent:""});
   const btns=el("div","sheet-btns");
   const ok=btn("Enter","sbtn-ok",function(){
-    if(inp.value===ADMIN_PIN) ss({isAdmin:true,showPin:false});
-    else{
+    if(inp.value===ADMIN_PIN){
+      var u={isAdmin:true,showPin:false,pinIntent:null};
+      if(S.pinIntent==="addRecipe"){u.showEditor=true;u.editingRecipe=null;}
+      ss(u);
+    } else {
       inp.className="pin-input err";err.textContent="Incorrect PIN";inp.value="";
       setTimeout(function(){inp.className="pin-input";err.textContent="";},1400);
     }
   });
   inp.onkeydown=function(e){if(e.key==="Enter")ok.click();};
-  btns.append(btn("Cancel","sbtn-cancel",function(){ss({showPin:false});}),ok);
+  btns.append(btn("Cancel","sbtn-cancel",function(){ss({showPin:false,pinIntent:null});}),ok);
   body.append(inp,err,btns);sheet.append(el("div","sheet-handle"),body);ov.appendChild(sheet);
-  ov.onclick=function(e){if(e.target===ov)ss({showPin:false});};
+  ov.onclick=function(e){if(e.target===ov)ss({showPin:false,pinIntent:null});};
   setTimeout(function(){inp.focus();},80);return ov;
 }
 
@@ -771,8 +775,17 @@ function buildEditorModal(recipe){
     const ni=document.createElement("input");ni.type="text";ni.value=form.name;ni.oninput=function(e){form.name=e.target.value;};s1.appendChild(ni);
     s1.appendChild(Object.assign(el("label","flbl"),{textContent:"Image URL"}));
     const ii=document.createElement("input");ii.type="text";ii.value=form.image||"";ii.placeholder="https://...";
-    ii.oninput=function(e){form.image=e.target.value;rebuild();};s1.appendChild(ii);
-    if(form.image){const p=document.createElement("img");p.src=form.image;p.className="img-prev";p.onerror=function(){p.remove();};s1.appendChild(p);}
+    s1.appendChild(ii);
+    const prevImg=document.createElement("img");prevImg.className="img-prev";
+    prevImg.style.display=form.image?"block":"none";
+    if(form.image)prevImg.src=form.image;
+    prevImg.onerror=function(){prevImg.style.display="none";};
+    s1.appendChild(prevImg);
+    ii.oninput=function(e){
+      form.image=e.target.value;
+      if(form.image){prevImg.src=form.image;prevImg.style.display="block";}
+      else{prevImg.style.display="none";}
+    };
     const tc=el("div","two");
     const cw=el("div");cw.appendChild(Object.assign(el("label","flbl"),{textContent:"Cuisine"}));
     const cs=document.createElement("select");
@@ -808,21 +821,23 @@ function buildEditorModal(recipe){
     const s4=el("div","esec");s4.appendChild(Object.assign(el("p","esec-title"),{textContent:"Ingredients"}));
     Object.entries(form.ingredients).forEach(function(entry){
       const sec=entry[0],items=entry[1];const block=el("div","ing-block");
+      const keyRef={v:sec};
       const sn=document.createElement("input");sn.className="ing-sec-inp";sn.type="text";sn.value=sec;sn.placeholder="Section name";
       sn.oninput=function(e){
         const newKey=e.target.value;const newIngs={};
-        Object.entries(form.ingredients).forEach(function(kv){newIngs[kv[0]===sec?newKey:kv[0]]=kv[1];});
+        Object.entries(form.ingredients).forEach(function(kv){newIngs[kv[0]===keyRef.v?newKey:kv[0]]=kv[1];});
         form.ingredients=newIngs;
+        keyRef.v=newKey;
       };
       block.appendChild(sn);
       items.forEach(function(item,i){
         const row=el("div","ing-line");
         const inp=document.createElement("input");inp.type="text";inp.value=item;inp.placeholder="e.g. 2 cups flour";
-        inp.oninput=function(e){const l=form.ingredients[sec].slice();l[i]=e.target.value;form.ingredients[sec]=l;};
-        const dx=btn("x","del-x",function(){form.ingredients[sec]=form.ingredients[sec].filter(function(_,j){return j!==i;});rebuild();});
+        inp.oninput=function(e){const l=form.ingredients[keyRef.v].slice();l[i]=e.target.value;form.ingredients[keyRef.v]=l;};
+        const dx=btn("x","del-x",function(){form.ingredients[keyRef.v]=form.ingredients[keyRef.v].filter(function(_,j){return j!==i;});rebuild();});
         row.append(inp,dx);block.appendChild(row);
       });
-      block.appendChild(btn("Add ingredient","ghost",function(){form.ingredients[sec]=[...items,""];rebuild();}));
+      block.appendChild(btn("Add ingredient","ghost",function(){form.ingredients[keyRef.v]=[...form.ingredients[keyRef.v],""];rebuild();}));
       s4.appendChild(block);
     });
     s4.appendChild(btn("Add section","ghost",function(){form.ingredients["New Section"]=[""];rebuild();}));

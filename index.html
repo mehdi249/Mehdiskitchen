@@ -40,6 +40,8 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.9);backdrop-fil
 .hdr-right{display:flex;align-items:center;gap:8px;}
 .admin-btn{font-size:12px;font-weight:500;letter-spacing:0.06em;padding:6px 14px;border-radius:100px;border:1px solid var(--border2);color:var(--text2);transition:all .2s;}
 .admin-btn.on{border-color:var(--gold-border);color:var(--gold);background:var(--gold2);}
+.test-btn{font-size:11px;font-weight:500;letter-spacing:0.05em;padding:5px 11px;border-radius:100px;border:1px solid var(--border2);color:var(--text3);transition:all .2s;}
+.test-btn:active{color:var(--gold);}
 .search-wrap{padding:0 16px 12px;}
 .search-inner{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:10px 16px;transition:border-color .2s;}
 .search-inner:focus-within{border-color:var(--gold-border);}
@@ -202,8 +204,13 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.9);backdrop-fil
 .spin{width:28px;height:28px;border:1.5px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:rot .7s linear infinite;}
 @keyframes rot{to{transform:rotate(360deg);}}
 .load-txt{font-size:13px;color:var(--text3);letter-spacing:0.05em;font-family:var(--serif);}
-.toast{position:fixed;z-index:300;bottom:calc(90px + var(--safe-bot));left:50%;transform:translateX(-50%);background:var(--gold);color:#080808;padding:11px 22px;border-radius:100px;font-size:13px;font-weight:500;animation:tin .3s ease;}
+.toast{position:fixed;z-index:300;bottom:calc(90px + var(--safe-bot));left:50%;transform:translateX(-50%);background:var(--gold);color:#080808;padding:11px 22px;border-radius:100px;font-size:13px;font-weight:500;animation:tin .3s ease;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;}
+.toast.err{background:var(--red);color:#fff;}
 @keyframes tin{from{opacity:0;transform:translateX(-50%) translateY(10px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+/* RLS warning banner */
+.db-warn{margin:12px 16px 0;padding:12px 16px;background:rgba(224,85,85,0.08);border:1px solid rgba(224,85,85,0.22);border-radius:12px;font-size:12px;line-height:1.6;color:#e08a8a;}
+.db-warn strong{color:var(--red);display:block;margin-bottom:2px;font-size:13px;}
+.db-warn code{font-size:11px;background:rgba(224,85,85,0.12);padding:2px 6px;border-radius:5px;font-family:monospace;}
 </style>
 </head>
 <body>
@@ -224,6 +231,9 @@ const SEED=[
   {id:"peruvian-chicken-aji-verde",name:"Peruvian Chicken with Aji Verde & Coconut Rice",cuisine:"Peruvian",tags:["High Protein","Meal Prep"],type:"Main Course",schedule:["Monday"],image:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400",ingredients:{"Chicken + Marinade":["1.5 lb / 700g boneless chicken thighs","4 garlic cloves, minced","2 tbsp soy sauce","2 tbsp fresh lime juice","Olive oil","Chili flakes to taste","2 tsp brown sugar","1 tsp ground cumin","1 tbsp smoked paprika","1 tsp dried oregano","Salt and black pepper"],"Aji Verde":["1 packed cup fresh cilantro","2-3 jalapenos, seeded","2-3 garlic cloves","2/3 cup sour cream","2 scallions","1 tbsp lime juice","2 tbsp olive oil","Salt and pepper"],"Coconut Rice":["250g basmati rice","400ml coconut milk","1 tsp salt"],"To Serve":["2-4 corn cobs","Fresh cilantro","Lime wedges"]},steps:["Marinate the chicken: mix all ingredients and coat chicken. Let sit 20+ minutes.","Cook the rice: combine rice, coconut milk and salt. Simmer covered 12-15 min. Steam 10 min then fluff.","Make the aji verde: blend all sauce ingredients until smooth and bright green.","Cook the chicken: sear 5-7 min per side until golden. Rest before slicing.","Assemble: serve chicken over coconut rice with aji verde, corn, cilantro and lime."],macros:{calories:520,protein:38,carbs:42,fat:22}},
   {id:"moroccan-cauliflower",name:"Moroccan Style Cauliflower",cuisine:"Mediterranean",tags:["Vegetarian","Meal Prep"],type:"Main Course",schedule:["Thursday"],image:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400",ingredients:{"Cauliflower":["1 large cauliflower, cut into florets","2 tbsp olive oil","1 tsp cumin","1 tsp smoked paprika","1/2 tsp turmeric","1/2 tsp cinnamon","Salt and pepper"],"To Serve":["Fresh parsley","Lemon wedges","Greek yogurt"]},steps:["Preheat oven to 425F / 220C.","Toss cauliflower florets with olive oil and all spices.","Spread on a baking sheet and roast 25-30 min until golden and crispy.","Serve with fresh parsley, lemon and yogurt."],macros:{calories:180,protein:6,carbs:22,fat:9}}
 ];
+
+// ─── Supabase helpers ────────────────────────────────────────────────────────
+
 async function sbFetch(){
   try{
     const r=await fetch(SB_URL+"/rest/v1/recipes?select=*&order=created_at.asc",{headers:{...sbH,"Accept":"application/json"}});
@@ -232,36 +242,119 @@ async function sbFetch(){
     return Array.isArray(d)?d:null;
   }catch(e){console.error("sbFetch error:",e);return null;}
 }
+
 async function sbInsert(recipe){
   try{
     const r=await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(recipe)});
-    if(!r.ok){console.error("sbInsert error:",r.status,await r.text());return false;}
-    return true;
-  }catch(e){console.error("sbInsert error:",e);return false;}
+    if(!r.ok){
+      const txt=await r.text();
+      console.error("sbInsert error:",r.status,txt);
+      return{ok:false,err:friendlyError(r.status,txt)};
+    }
+    return{ok:true};
+  }catch(e){
+    console.error("sbInsert error:",e);
+    return{ok:false,err:networkError(e)};
+  }
 }
+
 async function sbUpdate(recipe){
   try{
-    const body=Object.assign({},recipe);delete body.id;delete body.created_at;
-    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+recipe.id,{method:"PATCH",headers:Object.assign({},sbH,{"Prefer":"return=minimal"}),body:JSON.stringify(body)});
-    if(!r.ok){console.error("sbUpdate error:",r.status,await r.text());return false;}
-    return true;
-  }catch(e){console.error("sbUpdate error:",e);return false;}
+    const body=Object.assign({},recipe);
+    delete body.id;
+    delete body.created_at;
+    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(recipe.id),{
+      method:"PATCH",
+      headers:Object.assign({},sbH,{"Prefer":"return=minimal"}),
+      body:JSON.stringify(body)
+    });
+    if(!r.ok){
+      const txt=await r.text();
+      console.error("sbUpdate error:",r.status,txt);
+      return{ok:false,err:friendlyError(r.status,txt)};
+    }
+    return{ok:true};
+  }catch(e){
+    console.error("sbUpdate error:",e);
+    return{ok:false,err:networkError(e)};
+  }
 }
+
 async function sbDelete(id){
   try{
-    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+id,{method:"DELETE",headers:sbH});
-    if(!r.ok){console.error("sbDelete error:",r.status,await r.text());return false;}
-    return true;
-  }catch(e){console.error("sbDelete error:",e);return false;}
+    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(id),{method:"DELETE",headers:sbH});
+    if(!r.ok){
+      const txt=await r.text();
+      console.error("sbDelete error:",r.status,txt);
+      return{ok:false,err:friendlyError(r.status,txt)};
+    }
+    return{ok:true};
+  }catch(e){
+    console.error("sbDelete error:",e);
+    return{ok:false,err:networkError(e)};
+  }
 }
+
 async function sbSeed(){
-  try{await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(SEED)});}catch(e){console.error("sbSeed error:",e);}
+  try{
+    await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(SEED)});
+  }catch(e){console.error("sbSeed error:",e);}
 }
-let S={recipes:[],loading:true,view:"home",selected:null,prevView:"home",isAdmin:false,filterCuisine:"All",filterTag:"All",search:"",showPin:false,showEditor:false,editingRecipe:null};
+
+// Translate HTTP error codes / Supabase JSON into a human-readable string
+function friendlyError(status,txt){
+  // Supabase returns JSON errors
+  try{
+    const j=JSON.parse(txt);
+    // RLS violation
+    if(j.code==="42501"||/row-level security/i.test(j.message||"")){
+      return "Permission denied — Supabase RLS is blocking writes. See the banner below for the fix.";
+    }
+    if(j.message) return j.message;
+  }catch{}
+  if(status===401||status===403) return "Permission denied ("+status+") — check Supabase RLS policies";
+  if(status===0)  return "Network error — could not reach Supabase";
+  if(status===404) return "Table not found — check your Supabase URL";
+  return status+" — "+txt.slice(0,120);
+}
+
+function networkError(e){
+  if(/failed to fetch/i.test(e.message||"")) return "Network error — check your internet connection";
+  return e.message||"Unknown error";
+}
+
+// Quick write-permission test (called from admin "Test DB" button)
+async function testWritePermission(){
+  showToast("Testing DB write…");
+  // Try to PATCH the first recipe's schedule with its current value (a no-op)
+  if(!S.recipes.length){showToast("No recipes to test with",true);return;}
+  const r=S.recipes[0];
+  const res=await sbUpdate(r);
+  if(res.ok){
+    showToast("✓ DB writes working!");
+    ss({dbError:null});
+  } else {
+    showToast("Write failed: "+res.err,true);
+    // If it looks like an RLS problem, show the warning banner
+    if(/permission|rls|row-level/i.test(res.err)){
+      ss({dbError:"rls"});
+    }
+  }
+}
+
+// ─── State ───────────────────────────────────────────────────────────────────
+
+let S={recipes:[],loading:true,view:"home",selected:null,prevView:"home",
+       isAdmin:false,filterCuisine:"All",filterTag:"All",search:"",
+       showPin:false,showEditor:false,editingRecipe:null,
+       dbError:null // "rls" | null
+      };
+
 function ss(u){try{Object.assign(S,u);render();}catch(e){console.error("Render error:",e);}}
 function todayIdx(){const d=new Date().getDay();return d===0?6:d-1;}
 function orderedDays(){const i=todayIdx();return[...DAYS.slice(i),...DAYS.slice(0,i)];}
 function todayName(){return DAYS[todayIdx()];}
+
 async function checkUrlImport(recipes){
   try{
     const p=new URLSearchParams(window.location.search);
@@ -280,50 +373,93 @@ async function checkUrlImport(recipes){
     return recipes;
   }catch{return recipes;}
 }
+
+// ─── DOM helpers ─────────────────────────────────────────────────────────────
+
 function el(t,c){const e=document.createElement(t);if(c)e.className=c;return e;}
 function btn(t,c,fn){const b=el("button",c);b.textContent=t;if(fn)b.onclick=fn;return b;}
-function showToast(msg){
+
+function showToast(msg,isErr){
   document.querySelectorAll(".toast").forEach(function(x){x.remove();});
-  const t=el("div","toast");t.textContent=msg;document.body.appendChild(t);
-  setTimeout(function(){t.remove();},3000);
+  const t=el("div","toast"+(isErr?" err":""));
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(function(){t.remove();},isErr?5000:3000);
 }
+
 function cutlerySVG(){
   const d=el("div","day-thumb-empty");
   d.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3a3a3a" stroke-width="1.5"><path d="M3 2v7c0 1.1.9 2 2 2h1v11h2V11h1c1.1 0 2-.9 2-2V2"/><path d="M16 2c-1.66 0-3 1.34-3 3v6h9V5c0-1.66-1.34-3-3-3z"/></svg>';
   return d;
 }
+
 function imgFb(cls){
   const d=el("div",cls||"rcard-img-fb");
   d.innerHTML='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3a3a3a" stroke-width="1.5"><path d="M3 2v7c0 1.1.9 2 2 2h1v11h2V11h1c1.1 0 2-.9 2-2V2"/><path d="M16 2c-1.66 0-3 1.34-3 3v6h9V5c0-1.66-1.34-3-3-3z"/></svg>';
   return d;
 }
+
+// ─── RLS warning banner ───────────────────────────────────────────────────────
+
+function buildDbWarn(){
+  const w=el("div","db-warn");
+  w.innerHTML='<strong>⚠ Database write permission error</strong>'
+    +'Supabase Row Level Security (RLS) is blocking updates. To fix it, open your '
+    +'<a href="https://supabase.com/dashboard" target="_blank" style="color:var(--gold)">Supabase dashboard</a>'
+    +', go to <b>SQL Editor</b> and run:<br><br>'
+    +'<code>ALTER TABLE recipes DISABLE ROW LEVEL SECURITY;</code><br><br>'
+    +'Or, to keep RLS on but allow all operations for your anon key:<br>'
+    +'<code>CREATE POLICY "allow_all" ON recipes FOR ALL USING (true) WITH CHECK (true);</code>';
+  return w;
+}
+
+// ─── Render ───────────────────────────────────────────────────────────────────
+
 function render(){
   const app=document.getElementById("app");app.innerHTML="";
   if(S.view!=="detail")app.appendChild(buildHeader());
   const main=el("main");
-  if(S.loading){const d=el("div","loading");d.append(el("div","spin"),Object.assign(el("p","load-txt"),{textContent:"Loading your kitchen..."}));main.appendChild(d);}
-  else if(S.view==="home")main.appendChild(buildHome());
-  else if(S.view==="recipes")main.appendChild(buildRecipesPage());
-  else if(S.view==="detail"&&S.selected)main.appendChild(buildDetail(S.selected));
-  else if(S.view==="planner")main.appendChild(buildPlanner());
+  if(S.loading){
+    const d=el("div","loading");
+    d.append(el("div","spin"),Object.assign(el("p","load-txt"),{textContent:"Loading your kitchen..."}));
+    main.appendChild(d);
+  } else if(S.view==="home")   main.appendChild(buildHome());
+  else if(S.view==="recipes")  main.appendChild(buildRecipesPage());
+  else if(S.view==="detail"&&S.selected) main.appendChild(buildDetail(S.selected));
+  else if(S.view==="planner")  main.appendChild(buildPlanner());
+  // RLS warning banner (shown on any view when dbError is set)
+  if(S.dbError==="rls"&&S.view!=="detail") main.appendChild(buildDbWarn());
   app.appendChild(main);
   if(S.view!=="detail")app.appendChild(buildBnav());
   if(S.showPin)app.appendChild(buildPinModal());
   if(S.showEditor)app.appendChild(buildEditorModal(S.editingRecipe));
 }
+
 function buildHeader(){
   const hdr=el("header");const inner=el("div","hdr");
   const logo=el("div","logo");
-  logo.append(Object.assign(el("span","logo-mark"),{textContent:"✦"}),Object.assign(el("span","logo-text"),{textContent:"Mehdi's Kitchen"}));
+  logo.append(
+    Object.assign(el("span","logo-mark"),{textContent:"✦"}),
+    Object.assign(el("span","logo-text"),{textContent:"Mehdi's Kitchen"})
+  );
   logo.onclick=function(){ss({view:"home",selected:null});};
   const right=el("div","hdr-right");
-  right.appendChild(btn(S.isAdmin?"✦ Admin":"Admin",S.isAdmin?"admin-btn on":"admin-btn",function(){S.isAdmin?ss({isAdmin:false}):ss({showPin:true});}));
+  if(S.isAdmin){
+    // "Test DB" button in admin mode
+    right.appendChild(btn("Test DB","test-btn",function(){testWritePermission();}));
+  }
+  right.appendChild(btn(
+    S.isAdmin?"✦ Admin":"Admin",
+    S.isAdmin?"admin-btn on":"admin-btn",
+    function(){S.isAdmin?ss({isAdmin:false}):ss({showPin:true});}
+  ));
   inner.append(logo,right);hdr.appendChild(inner);
   if(S.view==="recipes"){
     const sw=el("div","search-wrap");const si=el("div","search-inner");
     const inp=document.createElement("input");inp.type="text";inp.placeholder="recipe, cuisine...";inp.value=S.search;
     inp.oninput=function(e){ss({search:e.target.value});};
-    si.append(Object.assign(el("span","search-lbl"),{textContent:"Search"}),inp);sw.appendChild(si);hdr.appendChild(sw);
+    si.append(Object.assign(el("span","search-lbl"),{textContent:"Search"}),inp);
+    sw.appendChild(si);hdr.appendChild(sw);
     const chips=el("div","chips");
     chips.appendChild(btn("All","chip"+(S.filterCuisine==="All"&&S.filterTag==="All"?" on":""),function(){ss({filterCuisine:"All",filterTag:"All"});}));
     CUISINE_OPTIONS.forEach(function(c){chips.appendChild(btn(c,"chip"+(S.filterCuisine===c?" on":""),function(){ss({filterCuisine:c,filterTag:"All"});}));});
@@ -332,6 +468,7 @@ function buildHeader(){
   }
   return hdr;
 }
+
 function buildBnav(){
   const nav=el("div","bnav");
   const hi=el("button","bnav-item"+(S.view==="home"?" on":""));
@@ -345,6 +482,7 @@ function buildBnav(){
   ri.onclick=function(){ss({view:"recipes",selected:null});};
   nav.append(hi,addB,ri);return nav;
 }
+
 function buildHome(){
   const page=el("div","home-wrap");
   const ws=el("div");const wh=el("div","sec-hdr");
@@ -357,21 +495,28 @@ function buildHome(){
     if(recipe){
       const img=document.createElement("img");img.className="day-thumb";img.src=recipe.image||"";img.alt=recipe.name;
       img.onerror=function(){try{img.replaceWith(cutlerySVG());}catch{}};
-      tile.appendChild(img);tile.onclick=function(){ss({view:"detail",selected:recipe,prevView:"home"});};
+      tile.appendChild(img);
+      tile.onclick=function(){ss({view:"detail",selected:recipe,prevView:"home"});};
     } else tile.appendChild(cutlerySVG());
     const foot=el("div","day-foot");
     foot.appendChild(Object.assign(el("p","day-label"),{textContent:day.slice(0,3)}));
-    if(recipe)foot.appendChild(Object.assign(el("p","day-rname"),{textContent:recipe.name}));
-    else foot.appendChild(Object.assign(el("p","day-empty-lbl"),{textContent:"No recipe"}));
+    if(recipe) foot.appendChild(Object.assign(el("p","day-rname"),{textContent:recipe.name}));
+    else       foot.appendChild(Object.assign(el("p","day-empty-lbl"),{textContent:"No recipe"}));
     tile.appendChild(foot);weekRow.appendChild(tile);
   });
   ws.appendChild(weekRow);page.appendChild(ws);
   const rs=el("div","recipes-section");const rh=el("div","sec-hdr");
-  rh.append(Object.assign(el("span","sec-title"),{textContent:"Saved Recipes"}),btn("See all","sec-link",function(){ss({view:"recipes"});}));
+  rh.append(
+    Object.assign(el("span","sec-title"),{textContent:"Saved Recipes"}),
+    btn("See all","sec-link",function(){ss({view:"recipes"});})
+  );
   rs.appendChild(rh);
   if(!S.recipes||S.recipes.length===0){
     const e=el("div","empty");
-    e.append(Object.assign(el("p","empty-title"),{textContent:"No recipes yet"}),Object.assign(el("p","empty-sub"),{textContent:"Tap + to add your first recipe"}));
+    e.append(
+      Object.assign(el("p","empty-title"),{textContent:"No recipes yet"}),
+      Object.assign(el("p","empty-sub"),{textContent:"Tap + to add your first recipe"})
+    );
     rs.appendChild(e);
   } else {
     const col=el("div","recipe-col");
@@ -380,6 +525,7 @@ function buildHome(){
   }
   page.appendChild(rs);return page;
 }
+
 function buildRcard(recipe){
   const card=el("div","rcard");const imgWrap=el("div","rcard-img");
   const img=document.createElement("img");img.src=recipe.image||"";img.alt=recipe.name||"";
@@ -387,21 +533,28 @@ function buildRcard(recipe){
   img.onerror=function(){try{img.replaceWith(imgFb());}catch{}};
   imgWrap.appendChild(img);
   const body=el("div","rcard-body");const top=el("div","rcard-top");
-  if(recipe.cuisine){const cc=el("p","rcard-cuisine");cc.style.color=CUISINE_COLORS[recipe.cuisine]||"#888";cc.textContent=recipe.cuisine;top.appendChild(cc);}
-  top.appendChild(Object.assign(el("p","rcard-name"),{textContent:recipe.name||""}));body.appendChild(top);
+  if(recipe.cuisine){
+    const cc=el("p","rcard-cuisine");
+    cc.style.color=CUISINE_COLORS[recipe.cuisine]||"#888";
+    cc.textContent=recipe.cuisine;
+    top.appendChild(cc);
+  }
+  top.appendChild(Object.assign(el("p","rcard-name"),{textContent:recipe.name||""}));
+  body.appendChild(top);
   const meta=el("div","rcard-meta");
   (recipe.tags||[]).forEach(function(t){meta.appendChild(Object.assign(el("span","rcard-tag gold"),{textContent:t}));});
-  if(recipe.type)meta.appendChild(Object.assign(el("span","rcard-type"),{textContent:recipe.type}));
-  if(recipe.schedule&&recipe.schedule.length)meta.appendChild(Object.assign(el("span","rcard-day"),{textContent:recipe.schedule.join(", ")}));
+  if(recipe.type) meta.appendChild(Object.assign(el("span","rcard-type"),{textContent:recipe.type}));
+  if(recipe.schedule&&recipe.schedule.length) meta.appendChild(Object.assign(el("span","rcard-day"),{textContent:recipe.schedule.join(", ")}));
   body.appendChild(meta);card.append(imgWrap,body);
   card.onclick=function(){ss({view:"detail",selected:recipe,prevView:"home"});};
   return card;
 }
+
 function buildRecipesPage(){
   const page=el("div","grid-wrap");let filtered=S.recipes||[];
-  if(S.search)filtered=filtered.filter(function(r){return(r.name||"").toLowerCase().includes(S.search.toLowerCase())||(r.cuisine||"").toLowerCase().includes(S.search.toLowerCase());});
-  if(S.filterCuisine!=="All")filtered=filtered.filter(function(r){return r.cuisine===S.filterCuisine;});
-  if(S.filterTag!=="All")filtered=filtered.filter(function(r){return r.tags&&r.tags.includes(S.filterTag);});
+  if(S.search) filtered=filtered.filter(function(r){return(r.name||"").toLowerCase().includes(S.search.toLowerCase())||(r.cuisine||"").toLowerCase().includes(S.search.toLowerCase());});
+  if(S.filterCuisine!=="All") filtered=filtered.filter(function(r){return r.cuisine===S.filterCuisine;});
+  if(S.filterTag!=="All")     filtered=filtered.filter(function(r){return r.tags&&r.tags.includes(S.filterTag);});
   if(filtered.length===0){
     const e=el("div","empty");
     e.append(Object.assign(el("p","empty-title"),{textContent:"Nothing found"}),Object.assign(el("p","empty-sub"),{textContent:"Try a different search or filter"}));
@@ -420,13 +573,14 @@ function buildRecipesPage(){
     const nm=Object.assign(el("p","gcard-name"),{textContent:recipe.name||""});
     const tags=el("div","gcard-tags");
     (recipe.tags||[]).forEach(function(t){tags.appendChild(Object.assign(el("span","gtag gold"),{textContent:t}));});
-    if(recipe.type)tags.appendChild(Object.assign(el("span","gtag"),{textContent:recipe.type}));
+    if(recipe.type) tags.appendChild(Object.assign(el("span","gtag"),{textContent:recipe.type}));
     body.append(nm,tags);card.append(imgW,body);
     card.onclick=function(){ss({view:"detail",selected:recipe,prevView:"recipes"});};
     grid.appendChild(card);
   });
   page.appendChild(grid);return page;
 }
+
 function buildDetail(recipe){
   const page=el("div");const hdr=el("header");const inner=el("div","hdr");
   const backB=btn("","detail-back",function(){ss({view:S.prevView||"home",selected:null});});
@@ -434,7 +588,10 @@ function buildDetail(recipe){
   inner.appendChild(backB);
   if(S.isAdmin){
     const ar=el("div","detail-admin-row");
-    ar.append(btn("Edit","d-btn edit",function(){ss({showEditor:true,editingRecipe:recipe});}),btn("Delete","d-btn del",function(){confirmDelete(recipe.id);}));
+    ar.append(
+      btn("Edit","d-btn edit",function(){ss({showEditor:true,editingRecipe:recipe});}),
+      btn("Delete","d-btn del",function(){confirmDelete(recipe.id);})
+    );
     inner.appendChild(ar);
   }
   hdr.appendChild(inner);page.appendChild(hdr);
@@ -450,7 +607,7 @@ function buildDetail(recipe){
     const ct=el("span");ct.style.color=CUISINE_COLORS[recipe.cuisine]||"#888";ct.textContent=recipe.cuisine;
     cp.append(dot,ct);metaRow.appendChild(cp);
   }
-  if(recipe.type)metaRow.appendChild(Object.assign(el("div","d-type"),{textContent:recipe.type}));
+  if(recipe.type) metaRow.appendChild(Object.assign(el("div","d-type"),{textContent:recipe.type}));
   top.appendChild(metaRow);
   top.appendChild(Object.assign(el("h1","detail-title"),{textContent:recipe.name||""}));
   if(recipe.tags&&recipe.tags.length){
@@ -467,35 +624,63 @@ function buildDetail(recipe){
     });
     top.appendChild(mb);
   }
+
+  // ── Schedule pills ──────────────────────────────────────────────────────────
   const schedWrap=el("div","sched-row");
   schedWrap.appendChild(Object.assign(el("p","sched-label"),{textContent:"Schedule for"}));
   const schedDays=el("div","sched-days");
   DAYS.forEach(function(day){
-    const isOn=(recipe.schedule||[]).includes(day);
-    const pill=btn(day.slice(0,3),"sched-pill"+(isOn?" on":""),async function(){
+    const currentOn=(recipe.schedule||[]).includes(day);
+    const pill=btn(day.slice(0,3),"sched-pill"+(currentOn?" on":""),async function(){
+      // Snapshot the state before any async work
       const wasOn=(recipe.schedule||[]).includes(day);
-      const newSched=wasOn?(recipe.schedule||[]).filter(function(d){return d!==day;}):[...(recipe.schedule||[]),day];
-      recipe.schedule=newSched;pill.className="sched-pill saving";
-      const ok=await sbUpdate(Object.assign({},recipe,{schedule:newSched}));
-      if(ok){
-        S.recipes=S.recipes.map(function(r){return r.id===recipe.id?Object.assign({},r,{schedule:newSched}):r;});
+      const newSched=wasOn
+        ? (recipe.schedule||[]).filter(function(d){return d!==day;})
+        : [...(recipe.schedule||[]),day];
+
+      // Optimistic UI update
+      pill.className="sched-pill saving";
+
+      const res=await sbUpdate(Object.assign({},recipe,{schedule:newSched}));
+
+      if(res.ok){
+        // Commit to app state
+        recipe.schedule=newSched;
+        S.recipes=S.recipes.map(function(r){
+          return r.id===recipe.id?Object.assign({},r,{schedule:newSched}):r;
+        });
         S.selected=Object.assign({},recipe,{schedule:newSched});
-        pill.className="sched-pill"+(wasOn?"":" on"); // FIX: space before "on"
+        pill.className="sched-pill"+(wasOn?"":" on");
         showToast(wasOn?"Removed from "+day:"Added to "+day);
+        // Clear any RLS warning if this succeeded
+        if(S.dbError) ss({dbError:null});
       } else {
-        recipe.schedule=wasOn?[...newSched,day]:newSched.filter(function(d){return d!==day;});
-        pill.className="sched-pill"+(wasOn?" on":"");showToast("Failed to update");
+        // Revert the pill to its original state
+        pill.className="sched-pill"+(wasOn?" on":"");
+        showToast(res.err,true);
+        // Flag RLS issue for the warning banner
+        if(/permission|rls|row-level/i.test(res.err)){
+          S.dbError="rls"; render();
+        }
       }
     });
     schedDays.appendChild(pill);
   });
-  schedWrap.appendChild(schedDays);top.appendChild(schedWrap);body.appendChild(top);
+  schedWrap.appendChild(schedDays);
+
+  // Show RLS banner inline on the detail view if there's a known DB error
+  if(S.dbError==="rls"){
+    schedWrap.appendChild(buildDbWarn());
+  }
+
+  top.appendChild(schedWrap);body.appendChild(top);
+
   if(recipe.ingredients&&Object.keys(recipe.ingredients).length){
     const sec=el("div","d-sec");
     sec.appendChild(Object.assign(el("p","d-sec-title"),{textContent:"Ingredients"}));
     Object.entries(recipe.ingredients).forEach(function(entry){
       const s=entry[0],items=entry[1];
-      if(s)sec.appendChild(Object.assign(el("p","d-sub"),{textContent:s}));
+      if(s) sec.appendChild(Object.assign(el("p","d-sub"),{textContent:s}));
       (items||[]).forEach(function(item){
         const row=el("div","ing-row");
         row.append(el("span","ing-bullet"),Object.assign(el("span"),{textContent:item}));
@@ -516,6 +701,7 @@ function buildDetail(recipe){
   }
   page.appendChild(body);page.appendChild(buildBnav());return page;
 }
+
 function buildPlanner(){
   const page=el("div","planner-wrap");
   const ph=el("div","sec-hdr");ph.style.padding="0 4px";
@@ -525,10 +711,10 @@ function buildPlanner(){
   orderedDays().forEach(function(day){
     const dw=el("div","pl-day");const dh=el("div","pl-day-hdr");
     dh.appendChild(Object.assign(el("span","pl-day-name"+(day===today?" today":"")),{textContent:day}));
-    if(day===today)dh.appendChild(Object.assign(el("span","today-badge"),{textContent:"Today"}));
+    if(day===today) dh.appendChild(Object.assign(el("span","today-badge"),{textContent:"Today"}));
     dw.appendChild(dh);
     const recipes=S.recipes.filter(function(r){return r.schedule&&r.schedule.includes(day);});
-    if(!recipes.length)dw.appendChild(Object.assign(el("p","pl-none"),{textContent:"Nothing planned"}));
+    if(!recipes.length) dw.appendChild(Object.assign(el("p","pl-none"),{textContent:"Nothing planned"}));
     else recipes.forEach(function(r){
       const row=el("div","pl-recipe");
       const thumb=document.createElement("img");thumb.className="pl-thumb";thumb.src=r.image||"";thumb.alt=r.name||"";
@@ -545,14 +731,22 @@ function buildPlanner(){
   });
   return page;
 }
+
 function buildPinModal(){
   const ov=el("div","overlay");const sheet=el("div","sheet");const body=el("div","pin-sheet");
-  body.append(Object.assign(el("h2","pin-title"),{textContent:"Admin Access"}),Object.assign(el("p","pin-sub"),{textContent:"Enter your PIN to continue"}));
+  body.append(
+    Object.assign(el("h2","pin-title"),{textContent:"Admin Access"}),
+    Object.assign(el("p","pin-sub"),{textContent:"Enter your PIN to continue"})
+  );
   const inp=document.createElement("input");inp.type="password";inp.maxLength=4;inp.placeholder="...";inp.className="pin-input";inp.inputMode="numeric";
-  const err=Object.assign(el("p","pin-err"),{textContent:""});const btns=el("div","sheet-btns");
+  const err=Object.assign(el("p","pin-err"),{textContent:""});
+  const btns=el("div","sheet-btns");
   const ok=btn("Enter","sbtn-ok",function(){
-    if(inp.value===ADMIN_PIN)ss({isAdmin:true,showPin:false});
-    else{inp.className="pin-input err";err.textContent="Incorrect PIN";inp.value="";setTimeout(function(){inp.className="pin-input";err.textContent="";},1400);}
+    if(inp.value===ADMIN_PIN) ss({isAdmin:true,showPin:false});
+    else{
+      inp.className="pin-input err";err.textContent="Incorrect PIN";inp.value="";
+      setTimeout(function(){inp.className="pin-input";err.textContent="";},1400);
+    }
   });
   inp.onkeydown=function(e){if(e.key==="Enter")ok.click();};
   btns.append(btn("Cancel","sbtn-cancel",function(){ss({showPin:false});}),ok);
@@ -560,11 +754,15 @@ function buildPinModal(){
   ov.onclick=function(e){if(e.target===ov)ss({showPin:false});};
   setTimeout(function(){inp.focus();},80);return ov;
 }
+
 function buildEditorModal(recipe){
   const isNew=!recipe;
   let form=recipe?JSON.parse(JSON.stringify(recipe)):{name:"",cuisine:"",tags:[],type:"Main Course",schedule:[],image:"",ingredients:{"":[""]},steps:[""],macros:null};
   const ov=el("div","overlay");const sheet=el("div","sheet editor-sheet");const hdr=el("div","editor-hdr");
-  hdr.append(Object.assign(el("h2","editor-title-text"),{textContent:isNew?"New Recipe":"Edit Recipe"}),btn("x","close-x",function(){ss({showEditor:false,editingRecipe:null});}));
+  hdr.append(
+    Object.assign(el("h2","editor-title-text"),{textContent:isNew?"New Recipe":"Edit Recipe"}),
+    btn("x","close-x",function(){ss({showEditor:false,editingRecipe:null});})
+  );
   const body=el("div","editor-body");
   function rebuild(){
     body.innerHTML="";
@@ -585,26 +783,24 @@ function buildEditorModal(recipe){
     ts.innerHTML=TYPE_OPTIONS.map(function(t){return'<option value="'+t+'"'+(form.type===t?' selected':'')+'>'+t+'</option>';}).join("");
     ts.onchange=function(e){form.type=e.target.value;};tw.appendChild(ts);tc.appendChild(tw);
     s1.appendChild(tc);body.appendChild(s1);
-    // Tags — FIX: rebuild() called after each toggle
     const s2=el("div","esec");s2.appendChild(Object.assign(el("p","esec-title"),{textContent:"Tags"}));
     const tg=el("div","tgrid");
     TAG_OPTIONS.forEach(function(t){
       const on=(form.tags||[]).includes(t);
       tg.appendChild(btn(t,"ttog"+(on?" on":""),function(){
-        if((form.tags||[]).includes(t)){form.tags=(form.tags||[]).filter(function(x){return x!==t;});}
-        else{form.tags=[...(form.tags||[]),t];}
+        if((form.tags||[]).includes(t)) form.tags=(form.tags||[]).filter(function(x){return x!==t;});
+        else form.tags=[...(form.tags||[]),t];
         rebuild();
       }));
     });
     s2.appendChild(tg);body.appendChild(s2);
-    // Schedule — FIX: rebuild() called after each toggle
     const s3=el("div","esec");s3.appendChild(Object.assign(el("p","esec-title"),{textContent:"Schedule"}));
     const dg=el("div","tgrid");
     DAYS.forEach(function(d){
       const on=(form.schedule||[]).includes(d);
       dg.appendChild(btn(d.slice(0,3),"dtog"+(on?" on":""),function(){
-        if((form.schedule||[]).includes(d)){form.schedule=(form.schedule||[]).filter(function(x){return x!==d;});}
-        else{form.schedule=[...(form.schedule||[]),d];}
+        if((form.schedule||[]).includes(d)) form.schedule=(form.schedule||[]).filter(function(x){return x!==d;});
+        else form.schedule=[...(form.schedule||[]),d];
         rebuild();
       }));
     });
@@ -655,16 +851,16 @@ function buildEditorModal(recipe){
   const footer=el("div","editor-footer");
   const saveB=btn(isNew?"Add Recipe":"Save Changes","sbtn-ok",async function(){
     if(!form.name.trim()){alert("Recipe name required");return;}
-    if(!form.id)form.id=Date.now().toString();
+    if(!form.id) form.id=Date.now().toString();
     saveB.textContent="Saving...";saveB.disabled=true;
-    const ok=(!isNew)?await sbUpdate(form):await sbInsert(form);
-    if(ok){
+    const res=(!isNew)?await sbUpdate(form):await sbInsert(form);
+    if(res===true||res&&res.ok){
       const recipes=await sbFetch();
       ss({recipes:recipes&&recipes.length?recipes:S.recipes,showEditor:false,editingRecipe:null});
       showToast(isNew?"Recipe added":"Changes saved");
     } else {
       saveB.textContent=isNew?"Add Recipe":"Save Changes";saveB.disabled=false;
-      showToast("Failed to save. Check browser console.");
+      showToast(res&&res.err?res.err:"Save failed",true);
     }
   });
   footer.append(btn("Cancel","sbtn-cancel",function(){ss({showEditor:false,editingRecipe:null});}),saveB);
@@ -672,12 +868,20 @@ function buildEditorModal(recipe){
   ov.onclick=function(e){if(e.target===ov)ss({showEditor:false,editingRecipe:null});};
   return ov;
 }
+
 async function confirmDelete(id){
   if(confirm("Delete this recipe?")){
-    await sbDelete(id);const recipes=await sbFetch();
-    ss({recipes:recipes||S.recipes,view:"home",selected:null});showToast("Recipe deleted");
+    const res=await sbDelete(id);
+    if(res===true||res&&res.ok){
+      const recipes=await sbFetch();
+      ss({recipes:recipes||S.recipes,view:"home",selected:null});
+      showToast("Recipe deleted");
+    } else {
+      showToast((res&&res.err)||"Delete failed",true);
+    }
   }
 }
+
 async function init(){
   render();
   try{
@@ -686,7 +890,10 @@ async function init(){
     if(recipes.length===0){await sbSeed();recipes=await sbFetch()||SEED;}
     recipes=await checkUrlImport(recipes);
     ss({recipes:recipes,loading:false});
-  }catch(e){console.error("Init error:",e);ss({recipes:SEED,loading:false});}
+  }catch(e){
+    console.error("Init error:",e);
+    ss({recipes:SEED,loading:false});
+  }
 }
 init();
 </script>

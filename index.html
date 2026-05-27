@@ -1190,6 +1190,7 @@ function buildAiImportModal(){
 
   // State
   var imageBase64=null;
+  var imageMimeType="image/jpeg";
 
   function setStatus(msg,type){
     status.textContent=msg;
@@ -1201,6 +1202,7 @@ function buildAiImportModal(){
     if(!file)return;
     var reader=new FileReader();
     reader.onload=function(ev){
+      imageMimeType=file.type||"image/jpeg";
       imageBase64=ev.target.result.split(",")[1];
       previewImg.src=ev.target.result;
       previewImg.style.display="block";
@@ -1218,16 +1220,16 @@ function buildAiImportModal(){
   extractB.onclick=async function(){
     if(!imageBase64){setStatus("Please upload an image first.","error");return;}
 
-    var apiKey=localStorage.getItem("anthropic_api_key")||"";
+    var apiKey=localStorage.getItem("gemini_api_key")||"";
     if(!apiKey){
-      apiKey=prompt("Enter your Anthropic API key (stored locally on this device only):");
+      apiKey=prompt("Enter your Gemini API key (stored locally on this device only):");
       if(!apiKey){setStatus("API key required to extract recipes.","error");return;}
-      localStorage.setItem("anthropic_api_key",apiKey.trim());
+      localStorage.setItem("gemini_api_key",apiKey.trim());
       apiKey=apiKey.trim();
     }
 
     extractB.disabled=true;extractB.textContent="Analysing...";
-    setStatus("Sending to Claude AI — this takes about 10 seconds...","");
+    setStatus("Sending to Gemini AI — this takes about 10 seconds...","");
 
     var today=new Date().getDay();
     var dayIdx=today===0?6:today-1;
@@ -1236,63 +1238,52 @@ function buildAiImportModal(){
     var prompt='You are a recipe extraction assistant. Analyse this recipe image and extract all information into a precise JSON object.\n\nRules:\n- Use ONLY these cuisine values: Peruvian, Mexican, Italian, Asian, American, Mediterranean, Middle Eastern, Other\n- Use ONLY these tag values (pick all that apply): High Protein, Quick, Meal Prep, Vegetarian, Vegan, Low Fat, Make Ahead, No Cook\n- Use ONLY these type values: Main Course, Breakfast, Appetizer, Side Dish, Dessert, Snack, Beverage, Other\n- schedule: set to ["'+todayDay+'"] as default\n- id: generate a short kebab-case string from the name (e.g. "chicken-tacos")\n- image: set to empty string ""\n- ingredients: object where keys are section names and values are arrays of ingredient strings\n- steps: array of strings, each a complete instruction\n- macros: object with calories, protein, carbs, fat as numbers, or null if not shown\n- CRITICAL: use plain ASCII fractions only: 1/2 not ½, 3/4 not ¾, 1/4 not ¼\n\nReturn ONLY valid JSON, no markdown, no explanation, no backticks. The JSON must match this exact structure:\n{"id":"","name":"","cuisine":"","tags":[],"type":"","schedule":[],"image":"","ingredients":{},"steps":[],"macros":null}';
 
     try{
-      var response=await fetch("https://api.anthropic.com/v1/messages",{
+      var response=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="+encodeURIComponent(apiKey),{
         method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-          "x-api-key":apiKey,
-          "anthropic-version":"2023-06-01",
-          "anthropic-dangerous-direct-browser-access":"true"
-        },
+        headers:{"Content-Type":"application/json"},
         body:JSON.stringify({
-          model:"claude-sonnet-4-5",
-          max_tokens:2000,
-          messages:[{
-            role:"user",
-            content:[
-              {type:"image",source:{type:"base64",media_type:"image/jpeg",data:imageBase64}},
-              {type:"text",text:prompt}
+          contents:[{
+            parts:[
+              {inline_data:{mime_type:imageMimeType,data:imageBase64}},
+              {text:prompt}
             ]
-          }]
+          }],
+          generationConfig:{maxOutputTokens:2000,temperature:0.1}
         })
       });
 
       if(!response.ok){
         var errData=await response.json();
-        throw new Error(errData.error&&errData.error.message?errData.error.message:"API error "+response.status);
+        var errMsg=(errData.error&&errData.error.message)||"API error "+response.status;
+        if(response.status===400||response.status===403){
+          localStorage.removeItem("gemini_api_key");
+          errMsg="Invalid API key — cleared. Try again to re-enter.";
+        }
+        throw new Error(errMsg);
       }
 
       var data=await response.json();
-      var raw=data.content.filter(function(c){return c.type==="text";}).map(function(c){return c.text;}).join("");
-      // Strip any accidental markdown fences
+      var raw=data.candidates&&data.candidates[0]&&data.candidates[0].content&&data.candidates[0].content.parts
+        ?data.candidates[0].content.parts.map(function(p){return p.text||"";}).join("")
+        :"";
       raw=raw.replace(/```json|```/g,"").trim();
       var recipe=JSON.parse(raw);
 
-      // Validate required fields
       if(!recipe.name)throw new Error("Could not extract recipe name from image.");
-
-      // Ensure id exists
       if(!recipe.id||recipe.id===""){
         recipe.id=recipe.name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
       }
-      // Ensure arrays
       if(!Array.isArray(recipe.tags))recipe.tags=[];
       if(!Array.isArray(recipe.steps))recipe.steps=[];
       if(!Array.isArray(recipe.schedule))recipe.schedule=[todayDay];
 
       setStatus("✦ Extracted: "+recipe.name+" — opening editor...","success");
-
       setTimeout(function(){
         ss({showAiImport:false,showEditor:true,editingRecipe:recipe});
       },800);
 
     } catch(err){
-      var msg=err.message||"Load failed";
-      if(msg.includes("401")||msg.includes("invalid_api_key")||msg.includes("authentication")){
-        localStorage.removeItem("anthropic_api_key");
-        msg="Invalid API key — it has been cleared. Try again to re-enter it.";
-      }
-      setStatus("Error: "+msg,"error");
+      setStatus("Error: "+(err.message||"Load failed"),"error");
       extractB.disabled=false;extractB.textContent="Extract & Fill";
     }
   };

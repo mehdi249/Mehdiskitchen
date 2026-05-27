@@ -297,37 +297,6 @@ header{
 .macros-g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
 .editor-footer{padding:14px 20px calc(14px + var(--safe-bot));border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0;}
 
-/* ── AI IMPORT MODAL ── */
-.ai-import-sheet{max-height:85vh;display:flex;flex-direction:column;}
-.ai-import-body{flex:1;overflow-y:auto;padding:20px;}
-.ai-drop-zone{
-  border:1.5px dashed var(--border2);border-radius:14px;
-  padding:36px 20px;text-align:center;
-  transition:border-color .2s,background .2s;
-  cursor:pointer;position:relative;
-}
-.ai-drop-zone.has-image{border-color:var(--gold-border);background:var(--gold2);}
-.ai-drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.ai-drop-icon{font-size:28px;margin-bottom:8px;}
-.ai-drop-title{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--text);margin-bottom:5px;}
-.ai-drop-sub{font-size:13px;color:var(--text2);}
-.ai-preview-img{width:100%;max-height:200px;object-fit:contain;border-radius:10px;margin-top:12px;}
-.ai-status{
-  margin-top:16px;padding:12px 16px;border-radius:10px;
-  background:var(--bg3);border:1px solid var(--border2);
-  font-size:13px;color:var(--text2);text-align:center;
-  display:none;
-}
-.ai-status.visible{display:block;}
-.ai-status.error{border-color:rgba(224,85,85,0.3);color:var(--red);background:rgba(224,85,85,0.05);}
-.ai-status.success{border-color:var(--gold-border);color:var(--gold);background:var(--gold2);}
-.ai-import-footer{padding:14px 20px calc(14px + var(--safe-bot));border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0;}
-.ai-key-row{display:flex;gap:8px;margin-top:14px;align-items:center;}
-.ai-key-inp{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:10px 12px;color:var(--text);font-size:13px;outline:none;}
-.ai-key-inp:focus{border-color:var(--gold-border);}
-.ai-key-save{padding:10px 14px;border-radius:9px;background:var(--gold);color:#080808;font-size:13px;font-weight:600;flex-shrink:0;}
-.ai-change-key{font-size:11px;color:var(--text3);text-decoration:underline;cursor:pointer;margin-top:6px;display:none;}
-
 /* ── DEV VIEW ── */
 .dev-view-overlay{
   position:fixed;inset:0;z-index:200;
@@ -537,7 +506,6 @@ var S={
   isAdmin:false,
   filterCuisine:"All",filterTag:"All",search:"",
   showPin:false,showEditor:false,editingRecipe:null,
-  showAiImport:false,
   showDevView:false
 };
 function ss(u){Object.assign(S,u);render();}
@@ -620,7 +588,6 @@ function render(){
   if(S.view!=="detail")app.appendChild(buildBnav());
   if(S.showPin)app.appendChild(buildPinModal());
   if(S.showEditor)app.appendChild(buildEditorModal(S.editingRecipe));
-  if(S.showAiImport)app.appendChild(buildAiImportModal());
   if(S.showDevView)app.appendChild(buildDevView());
 }
 
@@ -735,15 +702,11 @@ function buildHome(){
   if(S.isAdmin){
     var adminBar=el("div");
     adminBar.style.cssText="display:flex;gap:10px;padding:20px 16px 0;";
-    var aiBtn=el("button");
-    aiBtn.style.cssText="flex:1;padding:11px 14px;border-radius:11px;border:1px solid var(--gold-border);background:var(--gold2);color:var(--gold);font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:7px;letter-spacing:0.02em;";
-    aiBtn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg> AI Import';
-    aiBtn.onclick=function(){ss({showAiImport:true});};
     var devBtn=el("button");
     devBtn.style.cssText="flex:1;padding:11px 14px;border-radius:11px;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:7px;letter-spacing:0.02em;";
     devBtn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> Dev View';
     devBtn.onclick=function(){ss({showDevView:true});};
-    adminBar.append(aiBtn,devBtn);
+    adminBar.append(devBtn);
     page.appendChild(adminBar);
   }
 
@@ -1157,183 +1120,6 @@ function buildEditorModal(recipe){
   return ov;
 }
 
-// ── AI IMPORT MODAL ────────────────────────────────────────
-function buildAiImportModal(){
-  var ov=el("div","overlay");
-  var sheet=el("div","sheet ai-import-sheet");
-  var handle=el("div","sheet-handle");
-  var hdr=el("div","editor-hdr");
-  var titleEl=el("h2","editor-title-text");titleEl.textContent="AI Recipe Import";
-  var closeB=btn("x","close-x",function(){ss({showAiImport:false});});
-  hdr.append(titleEl,closeB);
-
-  var body=el("div","ai-import-body");
-
-  // Drop zone
-  var dropZone=el("div","ai-drop-zone");
-  var fileInput=document.createElement("input");
-  fileInput.type="file";fileInput.accept="image/*";
-  var dropIcon=el("div","ai-drop-icon");dropIcon.textContent="📸";
-  var dropTitle=el("p","ai-drop-title");dropTitle.textContent="Upload Recipe Screenshot";
-  var dropSub=el("p","ai-drop-sub");dropSub.textContent="Take a photo or choose from your library";
-  dropZone.append(fileInput,dropIcon,dropTitle,dropSub);
-
-  var previewImg=document.createElement("img");
-  previewImg.className="ai-preview-img";
-  previewImg.style.display="none";
-  body.append(dropZone,previewImg);
-
-  // API key row (shown only when no key stored)
-  var keyRow=el("div","ai-key-row");
-  var keyInp=document.createElement("input");
-  keyInp.type="text";keyInp.className="ai-key-inp";
-  keyInp.placeholder="Paste Gemini API key…";
-  keyInp.autocomplete="off";keyInp.spellcheck=false;
-  var keySave=btn("Save","ai-key-save",null);
-  keyRow.append(keyInp,keySave);
-  body.appendChild(keyRow);
-
-  var changeKeyLink=el("span","ai-change-key");
-  changeKeyLink.textContent="Change API key";
-  body.appendChild(changeKeyLink);
-
-  function refreshKeyRow(){
-    var hasKey=!!localStorage.getItem("gemini_api_key");
-    keyRow.style.display=hasKey?"none":"flex";
-    changeKeyLink.style.display=hasKey?"block":"none";
-  }
-  refreshKeyRow();
-
-  changeKeyLink.onclick=function(){
-    localStorage.removeItem("gemini_api_key");
-    refreshKeyRow();
-    setStatus("Key cleared — paste your new key above.","");
-  };
-
-  keySave.onclick=function(){
-    var v=keyInp.value.trim();
-    if(!v){setStatus("Paste your Gemini API key above.","error");return;}
-    localStorage.setItem("gemini_api_key",v);
-    keyInp.value="";
-    refreshKeyRow();
-    setStatus("API key saved. Tap Extract & Fill.","");
-  };
-
-  var status=el("div","ai-status");
-  body.appendChild(status);
-
-  var footer=el("div","ai-import-footer");
-  var cancelB=btn("Cancel","sbtn-cancel",function(){ss({showAiImport:false});});
-  var extractB=btn("Extract & Fill","sbtn-ok",null);
-  extractB.disabled=true;
-  extractB.style.opacity="0.5";
-  footer.append(cancelB,extractB);
-
-  // State
-  var imageBase64=null;
-  var imageMimeType="image/jpeg";
-
-  function setStatus(msg,type){
-    status.textContent=msg;
-    status.className="ai-status visible"+(type?" "+type:"");
-  }
-
-  fileInput.onchange=function(e){
-    var file=e.target.files[0];
-    if(!file)return;
-    var reader=new FileReader();
-    reader.onload=function(ev){
-      imageMimeType=file.type||"image/jpeg";
-      imageBase64=ev.target.result.split(",")[1];
-      previewImg.src=ev.target.result;
-      previewImg.style.display="block";
-      dropZone.classList.add("has-image");
-      dropIcon.textContent="✓";
-      dropTitle.textContent=file.name;
-      dropSub.textContent="Ready to extract";
-      extractB.disabled=false;
-      extractB.style.opacity="1";
-      setStatus("Image loaded. Tap Extract to analyse with AI.","");
-    };
-    reader.readAsDataURL(file);
-  };
-
-  extractB.onclick=async function(){
-    if(!imageBase64){setStatus("Please upload an image first.","error");return;}
-
-    var apiKey=(localStorage.getItem("gemini_api_key")||"").trim();
-    if(!apiKey){
-      refreshKeyRow();
-      setStatus("Paste your Gemini API key above and tap Save first.","error");
-      extractB.disabled=false;extractB.style.opacity="1";
-      return;
-    }
-
-    extractB.disabled=true;extractB.textContent="Analysing...";
-    setStatus("Sending to Gemini AI — this takes about 10 seconds...","");
-
-    var today=new Date().getDay();
-    var dayIdx=today===0?6:today-1;
-    var todayDay=DAYS[dayIdx];
-
-    var prompt='You are a recipe extraction assistant. Analyse this recipe image and extract all information into a precise JSON object.\n\nRules:\n- Use ONLY these cuisine values: Peruvian, Mexican, Italian, Asian, American, Mediterranean, Middle Eastern, Other\n- Use ONLY these tag values (pick all that apply): High Protein, Quick, Meal Prep, Vegetarian, Vegan, Low Fat, Make Ahead, No Cook\n- Use ONLY these type values: Main Course, Breakfast, Appetizer, Side Dish, Dessert, Snack, Beverage, Other\n- schedule: set to ["'+todayDay+'"] as default\n- id: generate a short kebab-case string from the name (e.g. "chicken-tacos")\n- image: set to empty string ""\n- ingredients: object where keys are section names and values are arrays of ingredient strings\n- steps: array of strings, each a complete instruction\n- macros: object with calories, protein, carbs, fat as numbers, or null if not shown\n- CRITICAL: use plain ASCII fractions only: 1/2 not ½, 3/4 not ¾, 1/4 not ¼\n\nReturn ONLY valid JSON, no markdown, no explanation, no backticks. The JSON must match this exact structure:\n{"id":"","name":"","cuisine":"","tags":[],"type":"","schedule":[],"image":"","ingredients":{},"steps":[],"macros":null}';
-
-    try{
-      var response=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key="+encodeURIComponent(apiKey),{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-          contents:[{
-            parts:[
-              {inline_data:{mime_type:imageMimeType,data:imageBase64}},
-              {text:prompt}
-            ]
-          }],
-          generationConfig:{maxOutputTokens:2000,temperature:0.1}
-        })
-      });
-
-      if(!response.ok){
-        var errData=await response.json();
-        var errMsg=(errData.error&&errData.error.message)||"API error "+response.status;
-        if(response.status===400||response.status===403){
-          localStorage.removeItem("gemini_api_key");
-          errMsg="Invalid API key — cleared. Try again to re-enter.";
-        }
-        throw new Error(errMsg);
-      }
-
-      var data=await response.json();
-      var raw=data.candidates&&data.candidates[0]&&data.candidates[0].content&&data.candidates[0].content.parts
-        ?data.candidates[0].content.parts.map(function(p){return p.text||"";}).join("")
-        :"";
-      raw=raw.replace(/```json|```/g,"").trim();
-      var recipe=JSON.parse(raw);
-
-      if(!recipe.name)throw new Error("Could not extract recipe name from image.");
-      if(!recipe.id||recipe.id===""){
-        recipe.id=recipe.name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-      }
-      if(!Array.isArray(recipe.tags))recipe.tags=[];
-      if(!Array.isArray(recipe.steps))recipe.steps=[];
-      if(!Array.isArray(recipe.schedule))recipe.schedule=[todayDay];
-
-      setStatus("✦ Extracted: "+recipe.name+" — opening editor...","success");
-      setTimeout(function(){
-        ss({showAiImport:false,showEditor:true,editingRecipe:recipe});
-      },800);
-
-    } catch(err){
-      setStatus("Error: "+(err.message||"Load failed"),"error");
-      extractB.disabled=false;extractB.textContent="Extract & Fill";
-    }
-  };
-
-  sheet.append(handle,hdr,body,footer);
-  ov.appendChild(sheet);
-  ov.onclick=function(e){if(e.target===ov)ss({showAiImport:false});};
-  return ov;
-}
 
 // ── DEV VIEW ───────────────────────────────────────────────
 function buildDevView(){
@@ -1410,9 +1196,6 @@ function buildDevView(){
     {id:"planner",  label:"Planner",     sub:"S.view==='planner'",color:"purple",col:3,
      desc:"Full week view from today. Each day lists scheduled recipes. Tap to open detail.",
      actions:[{label:"Go to Planner",color:"purple",fn:function(){ss({showDevView:false,view:"planner"});}}]},
-    {id:"aiimport", label:"AI Import",   sub:"Claude Vision API",color:"gold",  col:4,
-     desc:"Upload recipe screenshot → sent to claude-sonnet-4-20250514 with vision → JSON extracted → editor pre-filled. Runs via Anthropic API.",
-     actions:[{label:"Open AI Import",color:"gold",fn:function(){ss({showDevView:false,showAiImport:true});}}]},
     {id:"editor",   label:"Recipe Editor",sub:"add / edit",     color:"blue",  col:4,
      desc:"Full recipe form. Name, image, cuisine, type, tags, schedule, sectioned ingredients, steps, macros. Saves via sbInsert or sbUpdate.",
      actions:[{label:"New Recipe",color:"blue",fn:function(){ss({showDevView:false,showEditor:true,editingRecipe:null});}}]},

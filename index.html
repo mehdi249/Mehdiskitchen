@@ -512,8 +512,8 @@ const SEED=[
 // ── SUPABASE ──────────────────────────────────────────────
 async function sbFetch(){try{const r=await fetch(`${SB_URL}/rest/v1/recipes?select=*&order=created_at.asc`,{headers:{...sbH,"Accept":"application/json"}});return r.ok?await r.json():null;}catch{return null;}}
 async function sbInsert(recipe){try{const r=await fetch(`${SB_URL}/rest/v1/recipes`,{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(recipe)});return r.ok;}catch{return false;}}
-async function sbUpdate(recipe){try{const r=await fetch(`${SB_URL}/rest/v1/recipes?id=eq.${recipe.id}`,{method:"PATCH",headers:sbH,body:JSON.stringify(recipe)});return r.ok;}catch{return false;}}
-async function sbDelete(id){try{const r=await fetch(`${SB_URL}/rest/v1/recipes?id=eq.${id}`,{method:"DELETE",headers:sbH});return r.ok;}catch{return false;}}
+async function sbUpdate(recipe){try{const body=Object.assign({},recipe);delete body.id;delete body.created_at;const r=await fetch(`${SB_URL}/rest/v1/recipes?id=eq.${encodeURIComponent(recipe.id)}`,{method:"PATCH",headers:{...sbH,"Prefer":"return=minimal"},body:JSON.stringify(body)});return r.ok;}catch{return false;}}
+async function sbDelete(id){try{const r=await fetch(`${SB_URL}/rest/v1/recipes?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:{...sbH,"Prefer":"return=minimal"}});return r.ok;}catch{return false;}}
 async function sbSeed(){try{await fetch(`${SB_URL}/rest/v1/recipes`,{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(SEED)});}catch{}}
 
 // ── STATE ─────────────────────────────────────────────────
@@ -1088,10 +1088,14 @@ function buildEditorModal(recipe){
 // ── DELETE ────────────────────────────────────────────────
 async function confirmDelete(id){
   if(confirm("Delete this recipe?")){
-    await sbDelete(id);
-    const recipes=await sbFetch();
-    ss({recipes:recipes||S.recipes,view:"home",selected:null});
-    showToast("Recipe deleted");
+    const ok=await sbDelete(id);
+    if(ok){
+      const recipes=await sbFetch();
+      ss({recipes:recipes||S.recipes,view:"home",selected:null});
+      showToast("Recipe deleted");
+    } else {
+      showToast("Failed to delete — check Supabase permissions");
+    }
   }
 }
 

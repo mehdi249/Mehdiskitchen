@@ -326,6 +326,7 @@ header{
 .ai-key-inp{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:10px 12px;color:var(--text);font-size:13px;outline:none;}
 .ai-key-inp:focus{border-color:var(--gold-border);}
 .ai-key-save{padding:10px 14px;border-radius:9px;background:var(--gold);color:#080808;font-size:13px;font-weight:600;flex-shrink:0;}
+.ai-change-key{font-size:11px;color:var(--text3);text-decoration:underline;cursor:pointer;margin-top:6px;display:none;}
 
 /* ── DEV VIEW ── */
 .dev-view-overlay{
@@ -1192,10 +1193,22 @@ function buildAiImportModal(){
   keyRow.append(keyInp,keySave);
   body.appendChild(keyRow);
 
+  var changeKeyLink=el("span","ai-change-key");
+  changeKeyLink.textContent="Change API key";
+  body.appendChild(changeKeyLink);
+
   function refreshKeyRow(){
-    keyRow.style.display=localStorage.getItem("gemini_api_key")?"none":"flex";
+    var hasKey=!!localStorage.getItem("gemini_api_key");
+    keyRow.style.display=hasKey?"none":"flex";
+    changeKeyLink.style.display=hasKey?"block":"none";
   }
   refreshKeyRow();
+
+  changeKeyLink.onclick=function(){
+    localStorage.removeItem("gemini_api_key");
+    refreshKeyRow();
+    setStatus("Key cleared — paste your new key above.","");
+  };
 
   keySave.onclick=function(){
     var v=keyInp.value.trim();

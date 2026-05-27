@@ -1402,7 +1402,10 @@ function initPullToRefresh(){
   window.addEventListener("touchstart",function(e){
     cancelled=false;
     var allowedView=S.view==="home"||S.view==="recipes";
-    if(allowedView&&window.scrollY===0){
+    // Require touch to start in top 30% of screen so scrolling up from the
+    // bottom of the page doesn't accidentally trigger pull-to-refresh
+    var inTopZone=e.touches[0].clientY<window.innerHeight*0.3;
+    if(allowedView&&window.scrollY===0&&inTopZone){
       startY=e.touches[0].pageY;
       startX=e.touches[0].pageX;
     } else {
@@ -1412,6 +1415,12 @@ function initPullToRefresh(){
 
   window.addEventListener("touchmove",function(e){
     if(startY===0)return;
+    // If page scrolled away from top mid-gesture, cancel
+    if(window.scrollY>0){
+      cancelled=true;
+      ptr.style.transform="translateY(-50px)";
+      ptr.style.opacity="0";
+    }
     currentY=e.touches[0].pageY;
     var deltaY=currentY-startY;
     var deltaX=e.touches[0].pageX-startX;

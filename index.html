@@ -1375,7 +1375,8 @@ function initPullToRefresh(){
 
   window.addEventListener("touchstart",function(e){
     cancelled=false;
-    if(window.scrollY===0){
+    var allowedView=S.view==="home"||S.view==="recipes";
+    if(allowedView&&window.scrollY===0){
       startY=e.touches[0].pageY;
       startX=e.touches[0].pageX;
     } else {

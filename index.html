@@ -322,6 +322,10 @@ header{
 .ai-status.error{border-color:rgba(224,85,85,0.3);color:var(--red);background:rgba(224,85,85,0.05);}
 .ai-status.success{border-color:var(--gold-border);color:var(--gold);background:var(--gold2);}
 .ai-import-footer{padding:14px 20px calc(14px + var(--safe-bot));border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0;}
+.ai-key-row{display:flex;gap:8px;margin-top:14px;align-items:center;}
+.ai-key-inp{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:10px 12px;color:var(--text);font-size:13px;outline:none;}
+.ai-key-inp:focus{border-color:var(--gold-border);}
+.ai-key-save{padding:10px 14px;border-radius:9px;background:var(--gold);color:#080808;font-size:13px;font-weight:600;flex-shrink:0;}
 
 /* ── DEV VIEW ── */
 .dev-view-overlay{
@@ -1178,6 +1182,30 @@ function buildAiImportModal(){
   previewImg.style.display="none";
   body.append(dropZone,previewImg);
 
+  // API key row (shown only when no key stored)
+  var keyRow=el("div","ai-key-row");
+  var keyInp=document.createElement("input");
+  keyInp.type="text";keyInp.className="ai-key-inp";
+  keyInp.placeholder="Paste Gemini API key…";
+  keyInp.autocomplete="off";keyInp.spellcheck=false;
+  var keySave=btn("Save","ai-key-save",null);
+  keyRow.append(keyInp,keySave);
+  body.appendChild(keyRow);
+
+  function refreshKeyRow(){
+    keyRow.style.display=localStorage.getItem("gemini_api_key")?"none":"flex";
+  }
+  refreshKeyRow();
+
+  keySave.onclick=function(){
+    var v=keyInp.value.trim();
+    if(!v){setStatus("Paste your Gemini API key above.","error");return;}
+    localStorage.setItem("gemini_api_key",v);
+    keyInp.value="";
+    refreshKeyRow();
+    setStatus("API key saved. Tap Extract & Fill.","");
+  };
+
   var status=el("div","ai-status");
   body.appendChild(status);
 
@@ -1220,12 +1248,12 @@ function buildAiImportModal(){
   extractB.onclick=async function(){
     if(!imageBase64){setStatus("Please upload an image first.","error");return;}
 
-    var apiKey=localStorage.getItem("gemini_api_key")||"";
+    var apiKey=(localStorage.getItem("gemini_api_key")||"").trim();
     if(!apiKey){
-      apiKey=prompt("Enter your Gemini API key (stored locally on this device only):");
-      if(!apiKey){setStatus("API key required to extract recipes.","error");return;}
-      localStorage.setItem("gemini_api_key",apiKey.trim());
-      apiKey=apiKey.trim();
+      refreshKeyRow();
+      setStatus("Paste your Gemini API key above and tap Save first.","error");
+      extractB.disabled=false;extractB.style.opacity="1";
+      return;
     }
 
     extractB.disabled=true;extractB.textContent="Analysing...";

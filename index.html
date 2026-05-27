@@ -226,6 +226,10 @@ header{
 .sched-pill{font-size:11px;font-weight:500;padding:6px 13px;border-radius:100px;border:1px solid var(--border2);color:var(--text2);background:var(--bg3);letter-spacing:0.06em;transition:all .18s;cursor:pointer;}
 .sched-pill.on{background:var(--gold2);border-color:var(--gold-border);color:var(--gold);}
 .sched-pill.saving{opacity:0.5;pointer-events:none;}
+.ing-hdr{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:14px;}
+.ing-hdr .d-sec-title{padding-bottom:0;border-bottom:none;margin-bottom:0;}
+.share-ing-btn{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;letter-spacing:0.04em;color:var(--gold);background:var(--gold2);border:1px solid var(--gold-border);border-radius:100px;padding:6px 12px;white-space:nowrap;}
+.share-ing-btn:active{opacity:.7;}
 .source-row{margin:10px 0 4px;}
 .source-row a{display:inline-flex;align-items:center;gap:6px;color:var(--gold);font-size:13px;font-weight:500;letter-spacing:0.03em;text-decoration:none;background:var(--gold2);border:1px solid var(--gold-border);border-radius:100px;padding:7px 14px;}
 .source-row a:active{opacity:.7;}
@@ -552,6 +556,20 @@ function showToast(msg){
   document.querySelectorAll(".toast").forEach(function(x){x.remove();});
   var t=el("div","toast");t.textContent=msg;document.body.appendChild(t);
   setTimeout(function(){t.remove();},3200);
+}
+function shareIngredients(recipe){
+  var lines=[recipe.name+"\n"];
+  Object.entries(recipe.ingredients).forEach(function(entry){
+    var section=entry[0];var items=entry[1];
+    if(section)lines.push("\n"+section+":");
+    items.forEach(function(item){lines.push("• "+item);});
+  });
+  var text=lines.join("\n");
+  if(navigator.share){
+    navigator.share({title:recipe.name+" — Ingredients",text:text});
+  } else {
+    navigator.clipboard.writeText(text).then(function(){showToast("✦ Copied to clipboard");});
+  }
 }
 function cutlerySVG(){
   var d=el("div","day-thumb-empty");
@@ -906,7 +924,11 @@ function buildDetail(recipe){
   // Ingredients
   if(recipe.ingredients&&Object.keys(recipe.ingredients).length){
     var sec=el("div","d-sec");
-    var st=el("p","d-sec-title");st.textContent="Ingredients";sec.appendChild(st);
+    var ingHdr=el("div","ing-hdr");
+    var st=el("p","d-sec-title");st.textContent="Ingredients";
+    var shareB=btn("","share-ing-btn",function(){shareIngredients(recipe);});
+    shareB.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3-3 3 3"/><path d="M12 8v8"/><rect x="3" y="14" width="18" height="7" rx="2"/></svg> Add to Grocery List';
+    ingHdr.append(st,shareB);sec.appendChild(ingHdr);
     Object.entries(recipe.ingredients).forEach(function(entry){
       var s=entry[0];var items=entry[1];
       if(s){var sub=el("p","d-sub");sub.textContent=s;sec.appendChild(sub);}
@@ -1217,7 +1239,7 @@ function buildDevView(){
      desc:"2-column grid. Search + cuisine/tag filter chips in header. Tap card → detail.",
      actions:[{label:"Go to Recipes",color:"gold",fn:function(){ss({showDevView:false,view:"recipes",selected:null});}}]},
     {id:"detail",   label:"Detail",      sub:"S.view==='detail'",color:"gold",  col:3,
-     desc:"Full recipe view. Hero image, macros grid, source link button (opens original Instagram/TikTok post), interactive schedule pills (saves to Supabase on tap). Edit/Delete in admin.",
+     desc:"Full recipe view. Hero image, macros grid, source link button (opens original Instagram/TikTok post), share ingredients button (iOS share sheet → Reminders/todo app), interactive schedule pills (saves to Supabase on tap). Edit/Delete in admin.",
      actions:[]},
     {id:"planner",  label:"Planner",     sub:"S.view==='planner'",color:"purple",col:3,
      desc:"Full week view from today. Each day lists scheduled recipes. Tap to open detail.",

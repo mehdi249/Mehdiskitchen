@@ -1266,7 +1266,7 @@ function buildAiImportModal(){
     var prompt='You are a recipe extraction assistant. Analyse this recipe image and extract all information into a precise JSON object.\n\nRules:\n- Use ONLY these cuisine values: Peruvian, Mexican, Italian, Asian, American, Mediterranean, Middle Eastern, Other\n- Use ONLY these tag values (pick all that apply): High Protein, Quick, Meal Prep, Vegetarian, Vegan, Low Fat, Make Ahead, No Cook\n- Use ONLY these type values: Main Course, Breakfast, Appetizer, Side Dish, Dessert, Snack, Beverage, Other\n- schedule: set to ["'+todayDay+'"] as default\n- id: generate a short kebab-case string from the name (e.g. "chicken-tacos")\n- image: set to empty string ""\n- ingredients: object where keys are section names and values are arrays of ingredient strings\n- steps: array of strings, each a complete instruction\n- macros: object with calories, protein, carbs, fat as numbers, or null if not shown\n- CRITICAL: use plain ASCII fractions only: 1/2 not ½, 3/4 not ¾, 1/4 not ¼\n\nReturn ONLY valid JSON, no markdown, no explanation, no backticks. The JSON must match this exact structure:\n{"id":"","name":"","cuisine":"","tags":[],"type":"","schedule":[],"image":"","ingredients":{},"steps":[],"macros":null}';
 
     try{
-      var response=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="+encodeURIComponent(apiKey),{
+      var response=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key="+encodeURIComponent(apiKey),{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({

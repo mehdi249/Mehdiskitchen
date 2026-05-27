@@ -4,14 +4,49 @@
 
 When fixing or writing `sbUpdate` (PATCH) and `sbDelete` (DELETE) calls:
 
-1. **Strip `id` and `created_at` from PATCH body** — send only the fields being updated, never the primary key or server-generated columns.
+1. **Strip `id`, `created_at`, and `source_url` from PATCH/POST bodies** — use `sbStrip(recipe, keepId)`. `source_url` is not a Supabase column; it lives in localStorage only.
 2. **Always add `Prefer: return=minimal`** to PATCH and DELETE requests — prevents PostgREST from doing an implicit SELECT on the result, which can fail under RLS even when the write itself is allowed.
 3. **Use `encodeURIComponent` on ID values** in URL filters (e.g. `?id=eq.${encodeURIComponent(recipe.id)}`).
 4. **Always check return values** of `sbDelete`/`sbUpdate` and show user-facing error feedback on failure — never silently proceed as if the operation succeeded.
 
 ## Adding Recipes from Screenshots
 
-When the user shares a recipe screenshot, extract it and add it to the `PENDING_RECIPES` array in `index.html` (just before `init()`), then commit and push to `main`. On next app refresh, `insertPending()` will call `sbInsert` (merge-duplicates) for each entry — idempotent, safe to leave permanently. Do NOT use the URL import approach; it has length/formatting issues on mobile.
+When the user shares a recipe screenshot, extract it and add it to the `PENDING_RECIPES` array in `index.html` (just before `init()`), then commit and push to `main`. On next app refresh, `insertPending()` will insert each entry using **`ignore-duplicates`** — this means existing records (including user-edited images and data) are **never overwritten**. Safe to leave permanently.
+
+**Critical:** `insertPending` must always use `resolution=ignore-duplicates`, NOT `merge-duplicates`. Using `merge-duplicates` overwrites user-edited fields (like image URLs) with the empty defaults in `PENDING_RECIPES`.
+
+Do NOT use the URL import approach; it has length/formatting issues on mobile.
+
+## source_url Field (Recipe Source Links)
+
+`source_url` is stored in **localStorage only** (key: `recipe_source_urls`, a `{id: url}` map) — it is NOT a column in the Supabase `recipes` table. 
+
+- `sbStrip()` always removes it before any Supabase PATCH or POST
+- `saveSourceUrl(id, url)` — persists to localStorage after a successful save
+- `getSourceUrl(id)` — reads from localStorage
+- In `buildDetail`, use `recipe.source_url || getSourceUrl(recipe.id)` to display the link
+- In `buildEditorModal`, pre-populate with `getSourceUrl(form.id)` for existing recipes
+
+If the Supabase `recipes` table ever gets a `source_url` text column added, remove the localStorage logic and let it flow through normally.
+
+## Protecting User-Edited Recipe Data
+
+User-edited fields (images, source links, schedule, etc.) stored in Supabase must never be overwritten by app updates. Rules:
+
+- `insertPending` → always `ignore-duplicates`
+- `sbSeed` → `merge-duplicates` is OK (only runs when DB is empty)
+- `sbInsert` from editor → `merge-duplicates` is OK (intentional user action)
+- Never add `image: ""` or other empty defaults to `PENDING_RECIPES` expecting them to be benign — they will overwrite real data if `merge-duplicates` is ever used
+
+## Pull-to-Refresh Behaviour
+
+PTR only activates when **both** conditions are true:
+1. `window.scrollY === 0` at touchstart
+2. The touch starts in the **top 30% of the screen** (`clientY < window.innerHeight * 0.3`)
+
+This prevents upward scroll gestures from the bottom of the page accidentally triggering refresh. A mid-gesture cancel also fires if `scrollY > 0` during touchmove.
+
+PTR is only enabled on `view === "home"` and `view === "recipes"`.
 
 ## Dev View Must Stay in Sync
 
@@ -21,3 +56,9 @@ The `buildDevView()` function in `index.html` contains a `NODES` array that docu
 - Removing a feature → remove its node entirely (don't leave stale entries)
 - Changing how something works → update the `desc` of the affected node(s)
 - Node columns: 0 = entry, 1 = data/Supabase, 2 = state, 3 = views, 4 = features/tools
+
+## Deployment
+
+- The app is served from the `main` branch
+- All feature branches must be merged to `main` before changes are visible in the app
+- Always push to `main` after completing a feature or fix

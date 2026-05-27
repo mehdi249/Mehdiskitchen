@@ -226,6 +226,10 @@ header{
 .sched-pill{font-size:11px;font-weight:500;padding:6px 13px;border-radius:100px;border:1px solid var(--border2);color:var(--text2);background:var(--bg3);letter-spacing:0.06em;transition:all .18s;cursor:pointer;}
 .sched-pill.on{background:var(--gold2);border-color:var(--gold-border);color:var(--gold);}
 .sched-pill.saving{opacity:0.5;pointer-events:none;}
+.source-row{margin:10px 0 4px;}
+.source-row a{display:inline-flex;align-items:center;gap:6px;color:var(--gold);font-size:13px;font-weight:500;letter-spacing:0.03em;text-decoration:none;background:var(--gold2);border:1px solid var(--gold-border);border-radius:100px;padding:7px 14px;}
+.source-row a:active{opacity:.7;}
+.source-icon{display:flex;align-items:center;}
 .d-sec{margin-bottom:26px;}
 .d-sec-title{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--text);padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:14px;letter-spacing:0.02em;}
 .d-sub{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin:14px 0 8px;}
@@ -853,6 +857,16 @@ function buildDetail(recipe){
     });
     top.appendChild(mb);
   }
+  // Source link
+  if(recipe.source_url){
+    var srcRow=el("div","source-row");
+    var srcA=document.createElement("a");
+    srcA.href=recipe.source_url;
+    srcA.target="_blank";srcA.rel="noopener noreferrer";
+    var srcIcon=el("span","source-icon");srcIcon.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+    var srcTxt=el("span");srcTxt.textContent="View Original Recipe";
+    srcA.append(srcIcon,srcTxt);srcRow.appendChild(srcA);top.appendChild(srcRow);
+  }
   // Schedule pills
   var schedWrap=el("div","sched-row");
   var schedLbl=el("p","sched-label");schedLbl.textContent="Schedule for";
@@ -985,7 +999,7 @@ function buildEditorModal(recipe){
   var isNew=!recipe;
   var form=recipe?JSON.parse(JSON.stringify(recipe)):{
     name:"",cuisine:"",tags:[],type:"Main Course",
-    schedule:[],image:"",ingredients:{"":[""]},steps:[""],macros:null
+    schedule:[],image:"",source_url:"",ingredients:{"":[""]},steps:[""],macros:null
   };
   var ov=el("div","overlay");
   var sheet=el("div","sheet editor-sheet");
@@ -1011,6 +1025,9 @@ function buildEditorModal(recipe){
       var p=document.createElement("img");p.src=form.image;p.className="img-prev";
       p.onerror=function(){p.remove();};s1.appendChild(p);
     }
+    s1.appendChild(Object.assign(el("label","flbl"),{textContent:"Source Link (Instagram, TikTok, etc.)"}));
+    var si=document.createElement("input");si.type="url";si.value=form.source_url||"";si.placeholder="https://www.instagram.com/reel/...";
+    si.oninput=function(e){form.source_url=e.target.value;};s1.appendChild(si);
     var tc=el("div","two");
     var cw=el("div");cw.appendChild(Object.assign(el("label","flbl"),{textContent:"Cuisine"}));
     var cs=document.createElement("select");
@@ -1191,13 +1208,13 @@ function buildDevView(){
      desc:"2-column grid. Search + cuisine/tag filter chips in header. Tap card → detail.",
      actions:[{label:"Go to Recipes",color:"gold",fn:function(){ss({showDevView:false,view:"recipes",selected:null});}}]},
     {id:"detail",   label:"Detail",      sub:"S.view==='detail'",color:"gold",  col:3,
-     desc:"Full recipe view. Hero image, macros grid, interactive schedule pills (saves to Supabase on tap). Edit/Delete in admin.",
+     desc:"Full recipe view. Hero image, macros grid, source link button (opens original Instagram/TikTok post), interactive schedule pills (saves to Supabase on tap). Edit/Delete in admin.",
      actions:[]},
     {id:"planner",  label:"Planner",     sub:"S.view==='planner'",color:"purple",col:3,
      desc:"Full week view from today. Each day lists scheduled recipes. Tap to open detail.",
      actions:[{label:"Go to Planner",color:"purple",fn:function(){ss({showDevView:false,view:"planner"});}}]},
     {id:"editor",   label:"Recipe Editor",sub:"add / edit",     color:"blue",  col:4,
-     desc:"Full recipe form. Name, image, cuisine, type, tags, schedule, sectioned ingredients, steps, macros. Saves via sbInsert or sbUpdate.",
+     desc:"Full recipe form. Name, image, source link, cuisine, type, tags, schedule, sectioned ingredients, steps, macros. Saves via sbInsert or sbUpdate.",
      actions:[{label:"New Recipe",color:"blue",fn:function(){ss({showDevView:false,showEditor:true,editingRecipe:null});}}]},
     {id:"urlimport",label:"URL Import",  sub:"?recipe= param",  color:"green", col:4,
      desc:"On init, checks for ?recipe= in URL. base64 decodes JSON, inserts to Supabase if not duplicate. Used when Claude adds recipes directly from a screenshot shared in chat.",

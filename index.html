@@ -228,8 +228,14 @@ header{
 .sched-pill.saving{opacity:0.5;pointer-events:none;}
 .ing-hdr{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:14px;}
 .ing-hdr .d-sec-title{padding-bottom:0;border-bottom:none;margin-bottom:0;}
+.ing-btns{display:flex;align-items:center;gap:6px;}
+.ing-setup-btn{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--bg2);border:1px solid var(--border2);color:var(--text2);}
+.ing-setup-btn:active{opacity:.7;}
 .share-ing-btn{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;letter-spacing:0.04em;color:var(--gold);background:var(--gold2);border:1px solid var(--gold-border);border-radius:100px;padding:6px 12px;white-space:nowrap;}
 .share-ing-btn:active{opacity:.7;}
+.grocery-step{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px;}
+.grocery-step-lbl{font-size:12px;font-weight:600;color:var(--gold);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:4px;}
+.grocery-step-desc{font-size:13px;color:var(--text2);line-height:1.55;}
 .source-row{margin:10px 0 4px;}
 .source-row a{display:inline-flex;align-items:center;gap:6px;color:var(--gold);font-size:13px;font-weight:500;letter-spacing:0.03em;text-decoration:none;background:var(--gold2);border:1px solid var(--gold-border);border-radius:100px;padding:7px 14px;}
 .source-row a:active{opacity:.7;}
@@ -557,19 +563,71 @@ function showToast(msg){
   var t=el("div","toast");t.textContent=msg;document.body.appendChild(t);
   setTimeout(function(){t.remove();},3200);
 }
+function getGroceryShortcut(){return localStorage.getItem("grocery_shortcut_name")||"";}
+function setGroceryShortcut(name){localStorage.setItem("grocery_shortcut_name",name.trim());}
+
 function shareIngredients(recipe){
-  var lines=[recipe.name+"\n"];
+  var items=[];
   Object.entries(recipe.ingredients).forEach(function(entry){
-    var section=entry[0];var items=entry[1];
-    if(section)lines.push("\n"+section+":");
-    items.forEach(function(item){lines.push("• "+item);});
+    entry[1].forEach(function(item){items.push(item);});
   });
-  var text=lines.join("\n");
-  if(navigator.share){
-    navigator.share({title:recipe.name+" — Ingredients",text:text});
-  } else {
-    navigator.clipboard.writeText(text).then(function(){showToast("✦ Copied to clipboard");});
-  }
+  var shortcut=getGroceryShortcut();
+  if(!shortcut){showGrocerySetup();return;}
+  var url="shortcuts://run-shortcut?name="+encodeURIComponent(shortcut)+"&input=text&text="+encodeURIComponent(items.join("\n"));
+  window.location.href=url;
+}
+
+function showGrocerySetup(){
+  var ov=el("div","overlay");
+  var sheet=el("div","sheet editor-sheet");
+  sheet.style.cssText+="max-height:90vh;";
+  var handle=el("div","sheet-handle");
+  var hdr=el("div","editor-hdr");
+  var title=el("h2","editor-title-text");title.textContent="Grocery List Setup";
+  var closeB=btn("x","close-x",function(){ov.remove();});
+  hdr.append(title,closeB);
+
+  var body=el("div","editor-body");
+  body.style.padding="20px";
+
+  var intro=el("p");intro.style.cssText="color:var(--text2);font-size:14px;line-height:1.6;margin-bottom:20px;";
+  intro.textContent="To send ingredients straight to your Reminders grocery list, you need to create one Shortcut in the Shortcuts app. It takes about 2 minutes and only needs to be done once.";
+  body.appendChild(intro);
+
+  var steps=[
+    ["1 — Open Shortcuts","Open the Shortcuts app on your iPhone and tap the + button to create a new shortcut."],
+    ["2 — Add 'Split Text' action","Search for 'Split Text'. Set the text to Shortcut Input and separator to New Lines."],
+    ["3 — Add 'Repeat with Each'","Search for 'Repeat with Each Item'. Use the Split Text result as the list."],
+    ["4 — Add 'Add New Reminder'","Inside the repeat, search for 'Add New Reminder'. Set the title to Repeat Item and choose your Grocery list."],
+    ["5 — Name the Shortcut","Tap the shortcut name at the top and give it any name. Then enter that same name below."],
+  ];
+  steps.forEach(function(s){
+    var block=el("div","grocery-step");
+    var lbl=el("p","grocery-step-lbl");lbl.textContent=s[0];
+    var desc=el("p","grocery-step-desc");desc.textContent=s[1];
+    block.append(lbl,desc);body.appendChild(block);
+  });
+
+  var lbl=el("label","flbl");lbl.textContent="Shortcut Name";lbl.style.marginTop="16px";
+  var inp=document.createElement("input");
+  inp.type="text";inp.placeholder='e.g. "Add to Grocery List"';
+  inp.value=getGroceryShortcut();
+  body.append(lbl,inp);
+
+  var footer=el("div","editor-footer");
+  var cancelB=btn("Cancel","sbtn-cancel",function(){ov.remove();});
+  var saveB=btn("Save & Done","sbtn-ok",function(){
+    var name=inp.value.trim();
+    if(!name){alert("Enter the shortcut name.");return;}
+    setGroceryShortcut(name);
+    ov.remove();
+    showToast("✦ Shortcut saved — tap the button to send ingredients");
+  });
+  footer.append(cancelB,saveB);
+  sheet.append(handle,hdr,body,footer);
+  ov.appendChild(sheet);
+  ov.onclick=function(e){if(e.target===ov)ov.remove();};
+  document.body.appendChild(ov);
 }
 function cutlerySVG(){
   var d=el("div","day-thumb-empty");
@@ -926,9 +984,14 @@ function buildDetail(recipe){
     var sec=el("div","d-sec");
     var ingHdr=el("div","ing-hdr");
     var st=el("p","d-sec-title");st.textContent="Ingredients";
+    var ingBtns=el("div","ing-btns");
     var shareB=btn("","share-ing-btn",function(){shareIngredients(recipe);});
     shareB.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3-3 3 3"/><path d="M12 8v8"/><rect x="3" y="14" width="18" height="7" rx="2"/></svg> Add to Grocery List';
-    ingHdr.append(st,shareB);sec.appendChild(ingHdr);
+    var setupB=btn("","ing-setup-btn",function(){showGrocerySetup();});
+    setupB.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+    setupB.title="Configure grocery shortcut";
+    ingBtns.append(shareB,setupB);
+    ingHdr.append(st,ingBtns);sec.appendChild(ingHdr);
     Object.entries(recipe.ingredients).forEach(function(entry){
       var s=entry[0];var items=entry[1];
       if(s){var sub=el("p","d-sub");sub.textContent=s;sec.appendChild(sub);}

@@ -1370,28 +1370,42 @@ async function confirmDelete(id){
 // ── PULL TO REFRESH ────────────────────────────────────────
 function initPullToRefresh(){
   var ptr=document.getElementById("ptr-indicator");
-  var startY=0;
-  var currentY=0;
+  var startY=0,startX=0,currentY=0;
+  var cancelled=false;
 
   window.addEventListener("touchstart",function(e){
-    if(window.scrollY===0){startY=e.touches[0].pageY;}
-    else{startY=0;}
+    cancelled=false;
+    if(window.scrollY===0){
+      startY=e.touches[0].pageY;
+      startX=e.touches[0].pageX;
+    } else {
+      startY=0;startX=0;
+    }
   },{passive:true});
 
   window.addEventListener("touchmove",function(e){
     if(startY===0)return;
     currentY=e.touches[0].pageY;
-    var diff=currentY-startY;
-    if(diff>0&&diff<80){
-      ptr.style.transform="translateY("+(diff-50)+"px)";
-      ptr.style.opacity=String(diff/80);
-      ptr.textContent=diff>60?"Release to refresh":"Pull to refresh";
+    var deltaY=currentY-startY;
+    var deltaX=e.touches[0].pageX-startX;
+    // Cancel if gesture is more horizontal than vertical
+    if(!cancelled&&Math.abs(deltaX)>Math.abs(deltaY)){
+      cancelled=true;
+      ptr.style.transform="translateY(-50px)";
+      ptr.style.opacity="0";
+    }
+    if(cancelled)return;
+    if(deltaY>0&&deltaY<80){
+      ptr.style.transform="translateY("+(deltaY-50)+"px)";
+      ptr.style.opacity=String(deltaY/80);
+      ptr.textContent=deltaY>60?"Release to refresh":"Pull to refresh";
     }
   },{passive:true});
 
   window.addEventListener("touchend",async function(){
     var diff=currentY-startY;
-    startY=0;currentY=0;
+    startY=0;startX=0;currentY=0;
+    if(cancelled){cancelled=false;return;}
     if(diff>60){
       ptr.textContent="Refreshing...";
       ptr.style.transform="translateY(0px)";

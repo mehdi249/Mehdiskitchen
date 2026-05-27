@@ -1421,11 +1421,33 @@ function initPullToRefresh(){
 }
 
 // ── INIT ───────────────────────────────────────────────────
+// ── PENDING RECIPES ────────────────────────────────────────
+// Claude adds recipes here from screenshots. Inserted on every
+// load via merge-duplicates (safe to leave in permanently).
+const PENDING_RECIPES=[
+  {id:"chipotle-honey-chicken-tacos",name:"Chipotle Honey Chicken Tacos",cuisine:"Mexican",tags:["High Protein"],type:"Main Course",schedule:[],image:"",
+   ingredients:{
+     "Chipotle Honey Chicken":["2 lbs (907g) raw boneless skinless chicken thighs","3 chipotle peppers in adobo","3 tbsp adobo sauce","2 tbsp honey","juice of 2 limes","5 garlic cloves","1 1/2 tbsp olive oil","1 tsp salt","1/2 tsp pepper"],
+     "For The Cheese Pull":["2 cups reduced-fat mozzarella"],
+     "Tacos":["6 low cal tortilla wraps (slightly bigger than street taco size)","cilantro","pico"],
+     "Insane Green Goddess Sauce":["3/4 cup (170g) nonfat Greek yogurt","1/2 packed cup cilantro","juice of 2 limes","1/4 cup mild pickled jalapeno","1 garlic clove","salt & pepper","splash of water"]
+   },
+   steps:["Blend chipotle peppers, adobo sauce, honey, lime juice, garlic, olive oil, salt and pepper into a smooth marinade.","Coat chicken thighs in the marinade and let sit for at least 20 minutes.","Sear chicken in a hot pan 5-7 min per side until cooked through and caramelised. Rest, then slice.","Blend all green goddess sauce ingredients until completely smooth.","Warm tortillas, layer with sliced chicken and mozzarella, top with pico, cilantro and green goddess sauce."],
+   macros:{calories:342,protein:34,carbs:11,fat:18}}
+];
+
+async function insertPending(){
+  if(!PENDING_RECIPES.length)return;
+  for(var i=0;i<PENDING_RECIPES.length;i++){await sbInsert(PENDING_RECIPES[i]);}
+}
+
 async function init(){
   render();
   initPullToRefresh();
   var recipes=await sbFetch();
   if(!recipes||recipes.length===0){await sbSeed();recipes=await sbFetch();}
+  await insertPending();
+  recipes=await sbFetch()||recipes;
   recipes=await checkUrlImport(recipes||[]);
   ss({recipes:recipes||[],loading:false});
 }

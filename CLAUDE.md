@@ -9,6 +9,10 @@ When fixing or writing `sbUpdate` (PATCH) and `sbDelete` (DELETE) calls:
 3. **Use `encodeURIComponent` on ID values** in URL filters (e.g. `?id=eq.${encodeURIComponent(recipe.id)}`).
 4. **Always check return values** of `sbDelete`/`sbUpdate` and show user-facing error feedback on failure — never silently proceed as if the operation succeeded.
 
+## Adding Recipes from Screenshots
+
+When the user shares a recipe screenshot, extract it and add it to the `PENDING_RECIPES` array in `index.html` (just before `init()`), then commit and push to `main`. On next app refresh, `insertPending()` will call `sbInsert` (merge-duplicates) for each entry — idempotent, safe to leave permanently. Do NOT use the URL import approach; it has length/formatting issues on mobile.
+
 ## Dev View Must Stay in Sync
 
 The `buildDevView()` function in `index.html` contains a `NODES` array that documents the app's architecture. **Every time a feature is added, removed, or meaningfully changed, update the relevant node(s) before committing.** Rules:

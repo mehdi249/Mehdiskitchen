@@ -476,18 +476,21 @@ async function sbFetch(){
     return r.ok?await r.json():null;
   }catch{return null;}
 }
+function sbStrip(obj,keepId){
+  var b=Object.assign({},obj);
+  if(!keepId)delete b.id;
+  delete b.created_at;delete b.source_url;
+  return b;
+}
 async function sbInsert(recipe){
   try{
-    const r=await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(recipe)});
+    const r=await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(sbStrip(recipe,true))});
     return r.ok;
   }catch{return false;}
 }
 async function sbUpdate(recipe){
   try{
-    const body=Object.assign({},recipe);
-    delete body.id;
-    delete body.created_at;
-    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(recipe.id),{method:"PATCH",headers:{...sbH,"Prefer":"return=minimal"},body:JSON.stringify(body)});
+    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(recipe.id),{method:"PATCH",headers:{...sbH,"Prefer":"return=minimal"},body:JSON.stringify(sbStrip(recipe,false))});
     return r.ok;
   }catch{return false;}
 }
@@ -502,6 +505,9 @@ async function sbSeed(){
     await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(SEED)});
   }catch{}
 }
+function getSourceUrls(){try{return JSON.parse(localStorage.getItem("recipe_source_urls")||"{}");}catch{return {};}}
+function saveSourceUrl(id,url){var m=getSourceUrls();if(url)m[id]=url;else delete m[id];localStorage.setItem("recipe_source_urls",JSON.stringify(m));}
+function getSourceUrl(id){return getSourceUrls()[id]||"";}
 
 // ── STATE ──────────────────────────────────────────────────
 var S={
@@ -858,10 +864,11 @@ function buildDetail(recipe){
     top.appendChild(mb);
   }
   // Source link
-  if(recipe.source_url){
+  var _srcUrl=recipe.source_url||getSourceUrl(recipe.id);
+  if(_srcUrl){
     var srcRow=el("div","source-row");
     var srcA=document.createElement("a");
-    srcA.href=recipe.source_url;
+    srcA.href=_srcUrl;
     srcA.target="_blank";srcA.rel="noopener noreferrer";
     var srcIcon=el("span","source-icon");srcIcon.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
     var srcTxt=el("span");srcTxt.textContent="View Original Recipe";
@@ -1001,6 +1008,7 @@ function buildEditorModal(recipe){
     name:"",cuisine:"",tags:[],type:"Main Course",
     schedule:[],image:"",source_url:"",ingredients:{"":[""]},steps:[""],macros:null
   };
+  if(form.id&&!form.source_url)form.source_url=getSourceUrl(form.id);
   var ov=el("div","overlay");
   var sheet=el("div","sheet editor-sheet");
   var handle=el("div","sheet-handle");
@@ -1122,6 +1130,7 @@ function buildEditorModal(recipe){
     saveB.textContent="Saving...";saveB.disabled=true;
     var ok=(!isNew)?await sbUpdate(form):await sbInsert(form);
     if(ok){
+      saveSourceUrl(form.id,form.source_url||"");
       var recipes=await sbFetch();
       ss({recipes:recipes||S.recipes,showEditor:false,editingRecipe:null});
       showToast(isNew?"✦ Recipe added":"✦ Changes saved");
@@ -1488,7 +1497,10 @@ const PENDING_RECIPES=[
 
 async function insertPending(){
   if(!PENDING_RECIPES.length)return;
-  for(var i=0;i<PENDING_RECIPES.length;i++){await sbInsert(PENDING_RECIPES[i]);}
+  for(var i=0;i<PENDING_RECIPES.length;i++){
+    var body=sbStrip(PENDING_RECIPES[i],true);
+    try{await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=ignore-duplicates"},body:JSON.stringify(body)});}catch{}
+  }
 }
 
 async function init(){

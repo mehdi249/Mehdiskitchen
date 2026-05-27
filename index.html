@@ -1217,6 +1217,15 @@ function buildAiImportModal(){
 
   extractB.onclick=async function(){
     if(!imageBase64){setStatus("Please upload an image first.","error");return;}
+
+    var apiKey=localStorage.getItem("anthropic_api_key")||"";
+    if(!apiKey){
+      apiKey=prompt("Enter your Anthropic API key (stored locally on this device only):");
+      if(!apiKey){setStatus("API key required to extract recipes.","error");return;}
+      localStorage.setItem("anthropic_api_key",apiKey.trim());
+      apiKey=apiKey.trim();
+    }
+
     extractB.disabled=true;extractB.textContent="Analysing...";
     setStatus("Sending to Claude AI — this takes about 10 seconds...","");
 
@@ -1229,9 +1238,14 @@ function buildAiImportModal(){
     try{
       var response=await fetch("https://api.anthropic.com/v1/messages",{
         method:"POST",
-        headers:{"Content-Type":"application/json"},
+        headers:{
+          "Content-Type":"application/json",
+          "x-api-key":apiKey,
+          "anthropic-version":"2023-06-01",
+          "anthropic-dangerous-direct-browser-access":"true"
+        },
         body:JSON.stringify({
-          model:"claude-sonnet-4-20250514",
+          model:"claude-sonnet-4-5",
           max_tokens:2000,
           messages:[{
             role:"user",
@@ -1273,7 +1287,12 @@ function buildAiImportModal(){
       },800);
 
     } catch(err){
-      setStatus("Error: "+err.message,"error");
+      var msg=err.message||"Load failed";
+      if(msg.includes("401")||msg.includes("invalid_api_key")||msg.includes("authentication")){
+        localStorage.removeItem("anthropic_api_key");
+        msg="Invalid API key — it has been cleared. Try again to re-enter it.";
+      }
+      setStatus("Error: "+msg,"error");
       extractB.disabled=false;extractB.textContent="Extract & Fill";
     }
   };

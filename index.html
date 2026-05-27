@@ -55,7 +55,7 @@ header{
 }
 .hdr{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;}
 
-/* ── LOGO (original ✦ style) ── */
+/* ── LOGO ── */
 .logo{display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;}
 .logo-mark{color:var(--gold);font-size:13px;line-height:1;}
 .logo-text{font-family:var(--serif);font-size:20px;font-weight:400;letter-spacing:0.04em;color:var(--text);}
@@ -69,7 +69,17 @@ header{
 .admin-btn.on{border-color:var(--gold-border);color:var(--gold);background:var(--gold2);}
 .admin-btn:active{opacity:.75;}
 
-/* Search bar (recipes page only) */
+/* Refresh button */
+.refresh-btn{
+  width:34px;height:34px;border-radius:50%;
+  border:1px solid var(--border2);color:var(--text2);
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;flex-shrink:0;
+}
+.refresh-btn:active{opacity:.6;transform:rotate(180deg);}
+.refresh-btn.spinning svg{animation:rot .7s linear infinite;}
+
+/* Search bar */
 .search-wrap{padding:0 16px 12px;}
 .search-inner{
   display:flex;align-items:center;gap:10px;
@@ -112,11 +122,7 @@ header{
 }
 .bnav-item.on{color:var(--gold);}
 .bnav-item:active{opacity:.6;}
-.bnav-icon{
-  width:20px;height:20px;
-  display:flex;align-items:center;justify-content:center;
-}
-/* SVG icons */
+.bnav-icon{width:20px;height:20px;display:flex;align-items:center;justify-content:center;}
 .bnav-add{
   width:48px;height:48px;border-radius:14px;
   background:linear-gradient(145deg,#c8a96e 0%,#9a7340 100%);
@@ -129,174 +135,87 @@ header{
 
 /* ── HOME PAGE ── */
 .home-wrap{padding:20px 0 0;}
-
-/* Week section */
 .sec-hdr{display:flex;align-items:baseline;justify-content:space-between;padding:0 20px;margin-bottom:14px;}
 .sec-title{font-family:var(--serif);font-size:24px;font-weight:400;letter-spacing:0.02em;}
 .sec-title span{font-size:13px;color:var(--text2);font-family:var(--sans);font-weight:400;margin-left:6px;letter-spacing:0;}
 .sec-link{font-size:12px;color:var(--gold);font-weight:500;letter-spacing:0.06em;text-transform:uppercase;}
 
-.week-row{
-  display:flex;gap:10px;overflow-x:auto;
-  padding:0 20px 4px;scrollbar-width:none;
-}
+.week-row{display:flex;gap:10px;overflow-x:auto;padding:0 20px 4px;scrollbar-width:none;}
 .week-row::-webkit-scrollbar{display:none;}
-
 .day-tile{
   flex-shrink:0;width:120px;border-radius:14px;
   border:1px solid var(--border);background:var(--bg2);
-  overflow:hidden;cursor:pointer;
-  transition:border-color .18s,transform .18s;
+  overflow:hidden;cursor:pointer;transition:border-color .18s,transform .18s;
 }
 .day-tile:active{transform:scale(.97);}
 .day-tile.today{border-color:var(--gold-border);}
 .day-tile.has-recipe{border-color:var(--border2);}
 .day-tile.today.has-recipe{border-color:var(--gold);}
 .day-thumb{width:100%;height:72px;object-fit:cover;background:var(--bg3);}
-.day-thumb-empty{
-  width:100%;height:72px;background:var(--bg3);
-  display:flex;align-items:center;justify-content:center;
-}
-/* Elegant fork/knife SVG placeholder */
+.day-thumb-empty{width:100%;height:72px;background:var(--bg3);display:flex;align-items:center;justify-content:center;}
 .cutlery{width:18px;height:18px;stroke:var(--text3);stroke-width:1.5;fill:none;}
 .day-foot{padding:8px 10px 10px;}
-.day-label{
-  font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--gold);margin-bottom:3px;
-}
+.day-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:3px;}
 .day-tile.today .day-label{color:var(--gold);}
-.day-rname{
-  font-family:var(--serif);font-size:12px;line-height:1.3;color:var(--text);
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-}
+.day-rname{font-family:var(--serif);font-size:12px;line-height:1.3;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .day-empty-lbl{font-size:11px;color:var(--text3);font-style:italic;}
 
-/* Saved recipes section */
 .recipes-section{padding:26px 0 0;}
 .recipe-col{display:flex;flex-direction:column;gap:12px;padding:0 16px;}
 
-/* ── RECIPE CARD (original style: horizontal) ── */
-.rcard{
-  display:flex;border-radius:14px;overflow:hidden;
-  border:1px solid var(--border);background:var(--bg2);
-  cursor:pointer;transition:border-color .18s,transform .18s;
-}
+/* ── RECIPE CARD ── */
+.rcard{display:flex;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--bg2);cursor:pointer;transition:border-color .18s,transform .18s;}
 .rcard:active{transform:scale(.99);border-color:var(--border2);}
-.rcard-img{
-  width:100px;flex-shrink:0;
-  background:var(--bg3);overflow:hidden;position:relative;
-}
+.rcard-img{width:100px;flex-shrink:0;background:var(--bg3);overflow:hidden;position:relative;}
 .rcard-img img{width:100%;height:100%;object-fit:cover;}
-.rcard-img-fb{
-  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
-}
+.rcard-img-fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
 .rcard-body{flex:1;padding:13px 14px;display:flex;flex-direction:column;justify-content:space-between;min-width:0;}
 .rcard-top{margin-bottom:6px;}
-.rcard-cuisine{
-  font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
-  margin-bottom:4px;
-}
-.rcard-name{
-  font-family:var(--serif);font-size:16px;font-weight:400;line-height:1.3;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-}
+.rcard-cuisine{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;}
+.rcard-name{font-family:var(--serif);font-size:16px;font-weight:400;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .rcard-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:7px;}
-.rcard-tag{
-  font-size:10px;font-weight:500;padding:3px 9px;border-radius:100px;
-  border:1px solid var(--border2);color:var(--text2);letter-spacing:0.03em;
-}
+.rcard-tag{font-size:10px;font-weight:500;padding:3px 9px;border-radius:100px;border:1px solid var(--border2);color:var(--text2);letter-spacing:0.03em;}
 .rcard-tag.gold{border-color:var(--gold-border);color:var(--gold);background:var(--gold2);}
 .rcard-type{font-size:11px;color:var(--text3);font-style:italic;font-family:var(--serif);}
-.rcard-day{
-  font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
-  color:var(--text3);
-}
+.rcard-day{font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);}
 
 /* ── RECIPES GRID PAGE ── */
 .grid-wrap{padding:16px;}
 .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.gcard{
-  border-radius:14px;overflow:hidden;border:1px solid var(--border);
-  background:var(--bg2);cursor:pointer;transition:transform .18s,border-color .18s;
-}
+.gcard{border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--bg2);cursor:pointer;transition:transform .18s,border-color .18s;}
 .gcard:active{transform:scale(.98);}
 .gcard-img{position:relative;height:130px;overflow:hidden;background:var(--bg3);}
 .gcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
 .gcard:active .gcard-img img{transform:scale(1.04);}
 .gcard-img-fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
-.gcard-bar{
-  position:absolute;bottom:0;left:0;right:0;
-  background:linear-gradient(transparent,rgba(0,0,0,0.65));
-  padding:18px 10px 7px;
-  display:flex;align-items:center;gap:5px;
-}
+.gcard-bar{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.65));padding:18px 10px 7px;display:flex;align-items:center;gap:5px;}
 .cuisine-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 .cuisine-lbl{font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;}
 .gcard-body{padding:10px 11px 12px;}
-.gcard-name{
-  font-family:var(--serif);font-size:15px;font-weight:400;line-height:1.3;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-  margin-bottom:7px;
-}
+.gcard-name{font-family:var(--serif);font-size:15px;font-weight:400;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:7px;}
 .gcard-tags{display:flex;flex-wrap:wrap;gap:4px;}
-.gtag{
-  font-size:10px;padding:2px 8px;border-radius:100px;
-  border:1px solid var(--border2);color:var(--text2);
-}
+.gtag{font-size:10px;padding:2px 8px;border-radius:100px;border:1px solid var(--border2);color:var(--text2);}
 .gtag.gold{border-color:var(--gold-border);color:var(--gold);background:var(--gold2);}
 
 /* ── DETAIL PAGE ── */
 .detail-hero{position:relative;height:280px;overflow:hidden;background:var(--bg3);}
 .detail-hero img{width:100%;height:100%;object-fit:cover;}
-.detail-hero-grad{
-  position:absolute;inset:0;
-  background:linear-gradient(to bottom,rgba(8,8,8,0.35) 0%,transparent 45%,rgba(8,8,8,0.92) 100%);
-}
-.detail-back{
-  position:absolute;top:calc(14px + var(--safe-top));left:18px;
-  width:36px;height:36px;border-radius:50%;
-  background:rgba(8,8,8,0.55);backdrop-filter:blur(12px);
-  display:flex;align-items:center;justify-content:center;color:var(--text);
-}
+.detail-hero-grad{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(8,8,8,0.35) 0%,transparent 45%,rgba(8,8,8,0.92) 100%);}
+.detail-back{position:absolute;top:calc(14px + var(--safe-top));left:18px;width:36px;height:36px;border-radius:50%;background:rgba(8,8,8,0.55);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;color:var(--text);}
 .back-svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;}
-.detail-admin-row{
-  position:absolute;top:calc(14px + var(--safe-top));right:18px;
-  display:flex;gap:8px;
-}
-.d-btn{
-  padding:6px 14px;border-radius:100px;font-size:12px;font-weight:500;
-  backdrop-filter:blur(12px);letter-spacing:0.04em;
-}
+.detail-admin-row{position:absolute;top:calc(14px + var(--safe-top));right:18px;display:flex;gap:8px;}
+.d-btn{padding:6px 14px;border-radius:100px;font-size:12px;font-weight:500;backdrop-filter:blur(12px);letter-spacing:0.04em;}
 .d-btn.edit{background:rgba(8,8,8,0.55);color:var(--text);}
 .d-btn.del{background:rgba(224,85,85,0.18);color:var(--red);}
 .detail-body{padding:0 20px 32px;}
 .detail-top{padding:18px 0 16px;}
 .detail-meta-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
-.d-cuisine{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:4px 12px;border-radius:100px;
-  border:1px solid var(--border2);background:var(--bg3);
-  font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
-}
-.d-type{
-  padding:4px 12px;border-radius:100px;
-  border:1px solid var(--border2);background:var(--bg3);
-  font-size:12px;color:var(--text2);font-style:italic;font-family:var(--serif);
-}
-.detail-title{
-  font-family:var(--serif);font-size:30px;font-weight:400;line-height:1.15;
-  letter-spacing:0.01em;margin-bottom:12px;
-}
+.d-cuisine{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;border:1px solid var(--border2);background:var(--bg3);font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;}
+.d-type{padding:4px 12px;border-radius:100px;border:1px solid var(--border2);background:var(--bg3);font-size:12px;color:var(--text2);font-style:italic;font-family:var(--serif);}
+.detail-title{font-family:var(--serif);font-size:30px;font-weight:400;line-height:1.15;letter-spacing:0.01em;margin-bottom:12px;}
 .detail-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;}
-.d-tag{
-  padding:4px 12px;border-radius:100px;font-size:11px;font-weight:500;
-  border:1px solid var(--gold-border);color:var(--gold);background:var(--gold2);
-}
-.macros-row{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:14px;overflow:hidden;margin-bottom:22px;
-}
+.d-tag{padding:4px 12px;border-radius:100px;font-size:11px;font-weight:500;border:1px solid var(--gold-border);color:var(--gold);background:var(--gold2);}
+.macros-row{display:grid;grid-template-columns:repeat(4,1fr);background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:22px;}
 .mac{padding:12px 6px;text-align:center;border-right:1px solid var(--border);}
 .mac:last-child{border-right:none;}
 .mac-v{font-family:var(--serif);font-size:22px;font-weight:400;color:var(--gold);display:block;}
@@ -304,63 +223,27 @@ header{
 .sched-row{margin-bottom:22px;}
 .sched-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text2);margin-bottom:8px;}
 .sched-days{display:flex;gap:6px;flex-wrap:wrap;}
-.sched-pill{
-  font-size:11px;font-weight:500;padding:6px 13px;border-radius:100px;
-  border:1px solid var(--border2);color:var(--text2);background:var(--bg3);
-  letter-spacing:0.06em;transition:all .18s;cursor:pointer;
-}
-.sched-pill.on{
-  background:var(--gold2);border-color:var(--gold-border);color:var(--gold);
-}
+.sched-pill{font-size:11px;font-weight:500;padding:6px 13px;border-radius:100px;border:1px solid var(--border2);color:var(--text2);background:var(--bg3);letter-spacing:0.06em;transition:all .18s;cursor:pointer;}
+.sched-pill.on{background:var(--gold2);border-color:var(--gold-border);color:var(--gold);}
 .sched-pill.saving{opacity:0.5;pointer-events:none;}
 .d-sec{margin-bottom:26px;}
-.d-sec-title{
-  font-family:var(--serif);font-size:18px;font-weight:400;color:var(--text);
-  padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:14px;
-  letter-spacing:0.02em;
-}
-.d-sub{
-  font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
-  color:var(--gold);margin:14px 0 8px;
-}
-.ing-row{
-  display:flex;align-items:flex-start;gap:10px;
-  padding:7px 0;border-bottom:1px solid var(--border);
-  font-size:14px;line-height:1.5;
-}
+.d-sec-title{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--text);padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:14px;letter-spacing:0.02em;}
+.d-sub{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin:14px 0 8px;}
+.ing-row{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:14px;line-height:1.5;}
 .ing-row:last-child{border:none;}
-.ing-bullet{
-  width:4px;height:4px;border-radius:50%;background:var(--gold);
-  margin-top:8px;flex-shrink:0;opacity:0.7;
-}
+.ing-bullet{width:4px;height:4px;border-radius:50%;background:var(--gold);margin-top:8px;flex-shrink:0;opacity:0.7;}
 .step-r{display:flex;gap:16px;margin-bottom:18px;align-items:flex-start;}
-.step-n{
-  font-family:var(--serif);font-size:28px;font-weight:300;color:var(--gold);
-  opacity:0.5;line-height:1;min-width:28px;margin-top:-2px;
-}
+.step-n{font-family:var(--serif);font-size:28px;font-weight:300;color:var(--gold);opacity:0.5;line-height:1;min-width:28px;margin-top:-2px;}
 .step-t{font-size:14px;line-height:1.65;color:var(--text);padding-top:3px;}
 
-/* ── PLANNER FULL ── */
+/* ── PLANNER ── */
 .planner-wrap{padding:20px 16px;}
 .pl-day{margin-bottom:18px;}
-.pl-day-hdr{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:9px 14px;background:var(--bg2);border:1px solid var(--border);
-  border-radius:11px;margin-bottom:8px;
-}
+.pl-day-hdr{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:11px;margin-bottom:8px;}
 .pl-day-name{font-size:13px;font-weight:500;color:var(--text2);letter-spacing:0.04em;}
 .pl-day-name.today{color:var(--gold);}
-.today-badge{
-  font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--gold);border:1px solid var(--gold-border);
-  background:var(--gold2);padding:2px 8px;border-radius:100px;
-}
-.pl-recipe{
-  display:flex;align-items:center;gap:12px;
-  padding:10px 12px;background:var(--bg2);
-  border:1px solid var(--border2);border-radius:12px;
-  cursor:pointer;transition:border-color .15s;
-}
+.today-badge{font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold-border);background:var(--gold2);padding:2px 8px;border-radius:100px;}
+.pl-recipe{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;cursor:pointer;transition:border-color .15s;}
 .pl-recipe:active{border-color:var(--gold-border);}
 .pl-thumb{width:46px;height:46px;border-radius:9px;object-fit:cover;flex-shrink:0;background:var(--bg3);}
 .pl-name{font-family:var(--serif);font-size:15px;flex:1;}
@@ -368,104 +251,187 @@ header{
 .pl-none{font-size:13px;color:var(--text3);padding:4px 2px;font-style:italic;font-family:var(--serif);}
 
 /* ── MODALS ── */
-.overlay{
-  position:fixed;inset:0;z-index:200;
-  background:rgba(0,0,0,0.72);backdrop-filter:blur(10px);
-  display:flex;align-items:flex-end;justify-content:center;
-}
-.sheet{
-  background:var(--bg2);border:1px solid var(--border2);
-  border-radius:22px 22px 0 0;
-  width:100%;max-width:520px;
-}
+.overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.72);backdrop-filter:blur(10px);display:flex;align-items:flex-end;justify-content:center;}
+.sheet{background:var(--bg2);border:1px solid var(--border2);border-radius:22px 22px 0 0;width:100%;max-width:520px;}
 .sheet-handle{width:36px;height:3px;background:var(--border2);border-radius:2px;margin:14px auto 0;}
+
 /* PIN */
 .pin-sheet{padding:28px 24px calc(28px + var(--safe-bot));}
 .pin-title{font-family:var(--serif);font-size:22px;font-weight:400;margin-bottom:6px;letter-spacing:0.02em;}
 .pin-sub{font-size:13px;color:var(--text2);margin-bottom:22px;}
-.pin-input{
-  font-size:26px;letter-spacing:10px;text-align:center;
-  padding:15px;border-radius:12px;width:100%;
-  border:1.5px solid var(--border2);background:var(--bg3);
-  color:var(--text);font-family:var(--sans);font-weight:600;
-  margin-bottom:6px;
-}
+.pin-input{font-size:26px;letter-spacing:10px;text-align:center;padding:15px;border-radius:12px;width:100%;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text);font-family:var(--sans);font-weight:600;margin-bottom:6px;}
 .pin-input.err{border-color:var(--red);}
 .pin-err{font-size:12px;color:var(--red);text-align:center;min-height:18px;margin-bottom:14px;}
 .sheet-btns{display:flex;gap:10px;}
-.sbtn-cancel{
-  flex:1;padding:14px;border-radius:11px;
-  border:1px solid var(--border2);color:var(--text2);font-size:14px;
-}
-.sbtn-ok{
-  flex:2;padding:14px;border-radius:11px;
-  background:var(--gold);color:#080808;font-size:14px;font-weight:600;
-}
+.sbtn-cancel{flex:1;padding:14px;border-radius:11px;border:1px solid var(--border2);color:var(--text2);font-size:14px;}
+.sbtn-ok{flex:2;padding:14px;border-radius:11px;background:var(--gold);color:#080808;font-size:14px;font-weight:600;}
 .sbtn-ok:active{opacity:.85;}
 
 /* EDITOR */
 .editor-sheet{max-height:92vh;display:flex;flex-direction:column;}
-.editor-hdr{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:18px 20px 14px;border-bottom:1px solid var(--border);flex-shrink:0;
-}
+.editor-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--border);flex-shrink:0;}
 .editor-title-text{font-family:var(--serif);font-size:20px;font-weight:400;letter-spacing:0.02em;}
-.close-x{
-  width:30px;height:30px;border-radius:50%;
-  background:var(--bg3);color:var(--text2);
-  display:flex;align-items:center;justify-content:center;font-size:17px;
-}
+.close-x{width:30px;height:30px;border-radius:50%;background:var(--bg3);color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:17px;}
 .editor-body{flex:1;overflow-y:auto;padding:18px 20px;}
 .esec{margin-bottom:22px;}
-.esec-title{
-  font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
-  color:var(--gold);margin-bottom:10px;
-}
+.esec-title{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
 .flbl{display:block;font-size:12px;color:var(--text2);margin-bottom:5px;margin-top:10px;}
 .flbl:first-child{margin-top:0;}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .tgrid{display:flex;flex-wrap:wrap;gap:6px;}
-.ttog{
-  padding:5px 13px;border-radius:100px;font-size:12px;
-  border:1px solid var(--border2);color:var(--text2);
-  transition:all .12s;
-}
+.ttog{padding:5px 13px;border-radius:100px;font-size:12px;border:1px solid var(--border2);color:var(--text2);transition:all .12s;}
 .ttog.on{border-color:var(--gold-border);color:var(--gold);background:var(--gold2);}
-.dtog{
-  padding:5px 11px;border-radius:100px;font-size:12px;
-  border:1px solid var(--border2);color:var(--text2);
-  transition:all .12s;letter-spacing:0.03em;
-}
+.dtog{padding:5px 11px;border-radius:100px;font-size:12px;border:1px solid var(--border2);color:var(--text2);transition:all .12s;letter-spacing:0.03em;}
 .dtog.on{border-color:var(--gold-border);color:var(--gold);background:var(--gold2);}
 .img-prev{width:100%;height:130px;object-fit:cover;border-radius:10px;margin-top:8px;}
 .ing-block{background:var(--bg3);border-radius:11px;padding:12px;margin-bottom:9px;}
-.ing-sec-inp{
-  background:none;border:none;border-bottom:1px solid var(--border2);
-  border-radius:0;padding:0 0 5px;color:var(--gold);
-  font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
-  width:100%;outline:none;margin-bottom:8px;
-}
+.ing-sec-inp{background:none;border:none;border-bottom:1px solid var(--border2);border-radius:0;padding:0 0 5px;color:var(--gold);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;width:100%;outline:none;margin-bottom:8px;}
 .ing-line{display:flex;gap:7px;margin-bottom:6px;align-items:center;}
 .ing-line input{margin-bottom:0;flex:1;}
 .step-edit{display:flex;gap:9px;margin-bottom:7px;align-items:flex-start;}
-.step-no{
-  width:26px;height:26px;border-radius:50%;background:var(--gold2);
-  color:var(--gold);font-size:11px;font-weight:600;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:7px;
-}
+.step-no{width:26px;height:26px;border-radius:50%;background:var(--gold2);color:var(--gold);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:7px;}
 .step-edit textarea{flex:1;resize:vertical;min-height:58px;}
-.del-x{
-  width:26px;height:26px;border-radius:50%;flex-shrink:0;
-  background:rgba(224,85,85,0.08);color:var(--red);font-size:15px;
-  display:flex;align-items:center;justify-content:center;
-}
+.del-x{width:26px;height:26px;border-radius:50%;flex-shrink:0;background:rgba(224,85,85,0.08);color:var(--red);font-size:15px;display:flex;align-items:center;justify-content:center;}
 .ghost{font-size:13px;color:var(--gold);padding:7px 0;letter-spacing:0.03em;}
 .ghost::before{content:"+ ";}
 .macros-g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
-.editor-footer{
-  padding:14px 20px calc(14px + var(--safe-bot));
-  border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0;
+.editor-footer{padding:14px 20px calc(14px + var(--safe-bot));border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0;}
+
+/* ── AI IMPORT MODAL ── */
+.ai-import-sheet{max-height:85vh;display:flex;flex-direction:column;}
+.ai-import-body{flex:1;overflow-y:auto;padding:20px;}
+.ai-drop-zone{
+  border:1.5px dashed var(--border2);border-radius:14px;
+  padding:36px 20px;text-align:center;
+  transition:border-color .2s,background .2s;
+  cursor:pointer;position:relative;
 }
+.ai-drop-zone.has-image{border-color:var(--gold-border);background:var(--gold2);}
+.ai-drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.ai-drop-icon{font-size:28px;margin-bottom:8px;}
+.ai-drop-title{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--text);margin-bottom:5px;}
+.ai-drop-sub{font-size:13px;color:var(--text2);}
+.ai-preview-img{width:100%;max-height:200px;object-fit:contain;border-radius:10px;margin-top:12px;}
+.ai-status{
+  margin-top:16px;padding:12px 16px;border-radius:10px;
+  background:var(--bg3);border:1px solid var(--border2);
+  font-size:13px;color:var(--text2);text-align:center;
+  display:none;
+}
+.ai-status.visible{display:block;}
+.ai-status.error{border-color:rgba(224,85,85,0.3);color:var(--red);background:rgba(224,85,85,0.05);}
+.ai-status.success{border-color:var(--gold-border);color:var(--gold);background:var(--gold2);}
+.ai-import-footer{padding:14px 20px calc(14px + var(--safe-bot));border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0;}
+
+/* ── DEV VIEW ── */
+.dev-view-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:#050508;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.dev-view-hdr{
+  flex-shrink:0;
+  background:rgba(5,5,8,0.96);backdrop-filter:blur(20px);
+  border-bottom:1px solid #1a1a2e;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;height:calc(56px + var(--safe-top));padding-top:var(--safe-top);
+  z-index:10;
+}
+.dev-view-title{font-family:var(--serif);font-size:18px;font-weight:400;letter-spacing:0.04em;color:#e8e4ff;}
+.dev-view-subtitle{font-size:11px;color:#444466;letter-spacing:0.06em;text-transform:uppercase;margin-top:2px;}
+.dev-graph-wrap{
+  flex:1;overflow:auto;
+  position:relative;
+  scrollbar-width:thin;scrollbar-color:#1a1a2e transparent;
+}
+.dev-graph-wrap::-webkit-scrollbar{width:4px;height:4px;}
+.dev-graph-wrap::-webkit-scrollbar-thumb{background:#1a1a2e;border-radius:2px;}
+/* Canvas behind nodes */
+.dev-canvas{
+  position:absolute;top:0;left:0;
+  pointer-events:none;z-index:0;
+}
+/* Graph container — horizontal scroll */
+.dev-graph{
+  display:flex;gap:0;
+  padding:30px 24px 80px;
+  min-width:max-content;
+  position:relative;
+  min-height:100%;
+}
+/* Column */
+.dev-col{
+  display:flex;flex-direction:column;gap:10px;
+  width:160px;flex-shrink:0;
+  position:relative;z-index:1;
+}
+.dev-col-gap{width:80px;flex-shrink:0;}
+.dev-col-hdr{
+  font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;
+  color:#444466;margin-bottom:4px;padding:0 2px;
+}
+/* Node */
+.dev-node{
+  border-radius:8px;padding:10px 12px;
+  cursor:pointer;
+  transition:transform .15s, box-shadow .15s, border-color .15s;
+  position:relative;
+  user-select:none;
+}
+.dev-node:active{transform:scale(.97);}
+.dev-node.selected{box-shadow:0 0 0 1.5px currentColor;}
+/* Node colour themes */
+.dev-node.green{background:#0a1a0f;border:1px solid #1a3a22;color:#4caf72;}
+.dev-node.green.selected{box-shadow:0 0 0 1.5px #4caf72, 0 0 18px rgba(76,175,114,0.25);}
+.dev-node.gold{background:#1a1200;border:1px solid #3a2a00;color:#c8a96e;}
+.dev-node.gold.selected{box-shadow:0 0 0 1.5px #c8a96e, 0 0 18px rgba(200,169,110,0.25);}
+.dev-node.blue{background:#080f1a;border:1px solid #0f2040;color:#6490dc;}
+.dev-node.blue.selected{box-shadow:0 0 0 1.5px #6490dc, 0 0 18px rgba(100,144,220,0.25);}
+.dev-node.purple{background:#110a1a;border:1px solid #2a1040;color:#a06ee0;}
+.dev-node.purple.selected{box-shadow:0 0 0 1.5px #a06ee0, 0 0 18px rgba(160,110,224,0.25);}
+.dev-node.red{background:#1a0808;border:1px solid #3a1010;color:#e05555;}
+.dev-node.red.selected{box-shadow:0 0 0 1.5px #e05555, 0 0 18px rgba(224,85,85,0.25);}
+.dev-node.dim{background:#0a0a0a;border:1px solid #1a1a1a;color:#444466;}
+.dev-node-label{
+  font-size:11px;font-weight:600;letter-spacing:0.04em;
+  color:inherit;margin-bottom:2px;
+}
+.dev-node-sub{
+  font-size:9px;color:#444466;letter-spacing:0.03em;
+  font-family:monospace;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.dev-node-dot{
+  position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  width:6px;height:6px;border-radius:50%;background:currentColor;opacity:0.6;
+}
+.dev-node-dot-left{
+  position:absolute;left:-3px;top:50%;transform:translateY(-50%);
+  width:6px;height:6px;border-radius:50%;background:currentColor;opacity:0.6;
+}
+/* Detail panel at bottom */
+.dev-detail-panel{
+  position:fixed;bottom:0;left:0;right:0;z-index:20;
+  background:#0a0a12;border-top:1px solid #1a1a2e;
+  padding:16px 20px calc(16px + var(--safe-bot));
+  transform:translateY(100%);
+  transition:transform .25s cubic-bezier(.4,0,.2,1);
+}
+.dev-detail-panel.open{transform:translateY(0);}
+.dev-detail-name{
+  font-family:var(--serif);font-size:18px;font-weight:400;
+  color:#e8e4ff;margin-bottom:3px;
+}
+.dev-detail-file{font-size:11px;color:#444466;font-family:monospace;margin-bottom:8px;}
+.dev-detail-desc{font-size:13px;color:#888;line-height:1.6;margin-bottom:12px;}
+.dev-detail-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.dev-action-btn{
+  padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;
+  letter-spacing:0.04em;border:1px solid;
+  transition:opacity .15s;
+}
+.dev-action-btn:active{opacity:.7;}
 
 /* ── EMPTY & LOADING ── */
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 30px;text-align:center;}
@@ -478,7 +444,7 @@ header{
 
 /* ── TOAST ── */
 .toast{
-  position:fixed;z-index:300;
+  position:fixed;z-index:400;
   bottom:calc(90px + var(--safe-bot));
   left:50%;transform:translateX(-50%);
   background:var(--gold);color:#080808;
@@ -488,11 +454,27 @@ header{
   animation:tin .28s ease forwards;
 }
 @keyframes tin{from{opacity:0;transform:translateX(-50%) translateY(10px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+
+/* ── PULL TO REFRESH INDICATOR ── */
+#ptr-indicator{
+  position:fixed;top:0;left:0;width:100%;height:50px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;
+  color:var(--gold);font-family:var(--sans);
+  transform:translateY(-50px);
+  transition:transform 0.15s,opacity 0.15s;
+  pointer-events:none;z-index:500;
+  background:rgba(8,8,8,0.9);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+}
 </style>
 </head>
 <body>
+<div id="ptr-indicator"></div>
 <div id="app"></div>
 <script>
+// ── CONSTANTS ──────────────────────────────────────────────
 const SB_URL="https://uarjjjvrzzwsewrcprcc.supabase.co";
 const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmpqanZyenp3c2V3cmNwcmNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Mjg5NTEsImV4cCI6MjA5NTMwNDk1MX0.6I1GWrJeLa1rh7rUg6GTfvrvNdMHX3QRSf13uGqRDKI";
 const ADMIN_PIN="1234";
@@ -505,362 +487,424 @@ const TYPE_OPTIONS=["Main Course","Breakfast","Appetizer","Side Dish","Dessert",
 const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 
 const SEED=[
-  {id:"1",name:"Peruvian Style Chicken with Coconut Rice & Aji Verde",cuisine:"Peruvian",tags:["High Protein"],type:"Main Course",schedule:["Monday"],image:"https://www.daringgourmet.com/wp-content/uploads/2021/04/Peruvian-Chicken-1.jpg",ingredients:{"Chicken & Marinade":["1.5 lb / 700g boneless chicken thighs","4 garlic cloves, minced","2 tbsp soy sauce","2 tbsp fresh lime juice","Olive oil","Chili flakes to taste","2 tsp brown sugar","1 tsp ground cumin","1 tbsp smoked paprika","1 tsp dried oregano","Salt and black pepper"],"Aji Verde":["1 packed cup fresh cilantro","2–3 jalapeños, seeded","2–3 garlic cloves","⅔ cup sour cream","2 scallions","1 tbsp lime juice","2 tbsp olive oil","Salt and pepper"],"Coconut Rice":["250g basmati rice","400ml coconut milk","1 tsp salt"],"To Serve":["2–4 corn cobs","Fresh cilantro","Lime wedges"]},steps:["Marinate the chicken — mix all marinade ingredients and coat chicken. Let sit 20+ minutes.","Cook the rice — combine rice, coconut milk, and salt. Simmer covered 12–15 min. Steam 10 min then fluff.","Make the aji verde — blend all sauce ingredients until smooth and bright green.","Cook the chicken — sear 5–7 min per side until golden. Rest before slicing.","Assemble — serve chicken over coconut rice with aji verde, corn, cilantro, and lime."],macros:null},
-  {id:"2",name:"Chipotle Honey Chicken Tacos",cuisine:"Mexican",tags:["High Protein"],type:"Main Course",schedule:["Tuesday"],image:"https://krollskorner.com/wp-content/uploads/2026/01/Honey-Chipotle-Chicken-Crispy-Tacos_HighRes-014-scaled.jpg",ingredients:{"Chipotle Honey Chicken":["2 lbs (907g) raw boneless skinless chicken thighs","3 chipotle peppers in adobo","3 tbsp adobo sauce","2 tbsp honey","Juice of 2 limes","5 garlic cloves","1½ tbsp olive oil","1 tsp salt","½ tsp pepper"],"For The Cheese Pull":["2 cups reduced-fat mozzarella"],"Tacos":["6 low cal tortilla wraps","Cilantro","Pico de gallo"],"Green Goddess Sauce":["¾ cup (170g) nonfat Greek yogurt","½ packed cup cilantro","Juice of 2 limes","¼ cup mild pickled jalapeño","1 garlic clove","Salt & pepper","Splash of water"]},steps:["Blend chipotle peppers, adobo sauce, honey, lime juice, garlic, olive oil, salt and pepper into a smooth marinade.","Coat chicken thighs in the marinade and let sit for at least 20 minutes.","Sear chicken in a hot pan 5–7 min per side until cooked through and caramelised. Rest, then slice.","Blend all green goddess sauce ingredients until completely smooth.","Warm tortillas, load with sliced chicken, top with mozzarella, pico de gallo, cilantro, and green goddess sauce."],macros:{calories:342,protein:34,carbs:11,fat:18}}
+  {id:"1",name:"Peruvian Style Chicken with Coconut Rice & Aji Verde",cuisine:"Peruvian",tags:["High Protein"],type:"Main Course",schedule:["Monday"],image:"https://www.daringgourmet.com/wp-content/uploads/2021/04/Peruvian-Chicken-1.jpg",ingredients:{"Chicken & Marinade":["1.5 lb / 700g boneless chicken thighs","4 garlic cloves, minced","2 tbsp soy sauce","2 tbsp fresh lime juice","Olive oil","Chili flakes to taste","2 tsp brown sugar","1 tsp ground cumin","1 tbsp smoked paprika","1 tsp dried oregano","Salt and black pepper"],"Aji Verde":["1 packed cup fresh cilantro","2-3 jalapenos, seeded","2-3 garlic cloves","2/3 cup sour cream","2 scallions","1 tbsp lime juice","2 tbsp olive oil","Salt and pepper"],"Coconut Rice":["250g basmati rice","400ml coconut milk","1 tsp salt"],"To Serve":["2-4 corn cobs","Fresh cilantro","Lime wedges"]},steps:["Marinate the chicken - mix all marinade ingredients and coat chicken. Let sit 20+ minutes.","Cook the rice - combine rice, coconut milk, and salt. Simmer covered 12-15 min. Steam 10 min then fluff.","Make the aji verde - blend all sauce ingredients until smooth and bright green.","Cook the chicken - sear 5-7 min per side until golden. Rest before slicing.","Assemble - serve chicken over coconut rice with aji verde, corn, cilantro, and lime."],macros:null},
+  {id:"2",name:"Chipotle Honey Chicken Tacos",cuisine:"Mexican",tags:["High Protein"],type:"Main Course",schedule:["Tuesday"],image:"https://krollskorner.com/wp-content/uploads/2026/01/Honey-Chipotle-Chicken-Crispy-Tacos_HighRes-014-scaled.jpg",ingredients:{"Chipotle Honey Chicken":["2 lbs (907g) raw boneless skinless chicken thighs","3 chipotle peppers in adobo","3 tbsp adobo sauce","2 tbsp honey","Juice of 2 limes","5 garlic cloves","1 1/2 tbsp olive oil","1 tsp salt","1/2 tsp pepper"],"For The Cheese Pull":["2 cups reduced-fat mozzarella"],"Tacos":["6 low cal tortilla wraps","Cilantro","Pico de gallo"],"Green Goddess Sauce":["3/4 cup (170g) nonfat Greek yogurt","1/2 packed cup cilantro","Juice of 2 limes","1/4 cup mild pickled jalapeno","1 garlic clove","Salt and pepper","Splash of water"]},steps:["Blend chipotle peppers, adobo sauce, honey, lime juice, garlic, olive oil, salt and pepper into a smooth marinade.","Coat chicken thighs in the marinade and let sit for at least 20 minutes.","Sear chicken in a hot pan 5-7 min per side until cooked through and caramelised. Rest, then slice.","Blend all green goddess sauce ingredients until completely smooth.","Warm tortillas, load with sliced chicken, top with mozzarella, pico de gallo, cilantro, and green goddess sauce."],macros:{calories:342,protein:34,carbs:11,fat:18}}
 ];
 
-// ── SUPABASE ──────────────────────────────────────────────
-async function sbFetch(){try{const r=await fetch(`${SB_URL}/rest/v1/recipes?select=*&order=created_at.asc`,{headers:{...sbH,"Accept":"application/json"}});return r.ok?await r.json():null;}catch{return null;}}
-async function sbInsert(recipe){try{const r=await fetch(`${SB_URL}/rest/v1/recipes`,{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(recipe)});return r.ok;}catch{return false;}}
-async function sbUpdate(recipe){try{const body=Object.assign({},recipe);delete body.id;delete body.created_at;const r=await fetch(`${SB_URL}/rest/v1/recipes?id=eq.${encodeURIComponent(recipe.id)}`,{method:"PATCH",headers:{...sbH,"Prefer":"return=minimal"},body:JSON.stringify(body)});return r.ok;}catch{return false;}}
-async function sbDelete(id){try{const r=await fetch(`${SB_URL}/rest/v1/recipes?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:{...sbH,"Prefer":"return=minimal"}});return r.ok;}catch{return false;}}
-async function sbSeed(){try{await fetch(`${SB_URL}/rest/v1/recipes`,{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(SEED)});}catch{}}
+// ── SUPABASE ───────────────────────────────────────────────
+async function sbFetch(){
+  try{
+    const r=await fetch(SB_URL+"/rest/v1/recipes?select=*&order=created_at.asc",{headers:{...sbH,"Accept":"application/json"}});
+    return r.ok?await r.json():null;
+  }catch{return null;}
+}
+async function sbInsert(recipe){
+  try{
+    const r=await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(recipe)});
+    return r.ok;
+  }catch{return false;}
+}
+async function sbUpdate(recipe){
+  try{
+    const body=Object.assign({},recipe);
+    delete body.id;
+    delete body.created_at;
+    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(recipe.id),{method:"PATCH",headers:{...sbH,"Prefer":"return=minimal"},body:JSON.stringify(body)});
+    return r.ok;
+  }catch{return false;}
+}
+async function sbDelete(id){
+  try{
+    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(id),{method:"DELETE",headers:{...sbH,"Prefer":"return=minimal"}});
+    return r.ok;
+  }catch{return false;}
+}
+async function sbSeed(){
+  try{
+    await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(SEED)});
+  }catch{}
+}
 
-// ── STATE ─────────────────────────────────────────────────
-let S={
+// ── STATE ──────────────────────────────────────────────────
+var S={
   recipes:[],loading:true,
   view:"home",selected:null,prevView:"home",
   isAdmin:false,
   filterCuisine:"All",filterTag:"All",search:"",
-  showPin:false,showEditor:false,editingRecipe:null
+  showPin:false,showEditor:false,editingRecipe:null,
+  showAiImport:false,
+  showDevView:false
 };
 function ss(u){Object.assign(S,u);render();}
 
-// ── DAY HELPERS ───────────────────────────────────────────
-// Returns today's index in DAYS array (0=Monday … 6=Sunday)
-function todayIdx(){
-  const d=new Date().getDay(); // 0=Sun,1=Mon…
-  return d===0?6:d-1; // convert to Mon=0…Sun=6
-}
-// Returns DAYS reordered starting from today
-function orderedDays(){
-  const idx=todayIdx();
-  return [...DAYS.slice(idx),...DAYS.slice(0,idx)];
-}
+// ── DAY HELPERS ────────────────────────────────────────────
+function todayIdx(){var d=new Date().getDay();return d===0?6:d-1;}
+function orderedDays(){var idx=todayIdx();return DAYS.slice(idx).concat(DAYS.slice(0,idx));}
 function todayName(){return DAYS[todayIdx()];}
 
-// ── URL IMPORT ────────────────────────────────────────────
+// ── URL IMPORT ─────────────────────────────────────────────
 async function checkUrlImport(recipes){
   try{
-    const p=new URLSearchParams(window.location.search);
-    const enc=p.get("recipe");
+    var p=new URLSearchParams(window.location.search);
+    var enc=p.get("recipe");
     if(!enc)return recipes;
-    const recipe=JSON.parse(atob(decodeURIComponent(enc)));
+    var recipe=JSON.parse(atob(decodeURIComponent(enc)));
     if(!recipe||!recipe.name)return recipes;
-    const exists=recipes.find(r=>r.id===recipe.id);
+    var exists=recipes.find(function(r){return r.id===recipe.id;});
     if(!exists){
       await sbInsert(recipe);
-      recipes=await sbFetch()||recipes;
+      var fresh=await sbFetch();
+      if(fresh)recipes=fresh;
       showToast("✦ "+recipe.name+" added");
     }
     window.history.replaceState({},"",window.location.pathname);
     return recipes;
-  }catch{return recipes;}
+  }catch(e){return recipes;}
 }
 
-// ── HELPERS ───────────────────────────────────────────────
-function el(t,c=""){const e=document.createElement(t);if(c)e.className=c;return e;}
-function btn(t,c,fn){const b=el("button",c);b.textContent=t;if(fn)b.onclick=fn;return b;}
+// ── DOM HELPERS ────────────────────────────────────────────
+function el(t,c){var e=document.createElement(t);if(c)e.className=c;return e;}
+function btn(t,c,fn){var b=el("button",c);b.textContent=t;if(fn)b.onclick=fn;return b;}
 function showToast(msg){
-  document.querySelectorAll(".toast").forEach(x=>x.remove());
-  const t=el("div","toast");t.textContent=msg;document.body.appendChild(t);
-  setTimeout(()=>t.remove(),3200);
+  document.querySelectorAll(".toast").forEach(function(x){x.remove();});
+  var t=el("div","toast");t.textContent=msg;document.body.appendChild(t);
+  setTimeout(function(){t.remove();},3200);
 }
-// Elegant SVG fork/knife for empty image slots
 function cutlerySVG(){
-  const d=el("div","day-thumb-empty");
-  d.innerHTML=`<svg class="cutlery" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 2v7c0 1.1.9 2 2 2h1v11h2V11h1c1.1 0 2-.9 2-2V2h-2v5H7V2H5v5H4V2H3z" stroke-width="0" fill="currentColor" opacity=".25"/><path d="M16 2c-1.66 0-3 1.34-3 3v5c0 1.48 1.02 2.72 2.4 3.07L15 20h2l-.4-6.93C17.98 12.72 19 11.48 19 10V5c0-1.66-1.34-3-3-3z" stroke-width="0" fill="currentColor" opacity=".25"/></svg>`;
+  var d=el("div","day-thumb-empty");
+  d.innerHTML='<svg class="cutlery" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 2v7c0 1.1.9 2 2 2h1v11h2V11h1c1.1 0 2-.9 2-2V2h-2v5H7V2H5v5H4V2H3z" stroke-width="0" fill="currentColor" opacity=".25"/><path d="M16 2c-1.66 0-3 1.34-3 3v5c0 1.48 1.02 2.72 2.4 3.07L15 20h2l-.4-6.93C17.98 12.72 19 11.48 19 10V5c0-1.66-1.34-3-3-3z" stroke-width="0" fill="currentColor" opacity=".25"/></svg>';
   return d;
 }
-// Fallback for recipe card img
 function imgFb(cls){
-  const d=el("div",cls||"rcard-img-fb");
+  var d=el("div",cls||"rcard-img-fb");
   d.style.cssText="display:flex;align-items:center;justify-content:center;width:100%;height:100%;";
-  d.innerHTML=`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 2v7c0 1.1.9 2 2 2h1v11h2V11h1c1.1 0 2-.9 2-2V2h-2v5H7V2H5v5H4V2H3z" fill="#2a2a2a"/><path d="M16 2c-1.66 0-3 1.34-3 3v5c0 1.48 1.02 2.72 2.4 3.07L15 20h2l-.4-6.93C17.98 12.72 19 11.48 19 10V5c0-1.66-1.34-3-3-3z" fill="#2a2a2a"/></svg>`;
+  d.innerHTML='<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 2v7c0 1.1.9 2 2 2h1v11h2V11h1c1.1 0 2-.9 2-2V2h-2v5H7V2H5v5H4V2H3z" fill="#2a2a2a"/><path d="M16 2c-1.66 0-3 1.34-3 3v5c0 1.48 1.02 2.72 2.4 3.07L15 20h2l-.4-6.93C17.98 12.72 19 11.48 19 10V5c0-1.66-1.34-3-3-3z" fill="#2a2a2a"/></svg>';
   return d;
 }
 
-// ── RENDER ────────────────────────────────────────────────
-function render(){
-  const app=document.getElementById("app");
-  app.innerHTML="";
-  if(S.view!=="detail") app.appendChild(buildHeader());
-  const main=el("main");
-  if(S.loading){
-    const d=el("div","loading");
-    const sp=el("div","spin");
-    const tx=el("p","load-txt");tx.textContent="Loading your kitchen…";
-    d.append(sp,tx);main.appendChild(d);
-  } else if(S.view==="home") main.appendChild(buildHome());
-  else if(S.view==="recipes") main.appendChild(buildRecipesPage());
-  else if(S.view==="detail"&&S.selected) main.appendChild(buildDetail(S.selected));
-  else if(S.view==="planner") main.appendChild(buildPlanner());
-  app.appendChild(main);
-  if(S.view!=="detail") app.appendChild(buildBnav());
-  if(S.showPin) app.appendChild(buildPinModal());
-  if(S.showEditor) app.appendChild(buildEditorModal(S.editingRecipe));
+// ── REFRESH ────────────────────────────────────────────────
+async function doRefresh(btnEl){
+  if(btnEl){btnEl.classList.add("spinning");}
+  var fresh=await sbFetch();
+  if(fresh){ss({recipes:fresh});}
+  showToast("✦ Refreshed");
+  if(btnEl){setTimeout(function(){btnEl.classList.remove("spinning");},600);}
 }
 
-// ── HEADER ────────────────────────────────────────────────
+// ── RENDER ─────────────────────────────────────────────────
+function render(){
+  var app=document.getElementById("app");
+  app.innerHTML="";
+  if(S.view!=="detail")app.appendChild(buildHeader());
+  var main=el("main");
+  if(S.loading){
+    var d=el("div","loading");
+    var sp=el("div","spin");
+    var tx=el("p","load-txt");tx.textContent="Loading your kitchen...";
+    d.append(sp,tx);main.appendChild(d);
+  } else if(S.view==="home"){
+    main.appendChild(buildHome());
+  } else if(S.view==="recipes"){
+    main.appendChild(buildRecipesPage());
+  } else if(S.view==="detail"&&S.selected){
+    main.appendChild(buildDetail(S.selected));
+  } else if(S.view==="planner"){
+    main.appendChild(buildPlanner());
+  }
+  app.appendChild(main);
+  if(S.view!=="detail")app.appendChild(buildBnav());
+  if(S.showPin)app.appendChild(buildPinModal());
+  if(S.showEditor)app.appendChild(buildEditorModal(S.editingRecipe));
+  if(S.showAiImport)app.appendChild(buildAiImportModal());
+  if(S.showDevView)app.appendChild(buildDevView());
+}
+
+// ── HEADER ─────────────────────────────────────────────────
 function buildHeader(){
-  const hdr=el("header");
-  const inner=el("div","hdr");
-  // Logo — original ✦ style
-  const logo=el("div","logo");
-  const mark=el("span","logo-mark");mark.textContent="✦";
-  const txt=el("span","logo-text");txt.textContent="Mehdi's Kitchen";
+  var hdr=el("header");
+  var inner=el("div","hdr");
+  var logo=el("div","logo");
+  var mark=el("span","logo-mark");mark.textContent="✦";
+  var txt=el("span","logo-text");txt.textContent="Mehdi's Kitchen";
   logo.append(mark,txt);
-  logo.onclick=()=>ss({view:"home",selected:null});
-  const right=el("div","hdr-right");
-  const adminB=btn(S.isAdmin?"✦ Admin":"Admin",S.isAdmin?"admin-btn on":"admin-btn",()=>{
+  logo.onclick=function(){ss({view:"home",selected:null});};
+
+  var right=el("div","hdr-right");
+
+  // Refresh button
+  var rfBtn=el("button","refresh-btn");
+  rfBtn.title="Refresh recipes";
+  rfBtn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>';
+  rfBtn.onclick=function(){doRefresh(rfBtn);};
+  right.appendChild(rfBtn);
+
+  // Admin button
+  var adminB=btn(S.isAdmin?"✦ Admin":"Admin",S.isAdmin?"admin-btn on":"admin-btn",function(){
     if(S.isAdmin)ss({isAdmin:false});
     else ss({showPin:true});
   });
   right.appendChild(adminB);
+
   inner.append(logo,right);
   hdr.appendChild(inner);
-  // Recipes page: search + filters
+
+  // Search + filters on recipes page
   if(S.view==="recipes"){
-    const sw=el("div","search-wrap");
-    const si=el("div","search-inner");
-    const lbl=el("span","search-lbl");lbl.textContent="Search";
-    const inp=document.createElement("input");
-    inp.type="text";inp.placeholder="recipe, cuisine…";inp.value=S.search;
-    inp.oninput=e=>ss({search:e.target.value});
+    var sw=el("div","search-wrap");
+    var si=el("div","search-inner");
+    var lbl=el("span","search-lbl");lbl.textContent="Search";
+    var inp=document.createElement("input");
+    inp.type="text";inp.placeholder="recipe, cuisine...";inp.value=S.search;
+    inp.oninput=function(e){ss({search:e.target.value});};
     si.append(lbl,inp);sw.appendChild(si);hdr.appendChild(sw);
-    const chips=el("div","chips");
-    const allC=btn("All","chip"+(S.filterCuisine==="All"&&S.filterTag==="All"?" on":""),()=>ss({filterCuisine:"All",filterTag:"All"}));
+    var chips=el("div","chips");
+    var allC=btn("All","chip"+(S.filterCuisine==="All"&&S.filterTag==="All"?" on":""),function(){ss({filterCuisine:"All",filterTag:"All"});});
     chips.appendChild(allC);
-    CUISINE_OPTIONS.forEach(c=>{chips.appendChild(btn(c,"chip"+(S.filterCuisine===c?" on":""),()=>ss({filterCuisine:c,filterTag:"All"})));});
-    TAG_OPTIONS.forEach(t=>{chips.appendChild(btn(t,"chip"+(S.filterTag===t?" on":""),()=>ss({filterTag:t,filterCuisine:"All"})));});
+    CUISINE_OPTIONS.forEach(function(c){
+      chips.appendChild(btn(c,"chip"+(S.filterCuisine===c?" on":""),function(){ss({filterCuisine:c,filterTag:"All"});}));
+    });
+    TAG_OPTIONS.forEach(function(t){
+      chips.appendChild(btn(t,"chip"+(S.filterTag===t?" on":""),function(){ss({filterTag:t,filterCuisine:"All"});}));
+    });
     hdr.appendChild(chips);
   }
   return hdr;
 }
 
-// ── BOTTOM NAV ────────────────────────────────────────────
+// ── BOTTOM NAV ─────────────────────────────────────────────
 function buildBnav(){
-  const nav=el("div","bnav");
-  // Home
-  const hi=el("button","bnav-item"+(S.view==="home"?" on":""));
-  hi.innerHTML=`<span class="bnav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span>`;
-  hi.onclick=()=>ss({view:"home",selected:null});
-  // Add
-  const addB=el("button","bnav-add");
-  addB.innerHTML=`<svg class="plus-svg" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
-  addB.onclick=()=>{if(S.isAdmin)ss({showEditor:true,editingRecipe:null});else ss({showPin:true});};
-  // Recipes
-  const ri=el("button","bnav-item"+(S.view==="recipes"?" on":""));
-  ri.innerHTML=`<span class="bnav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span><span>Recipes</span>`;
-  ri.onclick=()=>ss({view:"recipes",selected:null});
+  var nav=el("div","bnav");
+  var hi=el("button","bnav-item"+(S.view==="home"?" on":""));
+  hi.innerHTML='<span class="bnav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span>';
+  hi.onclick=function(){ss({view:"home",selected:null});};
+  var addB=el("button","bnav-add");
+  addB.innerHTML='<svg class="plus-svg" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+  addB.onclick=function(){
+    if(S.isAdmin)ss({showEditor:true,editingRecipe:null});
+    else ss({showPin:true});
+  };
+  var ri=el("button","bnav-item"+(S.view==="recipes"?" on":""));
+  ri.innerHTML='<span class="bnav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span><span>Recipes</span>';
+  ri.onclick=function(){ss({view:"recipes",selected:null});};
   nav.append(hi,addB,ri);
   return nav;
 }
 
-// ── HOME PAGE ─────────────────────────────────────────────
+// ── HOME PAGE ──────────────────────────────────────────────
 function buildHome(){
-  const page=el("div","home-wrap");
-  // Weekly planner — ordered from today
-  const ws=el("div");
-  const wh=el("div","sec-hdr");
-  const wt=el("div");
-  const wTitle=el("span","sec-title");
-  wTitle.innerHTML=`This Week <span>starting today</span>`;
-  wt.appendChild(wTitle);
-  const seeAll=btn("See all","sec-link",()=>ss({view:"planner"}));
-  wh.append(wt,seeAll);ws.appendChild(wh);
-  const weekRow=el("div","week-row");
-  const today=todayName();
-  orderedDays().forEach(day=>{
-    const recipe=S.recipes.find(r=>r.schedule&&r.schedule.includes(day));
-    const isToday=day===today;
-    const tile=el("div","day-tile"+(isToday?" today":"")+(recipe?" has-recipe":""));
+  var page=el("div","home-wrap");
+  // Week row
+  var ws=el("div");
+  var wh=el("div","sec-hdr");
+  var wTitle=el("span","sec-title");
+  wTitle.innerHTML='This Week <span>starting today</span>';
+  var seeAll=btn("See all","sec-link",function(){ss({view:"planner"});});
+  wh.append(wTitle,seeAll);ws.appendChild(wh);
+  var weekRow=el("div","week-row");
+  var today=todayName();
+  orderedDays().forEach(function(day){
+    var recipe=S.recipes.find(function(r){return r.schedule&&r.schedule.includes(day);});
+    var isToday=day===today;
+    var classes="day-tile"+(isToday?" today":"")+(recipe?" has-recipe":"");
+    var tile=el("div",classes);
     if(recipe){
-      const img=document.createElement("img");
+      var img=document.createElement("img");
       img.className="day-thumb";img.src=recipe.image||"";img.alt=recipe.name;
-      img.onerror=()=>{img.replaceWith(cutlerySVG());};
+      img.onerror=function(){img.replaceWith(cutlerySVG());};
       tile.appendChild(img);
-      tile.onclick=()=>ss({view:"detail",selected:recipe,prevView:"home"});
+      tile.onclick=function(){ss({view:"detail",selected:recipe,prevView:"home"});};
     } else {
       tile.appendChild(cutlerySVG());
     }
-    const foot=el("div","day-foot");
-    const dl=el("p","day-label");dl.textContent=day.slice(0,3);foot.appendChild(dl);
-    if(recipe){const rn=el("p","day-rname");rn.textContent=recipe.name;foot.appendChild(rn);}
-    else{const en=el("p","day-empty-lbl");en.textContent="No recipe";foot.appendChild(en);}
+    var foot=el("div","day-foot");
+    var dl=el("p","day-label");dl.textContent=day.slice(0,3);foot.appendChild(dl);
+    if(recipe){var rn=el("p","day-rname");rn.textContent=recipe.name;foot.appendChild(rn);}
+    else{var en=el("p","day-empty-lbl");en.textContent="No recipe";foot.appendChild(en);}
     tile.appendChild(foot);
     weekRow.appendChild(tile);
   });
   ws.appendChild(weekRow);
   page.appendChild(ws);
 
-  // Saved recipes — horizontal list with original card style
-  const rs=el("div","recipes-section");
-  const rh=el("div","sec-hdr");
-  const rTitle=el("span","sec-title");rTitle.textContent="Saved Recipes";
-  const rseeAll=btn("See all","sec-link",()=>ss({view:"recipes"}));
-  rh.append(rTitle,rseeAll);rs.appendChild(rh);
+  // Admin quick actions bar (only shown when admin)
+  if(S.isAdmin){
+    var adminBar=el("div");
+    adminBar.style.cssText="display:flex;gap:10px;padding:20px 16px 0;";
+    var aiBtn=el("button");
+    aiBtn.style.cssText="flex:1;padding:11px 14px;border-radius:11px;border:1px solid var(--gold-border);background:var(--gold2);color:var(--gold);font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:7px;letter-spacing:0.02em;";
+    aiBtn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg> AI Import';
+    aiBtn.onclick=function(){ss({showAiImport:true});};
+    var devBtn=el("button");
+    devBtn.style.cssText="flex:1;padding:11px 14px;border-radius:11px;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:7px;letter-spacing:0.02em;";
+    devBtn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> Dev View';
+    devBtn.onclick=function(){ss({showDevView:true});};
+    adminBar.append(aiBtn,devBtn);
+    page.appendChild(adminBar);
+  }
 
+  // Saved recipes
+  var rs=el("div","recipes-section");
+  var rh=el("div","sec-hdr");
+  var rTitle=el("span","sec-title");rTitle.textContent="Saved Recipes";
+  var rseeAll=btn("See all","sec-link",function(){ss({view:"recipes"});});
+  rh.append(rTitle,rseeAll);rs.appendChild(rh);
   if(S.recipes.length===0){
-    const e=el("div","empty");
-    const et=el("p","empty-title");et.textContent="No recipes yet";
-    const es=el("p","empty-sub");es.textContent="Tap + to add your first recipe";
+    var e=el("div","empty");
+    var et=el("p","empty-title");et.textContent="No recipes yet";
+    var es=el("p","empty-sub");es.textContent="Tap + to add your first recipe";
     e.append(et,es);rs.appendChild(e);
   } else {
-    const col=el("div","recipe-col");
-    S.recipes.slice().reverse().forEach(recipe=>{
-      const card=buildRcard(recipe);
-      col.appendChild(card);
-    });
+    var col=el("div","recipe-col");
+    S.recipes.slice().reverse().forEach(function(recipe){col.appendChild(buildRcard(recipe));});
     rs.appendChild(col);
   }
   page.appendChild(rs);
   return page;
 }
 
-// Original horizontal recipe card
+// ── RECIPE CARD ────────────────────────────────────────────
 function buildRcard(recipe){
-  const card=el("div","rcard");
-  const imgWrap=el("div","rcard-img");
-  const img=document.createElement("img");
-  img.src=recipe.image||"";img.alt=recipe.name;img.style.cssText="width:100%;height:100%;object-fit:cover;";
-  img.onerror=()=>{img.replaceWith(imgFb());};
+  var card=el("div","rcard");
+  var imgWrap=el("div","rcard-img");
+  var img=document.createElement("img");
+  img.src=recipe.image||"";img.alt=recipe.name;
+  img.style.cssText="width:100%;height:100%;object-fit:cover;";
+  img.onerror=function(){img.replaceWith(imgFb());};
   imgWrap.appendChild(img);
-  const body=el("div","rcard-body");
-  const top=el("div","rcard-top");
+  var body=el("div","rcard-body");
+  var top=el("div","rcard-top");
   if(recipe.cuisine){
-    const cc=el("p","rcard-cuisine");
+    var cc=el("p","rcard-cuisine");
     cc.style.color=CUISINE_COLORS[recipe.cuisine]||"#888";
     cc.textContent=recipe.cuisine;top.appendChild(cc);
   }
-  const name=el("p","rcard-name");name.textContent=recipe.name;top.appendChild(name);
+  var name=el("p","rcard-name");name.textContent=recipe.name;top.appendChild(name);
   body.appendChild(top);
-  const meta=el("div","rcard-meta");
-  (recipe.tags||[]).forEach(t=>{const tg=el("span","rcard-tag gold");tg.textContent=t;meta.appendChild(tg);});
-  if(recipe.type){const ty=el("span","rcard-type");ty.textContent=recipe.type;meta.appendChild(ty);}
+  var meta=el("div","rcard-meta");
+  (recipe.tags||[]).forEach(function(t){var tg=el("span","rcard-tag gold");tg.textContent=t;meta.appendChild(tg);});
+  if(recipe.type){var ty=el("span","rcard-type");ty.textContent=recipe.type;meta.appendChild(ty);}
   if(recipe.schedule&&recipe.schedule.length){
-  const dy=el("span","rcard-day");dy.textContent=Array.isArray(recipe.schedule)?recipe.schedule.join(", "):(recipe.schedule||"");meta.appendChild(dy);
+    var dy=el("span","rcard-day");
+    dy.textContent=Array.isArray(recipe.schedule)?recipe.schedule.join(", "):(recipe.schedule||"");
+    meta.appendChild(dy);
   }
   body.appendChild(meta);
   card.append(imgWrap,body);
-  card.onclick=()=>ss({view:"detail",selected:recipe,prevView:"home"});
+  card.onclick=function(){ss({view:"detail",selected:recipe,prevView:"home"});};
   return card;
 }
 
-// ── RECIPES PAGE ──────────────────────────────────────────
+// ── RECIPES GRID PAGE ──────────────────────────────────────
 function buildRecipesPage(){
-  const page=el("div","grid-wrap");
-  let filtered=S.recipes;
-  if(S.search) filtered=filtered.filter(r=>r.name.toLowerCase().includes(S.search.toLowerCase())||(r.cuisine||"").toLowerCase().includes(S.search.toLowerCase()));
-  if(S.filterCuisine!=="All") filtered=filtered.filter(r=>r.cuisine===S.filterCuisine);
-  if(S.filterTag!=="All") filtered=filtered.filter(r=>r.tags&&r.tags.includes(S.filterTag));
+  var page=el("div","grid-wrap");
+  var filtered=S.recipes.slice();
+  if(S.search){
+    var q=S.search.toLowerCase();
+    filtered=filtered.filter(function(r){return r.name.toLowerCase().includes(q)||(r.cuisine||"").toLowerCase().includes(q);});
+  }
+  if(S.filterCuisine!=="All")filtered=filtered.filter(function(r){return r.cuisine===S.filterCuisine;});
+  if(S.filterTag!=="All")filtered=filtered.filter(function(r){return r.tags&&r.tags.includes(S.filterTag);});
   if(filtered.length===0){
-    const e=el("div","empty");
-    const et=el("p","empty-title");et.textContent="Nothing found";
-    const es=el("p","empty-sub");es.textContent="Try a different search or filter";
+    var e=el("div","empty");
+    var et=el("p","empty-title");et.textContent="Nothing found";
+    var es=el("p","empty-sub");es.textContent="Try a different search or filter";
     e.append(et,es);page.appendChild(e);return page;
   }
-  const grid=el("div","rgrid");
-  filtered.forEach(recipe=>{
-    const card=el("div","gcard");
-    const imgW=el("div","gcard-img");
-    const img=document.createElement("img");img.src=recipe.image||"";img.alt=recipe.name;
-    img.onerror=()=>{imgW.innerHTML="";imgW.appendChild(imgFb("gcard-img-fb"));};
-    const bar=el("div","gcard-bar");
-    const dot=el("span","cuisine-dot");dot.style.background=CUISINE_COLORS[recipe.cuisine]||"#888";
-    const cl=el("span","cuisine-lbl");cl.style.color=CUISINE_COLORS[recipe.cuisine]||"#aaa";cl.textContent=recipe.cuisine||"";
+  var grid=el("div","rgrid");
+  filtered.forEach(function(recipe){
+    var card=el("div","gcard");
+    var imgW=el("div","gcard-img");
+    var img=document.createElement("img");img.src=recipe.image||"";img.alt=recipe.name;
+    img.onerror=function(){imgW.innerHTML="";imgW.appendChild(imgFb("gcard-img-fb"));};
+    var bar=el("div","gcard-bar");
+    var dot=el("span","cuisine-dot");dot.style.background=CUISINE_COLORS[recipe.cuisine]||"#888";
+    var cl=el("span","cuisine-lbl");cl.style.color=CUISINE_COLORS[recipe.cuisine]||"#aaa";cl.textContent=recipe.cuisine||"";
     bar.append(dot,cl);imgW.append(img,bar);
-    const body=el("div","gcard-body");
-    const nm=el("p","gcard-name");nm.textContent=recipe.name;
-    const tags=el("div","gcard-tags");
-    (recipe.tags||[]).forEach(t=>{const tg=el("span","gtag gold");tg.textContent=t;tags.appendChild(tg);});
-    if(recipe.type){const ty=el("span","gtag");ty.textContent=recipe.type;tags.appendChild(ty);}
+    var body=el("div","gcard-body");
+    var nm=el("p","gcard-name");nm.textContent=recipe.name;
+    var tags=el("div","gcard-tags");
+    (recipe.tags||[]).forEach(function(t){var tg=el("span","gtag gold");tg.textContent=t;tags.appendChild(tg);});
+    if(recipe.type){var ty=el("span","gtag");ty.textContent=recipe.type;tags.appendChild(ty);}
     body.append(nm,tags);card.append(imgW,body);
-    card.onclick=()=>ss({view:"detail",selected:recipe,prevView:"recipes"});
+    card.onclick=function(){ss({view:"detail",selected:recipe,prevView:"recipes"});};
     grid.appendChild(card);
   });
   page.appendChild(grid);
   return page;
 }
 
-// ── DETAIL ────────────────────────────────────────────────
+// ── DETAIL PAGE ────────────────────────────────────────────
 function buildDetail(recipe){
-  const page=el("div");
-  // Full-width header for detail with back button baked in
-  const hdr=el("header");
-  const hdrInner=el("div","hdr");
+  var page=el("div");
+  var hdr=el("header");
+  var hdrInner=el("div","hdr");
   hdrInner.style.cssText="padding-top:var(--safe-top);";
-  const backB=btn("","detail-back",()=>ss({view:S.prevView||"home",selected:null}));
-  backB.innerHTML=`<svg class="back-svg" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>`;
+  var backB=btn("","detail-back",function(){ss({view:S.prevView||"home",selected:null});});
+  backB.innerHTML='<svg class="back-svg" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>';
   hdrInner.appendChild(backB);
   if(S.isAdmin){
-    const ar=el("div","detail-admin-row");
-    const editB=btn("Edit","d-btn edit",()=>ss({showEditor:true,editingRecipe:recipe}));
-    const delB=btn("Delete","d-btn del",()=>confirmDelete(recipe.id));
+    var ar=el("div","detail-admin-row");
+    var editB=btn("Edit","d-btn edit",function(){ss({showEditor:true,editingRecipe:recipe});});
+    var delB=btn("Delete","d-btn del",function(){confirmDelete(recipe.id);});
     ar.append(editB,delB);hdrInner.appendChild(ar);
   }
   hdr.appendChild(hdrInner);
   page.appendChild(hdr);
-  // Hero image
-  const hero=el("div","detail-hero");
-  const img=document.createElement("img");img.src=recipe.image||"";img.alt=recipe.name;
-  img.onerror=()=>hero.style.background="var(--bg3)";
-  const grad=el("div","detail-hero-grad");
+  // Hero
+  var hero=el("div","detail-hero");
+  var img=document.createElement("img");img.src=recipe.image||"";img.alt=recipe.name;
+  img.onerror=function(){hero.style.background="var(--bg3)";};
+  var grad=el("div","detail-hero-grad");
   hero.append(img,grad);
   page.appendChild(hero);
   // Body
-  const body=el("div","detail-body");
-  const top=el("div","detail-top");
-  const metaRow=el("div","detail-meta-row");
+  var body=el("div","detail-body");
+  var top=el("div","detail-top");
+  var metaRow=el("div","detail-meta-row");
   if(recipe.cuisine){
-    const cp=el("div","d-cuisine");
-    const dot=el("span");dot.style.cssText=`width:7px;height:7px;border-radius:50%;background:${CUISINE_COLORS[recipe.cuisine]||"#888"};`;
-    const ct=el("span");ct.style.color=CUISINE_COLORS[recipe.cuisine]||"#888";ct.textContent=recipe.cuisine;
+    var cp=el("div","d-cuisine");
+    var dot=el("span");dot.style.cssText="width:7px;height:7px;border-radius:50%;background:"+(CUISINE_COLORS[recipe.cuisine]||"#888")+";";
+    var ct=el("span");ct.style.color=CUISINE_COLORS[recipe.cuisine]||"#888";ct.textContent=recipe.cuisine;
     cp.append(dot,ct);metaRow.appendChild(cp);
   }
-  if(recipe.type){const tp=el("div","d-type");tp.textContent=recipe.type;metaRow.appendChild(tp);}
+  if(recipe.type){var tp=el("div","d-type");tp.textContent=recipe.type;metaRow.appendChild(tp);}
   top.appendChild(metaRow);
-  const title=el("h1","detail-title");title.textContent=recipe.name;top.appendChild(title);
+  var title=el("h1","detail-title");title.textContent=recipe.name;top.appendChild(title);
   if(recipe.tags&&recipe.tags.length){
-    const tr=el("div","detail-tags");
-    recipe.tags.forEach(t=>{const tg=el("span","d-tag");tg.textContent=t;tr.appendChild(tg);});
+    var tr=el("div","detail-tags");
+    recipe.tags.forEach(function(t){var tg=el("span","d-tag");tg.textContent=t;tr.appendChild(tg);});
     top.appendChild(tr);
   }
   if(recipe.macros){
-    const mb=el("div","macros-row");
-    [{v:recipe.macros.calories,l:"Cal"},{v:recipe.macros.protein+"g",l:"Protein"},{v:recipe.macros.carbs+"g",l:"Carbs"},{v:recipe.macros.fat+"g",l:"Fat"}].forEach(m=>{
-      const mc=el("div","mac");
-      const mv=el("span","mac-v");mv.textContent=m.v;
-      const ml=el("span","mac-l");ml.textContent=m.l;
+    var mb=el("div","macros-row");
+    [{v:recipe.macros.calories,l:"Cal"},{v:recipe.macros.protein+"g",l:"Protein"},{v:recipe.macros.carbs+"g",l:"Carbs"},{v:recipe.macros.fat+"g",l:"Fat"}].forEach(function(m){
+      var mc=el("div","mac");
+      var mv=el("span","mac-v");mv.textContent=m.v;
+      var ml=el("span","mac-l");ml.textContent=m.l;
       mc.append(mv,ml);mb.appendChild(mc);
     });
     top.appendChild(mb);
   }
-  // ── Interactive day scheduler ──
-  const schedWrap=el("div","sched-row");
-  const schedLbl=el("p","sched-label");schedLbl.textContent="Schedule for";
-  const schedDays=el("div","sched-days");
-  DAYS.forEach(day=>{
-    const isOn=(recipe.schedule||[]).includes(day);
-    const pill=btn(day.slice(0,3),"sched-pill"+(isOn?" on":""),async()=>{
-      // Optimistic UI update
-      const wasOn=(recipe.schedule||[]).includes(day);
-      const newSched=wasOn?(recipe.schedule||[]).filter(d=>d!==day):[...(recipe.schedule||[]),day];
-      // Update in local state immediately
+  // Schedule pills
+  var schedWrap=el("div","sched-row");
+  var schedLbl=el("p","sched-label");schedLbl.textContent="Schedule for";
+  var schedDays=el("div","sched-days");
+  DAYS.forEach(function(day){
+    var isOn=(recipe.schedule||[]).includes(day);
+    var pill=btn(day.slice(0,3),"sched-pill"+(isOn?" on":""),async function(){
+      var wasOn=(recipe.schedule||[]).includes(day);
+      var newSched=wasOn?(recipe.schedule||[]).filter(function(d){return d!==day;}):(recipe.schedule||[]).concat([day]);
       recipe.schedule=newSched;
       pill.className="sched-pill saving";
-      // Persist to Supabase
-      const updated={...recipe,schedule:newSched};
-      const ok=await sbUpdate(updated);
+      var updated=Object.assign({},recipe,{schedule:newSched});
+      var ok=await sbUpdate(updated);
       if(ok){
-        // Update recipes array in state
-        S.recipes=S.recipes.map(r=>r.id===recipe.id?{...r,schedule:newSched}:r);
-        S.selected={...recipe,schedule:newSched};
+        S.recipes=S.recipes.map(function(r){return r.id===recipe.id?Object.assign({},r,{schedule:newSched}):r;});
+        S.selected=Object.assign({},recipe,{schedule:newSched});
         pill.className="sched-pill"+(newSched.includes(day)?" on":"");
         showToast(newSched.includes(day)?"✦ Added to "+day:"Removed from "+day);
       } else {
-        // Revert on failure
-        recipe.schedule=wasOn?[...(newSched),day]:newSched.filter(d=>d!==day);
+        recipe.schedule=wasOn?newSched.concat([day]):newSched.filter(function(d){return d!==day;});
         pill.className="sched-pill"+(wasOn?" on":"");
         showToast("Failed to update");
       }
@@ -872,63 +916,65 @@ function buildDetail(recipe){
   body.appendChild(top);
   // Ingredients
   if(recipe.ingredients&&Object.keys(recipe.ingredients).length){
-    const sec=el("div","d-sec");
-    const st=el("p","d-sec-title");st.textContent="Ingredients";sec.appendChild(st);
-    Object.entries(recipe.ingredients).forEach(([s,items])=>{
-      if(s){const sub=el("p","d-sub");sub.textContent=s;sec.appendChild(sub);}
-      items.forEach(item=>{
-        const row=el("div","ing-row");
-        const dot=el("span","ing-bullet");
-        const tx=el("span");tx.textContent=item;
-        row.append(dot,tx);sec.appendChild(row);
+    var sec=el("div","d-sec");
+    var st=el("p","d-sec-title");st.textContent="Ingredients";sec.appendChild(st);
+    Object.entries(recipe.ingredients).forEach(function(entry){
+      var s=entry[0];var items=entry[1];
+      if(s){var sub=el("p","d-sub");sub.textContent=s;sec.appendChild(sub);}
+      items.forEach(function(item){
+        var row=el("div","ing-row");
+        var dot2=el("span","ing-bullet");
+        var tx=el("span");tx.textContent=item;
+        row.append(dot2,tx);sec.appendChild(row);
       });
     });
     body.appendChild(sec);
   }
   // Steps
   if(recipe.steps&&recipe.steps.length){
-    const sec=el("div","d-sec");
-    const st=el("p","d-sec-title");st.textContent="Method";sec.appendChild(st);
-    recipe.steps.forEach((step,i)=>{
-      const row=el("div","step-r");
-      const num=el("span","step-n");num.textContent=i+1;
-      const tx=el("span","step-t");tx.textContent=step;
-      row.append(num,tx);sec.appendChild(row);
+    var sec2=el("div","d-sec");
+    var st2=el("p","d-sec-title");st2.textContent="Method";sec2.appendChild(st2);
+    recipe.steps.forEach(function(step,i){
+      var row=el("div","step-r");
+      var num=el("span","step-n");num.textContent=i+1;
+      var tx2=el("span","step-t");tx2.textContent=step;
+      row.append(num,tx2);sec2.appendChild(row);
     });
-    body.appendChild(sec);
+    body.appendChild(sec2);
   }
   page.appendChild(body);
   page.appendChild(buildBnav());
   return page;
 }
 
-// ── PLANNER ───────────────────────────────────────────────
+// ── PLANNER PAGE ───────────────────────────────────────────
 function buildPlanner(){
-  const page=el("div","planner-wrap");
-  const ph=el("div","sec-hdr");ph.style.padding="0 4px";
-  const pt=el("span","sec-title");pt.innerHTML=`Weekly Planner <span>starting today</span>`;
+  var page=el("div","planner-wrap");
+  var ph=el("div","sec-hdr");ph.style.padding="0 4px";
+  var pt=el("span","sec-title");pt.innerHTML='Weekly Planner <span>starting today</span>';
   ph.appendChild(pt);page.appendChild(ph);
-  const today=todayName();
-  orderedDays().forEach(day=>{
-    const dw=el("div","pl-day");
-    const dh=el("div","pl-day-hdr");
-    const dn=el("span","pl-day-name"+(day===today?" today":""));dn.textContent=day;
+  var today=todayName();
+  orderedDays().forEach(function(day){
+    var dw=el("div","pl-day");
+    var dh=el("div","pl-day-hdr");
+    var dn=el("span","pl-day-name"+(day===today?" today":""));dn.textContent=day;
     dh.appendChild(dn);
-    if(day===today){const tb=el("span","today-badge");tb.textContent="Today";dh.appendChild(tb);}
+    if(day===today){var tb=el("span","today-badge");tb.textContent="Today";dh.appendChild(tb);}
     dw.appendChild(dh);
-    const recipes=S.recipes.filter(r=>r.schedule&&r.schedule.includes(day));
-    if(recipes.length===0){const ep=el("p","pl-none");ep.textContent="Nothing planned";dw.appendChild(ep);}
-    else{
-      recipes.forEach(r=>{
-        const row=el("div","pl-recipe");
-        const thumb=document.createElement("img");
+    var dayRecipes=S.recipes.filter(function(r){return r.schedule&&r.schedule.includes(day);});
+    if(dayRecipes.length===0){
+      var ep=el("p","pl-none");ep.textContent="Nothing planned";dw.appendChild(ep);
+    } else {
+      dayRecipes.forEach(function(r){
+        var row=el("div","pl-recipe");
+        var thumb=document.createElement("img");
         thumb.className="pl-thumb";thumb.src=r.image||"";thumb.alt=r.name;
-        thumb.onerror=()=>thumb.style.display="none";
-        const info=el("div");
-        const rn=el("p","pl-name");rn.textContent=r.name;
-        const rc=el("p","pl-cuis");rc.style.color=CUISINE_COLORS[r.cuisine]||"#888";rc.textContent=r.cuisine||"";
+        thumb.onerror=function(){thumb.style.display="none";};
+        var info=el("div");
+        var rn=el("p","pl-name");rn.textContent=r.name;
+        var rc=el("p","pl-cuis");rc.style.color=CUISINE_COLORS[r.cuisine]||"#888";rc.textContent=r.cuisine||"";
         info.append(rn,rc);row.append(thumb,info);
-        row.onclick=()=>ss({view:"detail",selected:r,prevView:"planner"});
+        row.onclick=function(){ss({view:"detail",selected:r,prevView:"planner"});};
         dw.appendChild(row);
       });
     }
@@ -937,155 +983,543 @@ function buildPlanner(){
   return page;
 }
 
-// ── PIN MODAL ─────────────────────────────────────────────
+// ── PIN MODAL ──────────────────────────────────────────────
 function buildPinModal(){
-  const ov=el("div","overlay");
-  const sheet=el("div","sheet");
-  const handle=el("div","sheet-handle");
-  const body=el("div","pin-sheet");
-  const title=el("h2","pin-title");title.textContent="Admin Access";
-  const sub=el("p","pin-sub");sub.textContent="Enter your PIN to continue";
-  const inp=document.createElement("input");
-  inp.type="password";inp.maxLength=4;inp.placeholder="••••";inp.className="pin-input";inp.inputMode="numeric";
-  const err=el("p","pin-err");
-  const btns=el("div","sheet-btns");
-  const cancel=btn("Cancel","sbtn-cancel",()=>ss({showPin:false}));
-  const ok=btn("Enter","sbtn-ok",()=>{
+  var ov=el("div","overlay");
+  var sheet=el("div","sheet");
+  var handle=el("div","sheet-handle");
+  var body=el("div","pin-sheet");
+  var title=el("h2","pin-title");title.textContent="Admin Access";
+  var sub=el("p","pin-sub");sub.textContent="Enter your PIN to continue";
+  var inp=document.createElement("input");
+  inp.type="password";inp.maxLength=4;inp.placeholder="....";inp.className="pin-input";inp.inputMode="numeric";
+  var err=el("p","pin-err");
+  var btns=el("div","sheet-btns");
+  var cancel=btn("Cancel","sbtn-cancel",function(){ss({showPin:false});});
+  var ok=btn("Enter","sbtn-ok",function(){
     if(inp.value===ADMIN_PIN){ss({isAdmin:true,showPin:false});}
-    else{inp.className="pin-input err";err.textContent="Incorrect PIN";inp.value="";
-    setTimeout(()=>{inp.className="pin-input";err.textContent="";},1400);}
+    else{
+      inp.className="pin-input err";err.textContent="Incorrect PIN";inp.value="";
+      setTimeout(function(){inp.className="pin-input";err.textContent="";},1400);
+    }
   });
-  inp.onkeydown=e=>{if(e.key==="Enter")ok.click();};
+  inp.onkeydown=function(e){if(e.key==="Enter")ok.click();};
   btns.append(cancel,ok);
   body.append(title,sub,inp,err,btns);
   sheet.append(handle,body);ov.appendChild(sheet);
-  ov.onclick=e=>{if(e.target===ov)ss({showPin:false});};
-  setTimeout(()=>inp.focus(),80);
+  ov.onclick=function(e){if(e.target===ov)ss({showPin:false});};
+  setTimeout(function(){inp.focus();},80);
   return ov;
 }
 
-// ── EDITOR MODAL ──────────────────────────────────────────
+// ── EDITOR MODAL ───────────────────────────────────────────
 function buildEditorModal(recipe){
-  const isNew=!recipe;
-  let form=recipe?JSON.parse(JSON.stringify(recipe)):{
+  var isNew=!recipe;
+  var form=recipe?JSON.parse(JSON.stringify(recipe)):{
     name:"",cuisine:"",tags:[],type:"Main Course",
     schedule:[],image:"",ingredients:{"":[""]},steps:[""],macros:null
   };
-  const ov=el("div","overlay");
-  const sheet=el("div","sheet editor-sheet");
-  const handle=el("div","sheet-handle");
-  // Header
-  const hdr=el("div","editor-hdr");
-  const title=el("h2","editor-title-text");title.textContent=isNew?"New Recipe":"Edit Recipe";
-  const closeB=btn("✕","close-x",()=>ss({showEditor:false,editingRecipe:null}));
-  hdr.append(title,closeB);
-  // Body
-  const body=el("div","editor-body");
+  var ov=el("div","overlay");
+  var sheet=el("div","sheet editor-sheet");
+  var handle=el("div","sheet-handle");
+  var hdr=el("div","editor-hdr");
+  var titleEl=el("h2","editor-title-text");titleEl.textContent=isNew?"New Recipe":"Edit Recipe";
+  var closeB=btn("x","close-x",function(){ss({showEditor:false,editingRecipe:null});});
+  hdr.append(titleEl,closeB);
+  var body=el("div","editor-body");
+
   function rebuild(){
     body.innerHTML="";
-    const s1=el("div","esec");
-    const s1t=el("p","esec-title");s1t.textContent="Basic Info";s1.appendChild(s1t);
+    // Basic info
+    var s1=el("div","esec");
+    s1.appendChild(Object.assign(el("p","esec-title"),{textContent:"Basic Info"}));
     s1.appendChild(Object.assign(el("label","flbl"),{textContent:"Recipe Name"}));
-    const ni=document.createElement("input");ni.type="text";ni.value=form.name;ni.oninput=e=>form.name=e.target.value;s1.appendChild(ni);
+    var ni=document.createElement("input");ni.type="text";ni.value=form.name;
+    ni.oninput=function(e){form.name=e.target.value;};s1.appendChild(ni);
     s1.appendChild(Object.assign(el("label","flbl"),{textContent:"Image URL"}));
-    const ii=document.createElement("input");ii.type="text";ii.value=form.image||"";ii.placeholder="https://…";
-    ii.oninput=e=>{form.image=e.target.value;rebuild();};s1.appendChild(ii);
-    if(form.image){const p=document.createElement("img");p.src=form.image;p.className="img-prev";p.onerror=()=>p.remove();s1.appendChild(p);}
-    const tc=el("div","two");
-    const cw=el("div");cw.appendChild(Object.assign(el("label","flbl"),{textContent:"Cuisine"}));
-    const cs=document.createElement("select");
-    cs.innerHTML=`<option value="">Select…</option>`+CUISINE_OPTIONS.map(c=>`<option value="${c}"${form.cuisine===c?" selected":""}>${c}</option>`).join("");
-    cs.onchange=e=>form.cuisine=e.target.value;cw.appendChild(cs);tc.appendChild(cw);
-    const tw=el("div");tw.appendChild(Object.assign(el("label","flbl"),{textContent:"Type"}));
-    const ts=document.createElement("select");
-    ts.innerHTML=TYPE_OPTIONS.map(t=>`<option value="${t}"${form.type===t?" selected":""}>${t}</option>`).join("");
-    ts.onchange=e=>form.type=e.target.value;tw.appendChild(ts);tc.appendChild(tw);
+    var ii=document.createElement("input");ii.type="text";ii.value=form.image||"";ii.placeholder="https://...";
+    ii.oninput=function(e){form.image=e.target.value;rebuild();};s1.appendChild(ii);
+    if(form.image){
+      var p=document.createElement("img");p.src=form.image;p.className="img-prev";
+      p.onerror=function(){p.remove();};s1.appendChild(p);
+    }
+    var tc=el("div","two");
+    var cw=el("div");cw.appendChild(Object.assign(el("label","flbl"),{textContent:"Cuisine"}));
+    var cs=document.createElement("select");
+    cs.innerHTML='<option value="">Select...</option>'+CUISINE_OPTIONS.map(function(c){return '<option value="'+c+'"'+(form.cuisine===c?' selected':'')+'>'+c+'</option>';}).join("");
+    cs.onchange=function(e){form.cuisine=e.target.value;};cw.appendChild(cs);tc.appendChild(cw);
+    var tw=el("div");tw.appendChild(Object.assign(el("label","flbl"),{textContent:"Type"}));
+    var ts=document.createElement("select");
+    ts.innerHTML=TYPE_OPTIONS.map(function(t){return '<option value="'+t+'"'+(form.type===t?' selected':'')+'>'+t+'</option>';}).join("");
+    ts.onchange=function(e){form.type=e.target.value;};tw.appendChild(ts);tc.appendChild(tw);
     s1.appendChild(tc);body.appendChild(s1);
     // Tags
-    const s2=el("div","esec");s2.appendChild(Object.assign(el("p","esec-title"),{textContent:"Tags"}));
-    const tg=el("div","tgrid");
-    TAG_OPTIONS.forEach(t=>{
-      const b=btn(t,"ttog"+(form.tags&&form.tags.includes(t)?" on":""),()=>{
-        form.tags=(form.tags||[]).includes(t)?(form.tags||[]).filter(x=>x!==t):[...(form.tags||[]),t];rebuild();
+    var s2=el("div","esec");
+    s2.appendChild(Object.assign(el("p","esec-title"),{textContent:"Tags"}));
+    var tg=el("div","tgrid");
+    TAG_OPTIONS.forEach(function(t){
+      var b=btn(t,"ttog"+(form.tags&&form.tags.includes(t)?" on":""),function(){
+        form.tags=(form.tags||[]).includes(t)?(form.tags||[]).filter(function(x){return x!==t;}):(form.tags||[]).concat([t]);
+        rebuild();
       });tg.appendChild(b);
     });
     s2.appendChild(tg);body.appendChild(s2);
     // Schedule
-    const s3=el("div","esec");s3.appendChild(Object.assign(el("p","esec-title"),{textContent:"Schedule"}));
-    const dg=el("div","tgrid");
-    DAYS.forEach(d=>{
-      const b=btn(d.slice(0,3),"dtog"+(form.schedule&&form.schedule.includes(d)?" on":""),()=>{
-        form.schedule=(form.schedule||[]).includes(d)?(form.schedule||[]).filter(x=>x!==d):[...(form.schedule||[]),d];rebuild();
+    var s3=el("div","esec");
+    s3.appendChild(Object.assign(el("p","esec-title"),{textContent:"Schedule"}));
+    var dg=el("div","tgrid");
+    DAYS.forEach(function(d){
+      var b=btn(d.slice(0,3),"dtog"+(form.schedule&&form.schedule.includes(d)?" on":""),function(){
+        form.schedule=(form.schedule||[]).includes(d)?(form.schedule||[]).filter(function(x){return x!==d;}):(form.schedule||[]).concat([d]);
+        rebuild();
       });dg.appendChild(b);
     });
     s3.appendChild(dg);body.appendChild(s3);
     // Ingredients
-    const s4=el("div","esec");s4.appendChild(Object.assign(el("p","esec-title"),{textContent:"Ingredients"}));
-    Object.entries(form.ingredients).forEach(([sec,items])=>{
-      const block=el("div","ing-block");
-      const sn=document.createElement("input");
+    var s4=el("div","esec");
+    s4.appendChild(Object.assign(el("p","esec-title"),{textContent:"Ingredients"}));
+    Object.entries(form.ingredients).forEach(function(entry){
+      var sec=entry[0];var items=entry[1];
+      var block=el("div","ing-block");
+      var sn=document.createElement("input");
       sn.className="ing-sec-inp";sn.type="text";sn.value=sec;sn.placeholder="Section name";
-      sn.oninput=e=>{
-        const entries=Object.entries(form.ingredients);
-        const idx=entries.findIndex(([k])=>k===sec);
+      sn.oninput=function(e){
+        var entries=Object.entries(form.ingredients);
+        var idx=entries.findIndex(function(kv){return kv[0]===sec;});
         if(idx>-1){entries[idx]=[e.target.value,entries[idx][1]];form.ingredients=Object.fromEntries(entries);}
       };
       block.appendChild(sn);
-      items.forEach((item,i)=>{
-        const row=el("div","ing-line");
-        const inp=document.createElement("input");inp.type="text";inp.value=item;inp.placeholder="e.g. 2 cups flour";
-        inp.oninput=e=>{const l=[...form.ingredients[sec]];l[i]=e.target.value;form.ingredients={...form.ingredients,[sec]:l};};
-        const dx=btn("✕","del-x",()=>{const l=form.ingredients[sec].filter((_,j)=>j!==i);form.ingredients={...form.ingredients,[sec]:l};rebuild();});
+      items.forEach(function(item,i){
+        var row=el("div","ing-line");
+        var inp=document.createElement("input");inp.type="text";inp.value=item;inp.placeholder="e.g. 2 cups flour";
+        inp.oninput=function(e){var l=form.ingredients[sec].slice();l[i]=e.target.value;form.ingredients=Object.assign({},form.ingredients);form.ingredients[sec]=l;};
+        var dx=btn("x","del-x",function(){var l=form.ingredients[sec].filter(function(_,j){return j!==i;});form.ingredients=Object.assign({},form.ingredients);form.ingredients[sec]=l;rebuild();});
         row.append(inp,dx);block.appendChild(row);
       });
-      block.appendChild(btn("Add ingredient","ghost",()=>{form.ingredients={...form.ingredients,[sec]:[...items,""]};rebuild();}));
+      block.appendChild(btn("Add ingredient","ghost",function(){form.ingredients=Object.assign({},form.ingredients);form.ingredients[sec]=items.concat([""]);rebuild();}));
       s4.appendChild(block);
     });
-    s4.appendChild(btn("Add section","ghost",()=>{form.ingredients={...form.ingredients,"New Section":[""]};rebuild();}));
+    s4.appendChild(btn("Add section","ghost",function(){form.ingredients=Object.assign({},form.ingredients,{"New Section":[""]});rebuild();}));
     body.appendChild(s4);
     // Steps
-    const s5=el("div","esec");s5.appendChild(Object.assign(el("p","esec-title"),{textContent:"Method"}));
-    (form.steps||[]).forEach((step,i)=>{
-      const row=el("div","step-edit");
-      const num=el("span","step-no");num.textContent=i+1;
-      const ta=document.createElement("textarea");ta.value=step;ta.placeholder=`Step ${i+1}`;ta.oninput=e=>form.steps[i]=e.target.value;
-      const dx=btn("✕","del-x",()=>{form.steps=form.steps.filter((_,j)=>j!==i);rebuild();});
+    var s5=el("div","esec");
+    s5.appendChild(Object.assign(el("p","esec-title"),{textContent:"Method"}));
+    (form.steps||[]).forEach(function(step,i){
+      var row=el("div","step-edit");
+      var num=el("span","step-no");num.textContent=i+1;
+      var ta=document.createElement("textarea");ta.value=step;ta.placeholder="Step "+(i+1);
+      ta.oninput=function(e){form.steps[i]=e.target.value;};
+      var dx=btn("x","del-x",function(){form.steps=form.steps.filter(function(_,j){return j!==i;});rebuild();});
       row.append(num,ta,dx);s5.appendChild(row);
     });
-    s5.appendChild(btn("Add step","ghost",()=>{form.steps=[...(form.steps||[]),""];rebuild();}));
+    s5.appendChild(btn("Add step","ghost",function(){form.steps=(form.steps||[]).concat([""]);rebuild();}));
     body.appendChild(s5);
     // Macros
-    const s6=el("div","esec");s6.appendChild(Object.assign(el("p","esec-title"),{textContent:"Macros (per serving)"}));
-    const mg=el("div","macros-g");
-    const m=form.macros||{};
-    [{k:"calories",l:"Calories"},{k:"protein",l:"Protein"},{k:"carbs",l:"Carbs"},{k:"fat",l:"Fat"}].forEach(({k,l})=>{
-      const w=el("div");w.appendChild(Object.assign(el("label","flbl"),{textContent:l}));
-      const inp=document.createElement("input");inp.type="number";inp.value=m[k]||"";inp.inputMode="numeric";
-      inp.oninput=e=>{form.macros={...(form.macros||{})};form.macros[k]=Number(e.target.value)||0;};
+    var s6=el("div","esec");
+    s6.appendChild(Object.assign(el("p","esec-title"),{textContent:"Macros (per serving)"}));
+    var mg=el("div","macros-g");
+    var m=form.macros||{};
+    [{k:"calories",l:"Calories"},{k:"protein",l:"Protein"},{k:"carbs",l:"Carbs"},{k:"fat",l:"Fat"}].forEach(function(item){
+      var w=el("div");w.appendChild(Object.assign(el("label","flbl"),{textContent:item.l}));
+      var inp=document.createElement("input");inp.type="number";inp.value=m[item.k]||"";inp.inputMode="numeric";
+      inp.oninput=function(e){if(!form.macros)form.macros={};form.macros[item.k]=Number(e.target.value)||0;};
       w.appendChild(inp);mg.appendChild(w);
     });
     s6.appendChild(mg);body.appendChild(s6);
   }
   rebuild();
-  // Footer
-  const footer=el("div","editor-footer");
-  const cancelB=btn("Cancel","sbtn-cancel",()=>ss({showEditor:false,editingRecipe:null}));
-  const saveB=btn(isNew?"Add Recipe":"Save Changes","sbtn-ok",async()=>{
+
+  var footer=el("div","editor-footer");
+  var cancelB=btn("Cancel","sbtn-cancel",function(){ss({showEditor:false,editingRecipe:null});});
+  var saveB=btn(isNew?"Add Recipe":"Save Changes","sbtn-ok",async function(){
     if(!form.name.trim()){alert("Recipe name required");return;}
     if(!form.id)form.id=Date.now().toString();
-    saveB.textContent="Saving…";saveB.disabled=true;
-    const ok=form.id&&!isNew?await sbUpdate(form):await sbInsert(form);
-    if(ok){const recipes=await sbFetch();ss({recipes:recipes||S.recipes,showEditor:false,editingRecipe:null});showToast(isNew?"✦ Recipe added":"✦ Changes saved");}
-    else{saveB.textContent=isNew?"Add Recipe":"Save Changes";saveB.disabled=false;alert("Failed to save. Check connection.");}
+    saveB.textContent="Saving...";saveB.disabled=true;
+    var ok=(!isNew)?await sbUpdate(form):await sbInsert(form);
+    if(ok){
+      var recipes=await sbFetch();
+      ss({recipes:recipes||S.recipes,showEditor:false,editingRecipe:null});
+      showToast(isNew?"✦ Recipe added":"✦ Changes saved");
+    } else {
+      saveB.textContent=isNew?"Add Recipe":"Save Changes";saveB.disabled=false;
+      alert("Failed to save. Check connection.");
+    }
   });
   footer.append(cancelB,saveB);
   sheet.append(handle,hdr,body,footer);
   ov.appendChild(sheet);
-  ov.onclick=e=>{if(e.target===ov)ss({showEditor:false,editingRecipe:null});};
+  ov.onclick=function(e){if(e.target===ov)ss({showEditor:false,editingRecipe:null});};
   return ov;
 }
 
-// ── DELETE ────────────────────────────────────────────────
+// ── AI IMPORT MODAL ────────────────────────────────────────
+function buildAiImportModal(){
+  var ov=el("div","overlay");
+  var sheet=el("div","sheet ai-import-sheet");
+  var handle=el("div","sheet-handle");
+  var hdr=el("div","editor-hdr");
+  var titleEl=el("h2","editor-title-text");titleEl.textContent="AI Recipe Import";
+  var closeB=btn("x","close-x",function(){ss({showAiImport:false});});
+  hdr.append(titleEl,closeB);
+
+  var body=el("div","ai-import-body");
+
+  // Drop zone
+  var dropZone=el("div","ai-drop-zone");
+  var fileInput=document.createElement("input");
+  fileInput.type="file";fileInput.accept="image/*";
+  var dropIcon=el("div","ai-drop-icon");dropIcon.textContent="📸";
+  var dropTitle=el("p","ai-drop-title");dropTitle.textContent="Upload Recipe Screenshot";
+  var dropSub=el("p","ai-drop-sub");dropSub.textContent="Take a photo or choose from your library";
+  dropZone.append(fileInput,dropIcon,dropTitle,dropSub);
+
+  var previewImg=document.createElement("img");
+  previewImg.className="ai-preview-img";
+  previewImg.style.display="none";
+  body.append(dropZone,previewImg);
+
+  var status=el("div","ai-status");
+  body.appendChild(status);
+
+  var footer=el("div","ai-import-footer");
+  var cancelB=btn("Cancel","sbtn-cancel",function(){ss({showAiImport:false});});
+  var extractB=btn("Extract & Fill","sbtn-ok",null);
+  extractB.disabled=true;
+  extractB.style.opacity="0.5";
+  footer.append(cancelB,extractB);
+
+  // State
+  var imageBase64=null;
+
+  function setStatus(msg,type){
+    status.textContent=msg;
+    status.className="ai-status visible"+(type?" "+type:"");
+  }
+
+  fileInput.onchange=function(e){
+    var file=e.target.files[0];
+    if(!file)return;
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      imageBase64=ev.target.result.split(",")[1];
+      previewImg.src=ev.target.result;
+      previewImg.style.display="block";
+      dropZone.classList.add("has-image");
+      dropIcon.textContent="✓";
+      dropTitle.textContent=file.name;
+      dropSub.textContent="Ready to extract";
+      extractB.disabled=false;
+      extractB.style.opacity="1";
+      setStatus("Image loaded. Tap Extract to analyse with AI.","");
+    };
+    reader.readAsDataURL(file);
+  };
+
+  extractB.onclick=async function(){
+    if(!imageBase64){setStatus("Please upload an image first.","error");return;}
+    extractB.disabled=true;extractB.textContent="Analysing...";
+    setStatus("Sending to Claude AI — this takes about 10 seconds...","");
+
+    var today=new Date().getDay();
+    var dayIdx=today===0?6:today-1;
+    var todayDay=DAYS[dayIdx];
+
+    var prompt='You are a recipe extraction assistant. Analyse this recipe image and extract all information into a precise JSON object.\n\nRules:\n- Use ONLY these cuisine values: Peruvian, Mexican, Italian, Asian, American, Mediterranean, Middle Eastern, Other\n- Use ONLY these tag values (pick all that apply): High Protein, Quick, Meal Prep, Vegetarian, Vegan, Low Fat, Make Ahead, No Cook\n- Use ONLY these type values: Main Course, Breakfast, Appetizer, Side Dish, Dessert, Snack, Beverage, Other\n- schedule: set to ["'+todayDay+'"] as default\n- id: generate a short kebab-case string from the name (e.g. "chicken-tacos")\n- image: set to empty string ""\n- ingredients: object where keys are section names and values are arrays of ingredient strings\n- steps: array of strings, each a complete instruction\n- macros: object with calories, protein, carbs, fat as numbers, or null if not shown\n- CRITICAL: use plain ASCII fractions only: 1/2 not ½, 3/4 not ¾, 1/4 not ¼\n\nReturn ONLY valid JSON, no markdown, no explanation, no backticks. The JSON must match this exact structure:\n{"id":"","name":"","cuisine":"","tags":[],"type":"","schedule":[],"image":"","ingredients":{},"steps":[],"macros":null}';
+
+    try{
+      var response=await fetch("https://api.anthropic.com/v1/messages",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          model:"claude-sonnet-4-20250514",
+          max_tokens:2000,
+          messages:[{
+            role:"user",
+            content:[
+              {type:"image",source:{type:"base64",media_type:"image/jpeg",data:imageBase64}},
+              {type:"text",text:prompt}
+            ]
+          }]
+        })
+      });
+
+      if(!response.ok){
+        var errData=await response.json();
+        throw new Error(errData.error&&errData.error.message?errData.error.message:"API error "+response.status);
+      }
+
+      var data=await response.json();
+      var raw=data.content.filter(function(c){return c.type==="text";}).map(function(c){return c.text;}).join("");
+      // Strip any accidental markdown fences
+      raw=raw.replace(/```json|```/g,"").trim();
+      var recipe=JSON.parse(raw);
+
+      // Validate required fields
+      if(!recipe.name)throw new Error("Could not extract recipe name from image.");
+
+      // Ensure id exists
+      if(!recipe.id||recipe.id===""){
+        recipe.id=recipe.name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+      }
+      // Ensure arrays
+      if(!Array.isArray(recipe.tags))recipe.tags=[];
+      if(!Array.isArray(recipe.steps))recipe.steps=[];
+      if(!Array.isArray(recipe.schedule))recipe.schedule=[todayDay];
+
+      setStatus("✦ Extracted: "+recipe.name+" — opening editor...","success");
+
+      setTimeout(function(){
+        ss({showAiImport:false,showEditor:true,editingRecipe:recipe});
+      },800);
+
+    } catch(err){
+      setStatus("Error: "+err.message,"error");
+      extractB.disabled=false;extractB.textContent="Extract & Fill";
+    }
+  };
+
+  sheet.append(handle,hdr,body,footer);
+  ov.appendChild(sheet);
+  ov.onclick=function(e){if(e.target===ov)ss({showAiImport:false});};
+  return ov;
+}
+
+// ── DEV VIEW ───────────────────────────────────────────────
+function buildDevView(){
+  var ov=el("div","dev-view-overlay");
+
+  // ── Header
+  var hdr=el("div","dev-view-hdr");
+  var hdrLeft=el("div");
+  var titleEl=el("div","dev-view-title");titleEl.textContent="✦ Architecture";
+  var subEl=el("div","dev-view-subtitle");subEl.textContent="Tap any node to inspect + act";
+  hdrLeft.append(titleEl,subEl);
+  var closeB=btn("Done","admin-btn on",function(){ss({showDevView:false});});
+  hdr.append(hdrLeft,closeB);
+  ov.appendChild(hdr);
+
+  // ── Scrollable graph area
+  var graphWrap=el("div","dev-graph-wrap");
+
+  // SVG canvas for connection lines — drawn after layout
+  var svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+  svg.setAttribute("class","dev-canvas");
+  graphWrap.appendChild(svg);
+
+  // ── Graph container
+  var graph=el("div","dev-graph");
+
+  // Node registry: id → DOM element (for drawing lines)
+  var nodeEls={};
+  // Selected state
+  var selectedId=null;
+
+  // Detail panel
+  var panel=el("div","dev-detail-panel");
+  ov.appendChild(panel); // added to ov, not graphWrap, so it stays fixed
+
+  // Node definitions
+  var NODES=[
+    {id:"entry",    label:"index.html",  sub:"app entry point", color:"gold",  col:0,
+     desc:"Single HTML file. Loads fonts, defines all CSS variables, bootstraps JS. Calls init() on load.",
+     actions:[]},
+    {id:"pwa",      label:"PWA",         sub:"manifest.json",   color:"dim",   col:0,
+     desc:"Progressive Web App config. Enables 'Add to Home Screen'. Runs full-screen with no browser chrome.",
+     actions:[]},
+    {id:"supabase", label:"Supabase DB",  sub:"recipes table",   color:"green", col:1,
+     desc:"Postgres database. Table: recipes. All recipe JSON stored here. Connected via anon public key.",
+     actions:[{label:"Refresh now",color:"green",fn:function(){ss({showDevView:false});doRefresh(null);showToast("Refreshed from Supabase");}}]},
+    {id:"sbfetch",  label:"sbFetch()",   sub:"GET /recipes",    color:"green", col:1,
+     desc:"Fetches all recipes ordered by created_at. Returns array or null on failure.",
+     actions:[{label:"Run fetch",color:"green",fn:async function(){var r=await sbFetch();showToast(r?"Fetched "+r.length+" recipes":"Fetch failed");}}]},
+    {id:"sbwrite",  label:"sbInsert / Update / Delete", sub:"POST · PATCH · DELETE", color:"green", col:1,
+     desc:"Write operations. sbInsert uses merge-duplicates. sbUpdate strips id/created_at and uses Prefer:return=minimal. sbDelete uses Prefer:return=minimal.",
+     actions:[]},
+    {id:"sbkey",    label:"SB_KEY",      sub:"anon public",     color:"dim",   col:1,
+     desc:"Supabase anon key — embedded in the app. Sent as apikey + Authorization Bearer on every request.",
+     actions:[]},
+    {id:"state",    label:"State S",     sub:"single object",   color:"blue",  col:2,
+     desc:"Single source of truth. Contains: recipes[], view, selected, isAdmin, filters, modal flags. All updates go through ss() → render().",
+     actions:[]},
+    {id:"ss",       label:"ss(update)",  sub:"setState + render",color:"blue", col:2,
+     desc:"Merges update into S with Object.assign, then calls render(). Every user action calls this.",
+     actions:[]},
+    {id:"render",   label:"render()",    sub:"full re-render",  color:"blue",  col:2,
+     desc:"Wipes #app innerHTML, rebuilds header + main + bnav + any open modals from current S. Called after every ss().",
+     actions:[]},
+    {id:"home",     label:"Home",        sub:"S.view==='home'",  color:"gold",  col:3,
+     desc:"Week strip (ordered from today) + saved recipes list. Admin bar shows AI Import + Dev View when active.",
+     actions:[{label:"Go to Home",color:"gold",fn:function(){ss({showDevView:false,view:"home",selected:null});}}]},
+    {id:"recipes",  label:"Recipes Grid",sub:"S.view==='recipes'",color:"gold", col:3,
+     desc:"2-column grid. Search + cuisine/tag filter chips in header. Tap card → detail.",
+     actions:[{label:"Go to Recipes",color:"gold",fn:function(){ss({showDevView:false,view:"recipes",selected:null});}}]},
+    {id:"detail",   label:"Detail",      sub:"S.view==='detail'",color:"gold",  col:3,
+     desc:"Full recipe view. Hero image, macros grid, interactive schedule pills (saves to Supabase on tap). Edit/Delete in admin.",
+     actions:[]},
+    {id:"planner",  label:"Planner",     sub:"S.view==='planner'",color:"purple",col:3,
+     desc:"Full week view from today. Each day lists scheduled recipes. Tap to open detail.",
+     actions:[{label:"Go to Planner",color:"purple",fn:function(){ss({showDevView:false,view:"planner"});}}]},
+    {id:"aiimport", label:"AI Import",   sub:"Claude Vision API",color:"gold",  col:4,
+     desc:"Upload recipe screenshot → sent to claude-sonnet-4-20250514 with vision → JSON extracted → editor pre-filled. Runs via Anthropic API.",
+     actions:[{label:"Open AI Import",color:"gold",fn:function(){ss({showDevView:false,showAiImport:true});}}]},
+    {id:"editor",   label:"Recipe Editor",sub:"add / edit",     color:"blue",  col:4,
+     desc:"Full recipe form. Name, image, cuisine, type, tags, schedule, sectioned ingredients, steps, macros. Saves via sbInsert or sbUpdate.",
+     actions:[{label:"New Recipe",color:"blue",fn:function(){ss({showDevView:false,showEditor:true,editingRecipe:null});}}]},
+    {id:"urlimport",label:"URL Import",  sub:"?recipe= param",  color:"green", col:4,
+     desc:"On init, checks for ?recipe= in URL. base64 decodes JSON, inserts to Supabase if not duplicate. Used in Claude chat workflow.",
+     actions:[]},
+    {id:"refresh",  label:"Refresh",     sub:"header btn + pull",color:"blue", col:4,
+     desc:"Header button triggers doRefresh(). Pull-to-refresh detects touchstart at scrollY=0 and triggers on 60px+ pull. Both call sbFetch().",
+     actions:[{label:"Refresh now",color:"blue",fn:function(){ss({showDevView:false});doRefresh(null);}}]},
+  ];
+
+  var CONNECTIONS=[
+    ["entry","supabase","#1a3a22"],
+    ["entry","state","#0f2040"],
+    ["sbkey","sbfetch","#2a2a00"],
+    ["sbkey","sbwrite","#2a2a00"],
+    ["supabase","sbfetch","#4caf72"],
+    ["supabase","sbwrite","#4caf72"],
+    ["sbfetch","state","#6490dc"],
+    ["sbwrite","state","#6490dc"],
+    ["state","ss","#6490dc"],
+    ["ss","render","#6490dc"],
+    ["render","home","#c8a96e"],
+    ["render","recipes","#c8a96e"],
+    ["render","detail","#c8a96e"],
+    ["render","planner","#a06ee0"],
+    ["aiimport","editor","#c8a96e"],
+    ["editor","sbwrite","#4caf72"],
+    ["urlimport","sbwrite","#4caf72"],
+    ["urlimport","state","#6490dc"],
+    ["refresh","sbfetch","#4caf72"],
+    ["home","aiimport","#c8a96e"],
+    ["detail","editor","#6490dc"],
+    ["detail","sbwrite","#4caf72"],
+  ];
+
+  var cols=[0,1,2,3,4];
+  var colLabels=["Entry","Data","State","Views","Features"];
+  var colEls=[];
+
+  cols.forEach(function(ci){
+    var colWrap=el("div");
+    colWrap.style.cssText="display:flex;flex-direction:column;gap:0;";
+    var colHdr=el("div","dev-col-hdr");colHdr.textContent=colLabels[ci];
+    colWrap.appendChild(colHdr);
+    var col=el("div","dev-col");
+    colEls.push(col);
+    colWrap.appendChild(col);
+    graph.appendChild(colWrap);
+    if(ci<4){var gap=el("div","dev-col-gap");graph.appendChild(gap);}
+  });
+
+  NODES.forEach(function(nd){
+    var node=el("div","dev-node "+nd.color);
+    node.dataset.id=nd.id;
+    var lbl=el("div","dev-node-label");lbl.textContent=nd.label;
+    var sub=el("div","dev-node-sub");sub.textContent=nd.sub;
+    var hasDot=CONNECTIONS.some(function(c){return c[0]===nd.id;});
+    var hasInDot=CONNECTIONS.some(function(c){return c[1]===nd.id;});
+    node.append(lbl,sub);
+    if(hasDot){var dot=el("span","dev-node-dot");node.appendChild(dot);}
+    if(hasInDot&&nd.col>0){var dotL=el("span","dev-node-dot-left");node.appendChild(dotL);}
+    node.onclick=function(e){
+      e.stopPropagation();
+      graph.querySelectorAll(".dev-node").forEach(function(n){n.classList.remove("selected");});
+      if(selectedId===nd.id){
+        selectedId=null;
+        panel.classList.remove("open");
+        panel.innerHTML="";
+      } else {
+        selectedId=nd.id;
+        node.classList.add("selected");
+        showPanel(nd);
+        drawLines();
+      }
+    };
+    colEls[nd.col].appendChild(node);
+    nodeEls[nd.id]=node;
+  });
+
+  graphWrap.appendChild(graph);
+
+  function showPanel(nd){
+    panel.innerHTML="";
+    var nm=el("div","dev-detail-name");nm.textContent=nd.label;
+    var fl=el("div","dev-detail-file");fl.textContent=nd.sub;
+    var desc=el("div","dev-detail-desc");desc.textContent=nd.desc;
+    panel.append(nm,fl,desc);
+    if(nd.actions&&nd.actions.length){
+      var acts=el("div","dev-detail-actions");
+      nd.actions.forEach(function(a){
+        var b=el("button","dev-action-btn");
+        b.textContent=a.label;
+        var colorMap={gold:"#c8a96e",blue:"#6490dc",green:"#4caf72",purple:"#a06ee0",red:"#e05555"};
+        var c=colorMap[a.color]||"#c8a96e";
+        b.style.cssText="color:"+c+";border-color:"+c+"33;background:"+c+"11;";
+        b.onclick=a.fn;
+        acts.appendChild(b);
+      });
+      panel.appendChild(acts);
+    }
+    panel.classList.add("open");
+  }
+
+  graphWrap.onclick=function(){
+    selectedId=null;
+    panel.classList.remove("open");
+    graph.querySelectorAll(".dev-node").forEach(function(n){n.classList.remove("selected");});
+    drawLines();
+  };
+
+  function drawLines(){
+    var wRect=graphWrap.getBoundingClientRect();
+    var scrollLeft=graphWrap.scrollLeft;
+    var scrollTop=graphWrap.scrollTop;
+    var totalW=graph.scrollWidth;
+    var totalH=graph.scrollHeight;
+    svg.setAttribute("width",totalW);
+    svg.setAttribute("height",totalH);
+    svg.setAttribute("viewBox","0 0 "+totalW+" "+totalH);
+    svg.innerHTML="";
+
+    CONNECTIONS.forEach(function(conn){
+      var fromId=conn[0];var toId=conn[1];var color=conn[2];
+      var fromEl=nodeEls[fromId];var toEl=nodeEls[toId];
+      if(!fromEl||!toEl)return;
+
+      var fRect=fromEl.getBoundingClientRect();
+      var tRect=toEl.getBoundingClientRect();
+
+      var fx=fRect.right-wRect.left+scrollLeft;
+      var fy=fRect.top+fRect.height/2-wRect.top+scrollTop;
+      var tx=tRect.left-wRect.left+scrollLeft;
+      var ty=tRect.top+tRect.height/2-wRect.top+scrollTop;
+
+      var cp=Math.abs(tx-fx)*0.45;
+      var isSelected=(selectedId===fromId||selectedId===toId);
+      var opacity=selectedId?(isSelected?"1":"0.08"):"0.35";
+      var strokeW=isSelected?"1.5":"0.8";
+
+      var path=document.createElementNS("http://www.w3.org/2000/svg","path");
+      path.setAttribute("d","M "+fx+" "+fy+" C "+(fx+cp)+" "+fy+", "+(tx-cp)+" "+ty+", "+tx+" "+ty);
+      path.setAttribute("fill","none");
+      path.setAttribute("stroke",color);
+      path.setAttribute("stroke-width",strokeW);
+      path.setAttribute("opacity",opacity);
+      svg.appendChild(path);
+    });
+  }
+
+  setTimeout(drawLines,60);
+  graphWrap.addEventListener("scroll",drawLines,{passive:true});
+
+  ov.appendChild(graphWrap);
+  return ov;
+}
+
+// ── DELETE ─────────────────────────────────────────────────
 async function confirmDelete(id){
   if(confirm("Delete this recipe?")){
     const ok=await sbDelete(id);
@@ -1099,67 +1533,53 @@ async function confirmDelete(id){
   }
 }
 
-<!-- REPLACE EVERYTHING FROM LINE 1098 TO THE END OF YOUR FILE WITH THIS BLOCK -->
-// ── INIT ──
+// ── PULL TO REFRESH ────────────────────────────────────────
+function initPullToRefresh(){
+  var ptr=document.getElementById("ptr-indicator");
+  var startY=0;
+  var currentY=0;
+
+  window.addEventListener("touchstart",function(e){
+    if(window.scrollY===0){startY=e.touches[0].pageY;}
+    else{startY=0;}
+  },{passive:true});
+
+  window.addEventListener("touchmove",function(e){
+    if(startY===0)return;
+    currentY=e.touches[0].pageY;
+    var diff=currentY-startY;
+    if(diff>0&&diff<80){
+      ptr.style.transform="translateY("+(diff-50)+"px)";
+      ptr.style.opacity=String(diff/80);
+      ptr.textContent=diff>60?"Release to refresh":"Pull to refresh";
+    }
+  },{passive:true});
+
+  window.addEventListener("touchend",async function(){
+    var diff=currentY-startY;
+    startY=0;currentY=0;
+    if(diff>60){
+      ptr.textContent="Refreshing...";
+      ptr.style.transform="translateY(0px)";
+      var fresh=await sbFetch();
+      if(fresh)ss({recipes:fresh});
+      showToast("✦ Refreshed");
+      setTimeout(function(){ptr.style.transform="translateY(-50px)";ptr.style.opacity="0";},700);
+    } else {
+      ptr.style.transform="translateY(-50px)";
+      ptr.style.opacity="0";
+    }
+  });
+}
+
+// ── INIT ───────────────────────────────────────────────────
 async function init(){
   render();
-  let recipes=await sbFetch();
+  initPullToRefresh();
+  var recipes=await sbFetch();
   if(!recipes||recipes.length===0){await sbSeed();recipes=await sbFetch();}
   recipes=await checkUrlImport(recipes||[]);
   ss({recipes:recipes||[],loading:false});
-
-  // ── PULL TO REFRESH INDEPENDENT CONTROLLER ──
-  let startY = 0;
-  let currentY = 0;
-  
-  // Inject the visual pull indicator element dynamically so you don't have to find the body tag
-  let ptr = document.getElementById("ptr-indicator");
-  if (!ptr) {
-    ptr = document.createElement("div");
-    ptr.id = "ptr-indicator";
-    ptr.style.cssText = "position:fixed;top:0;left:0;width:100%;height:50px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#c8a96e;font-family:var(--sans);transform:translateY(-50px);transition:transform 0.15s,opacity 0.15s;pointer-events:none;z-index:1000;background:rgba(8,8,8,0.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border);";
-    document.body.prepend(ptr);
-  }
-
-  window.addEventListener("touchstart", (e) => {
-    if (window.scrollY === 0) {
-      startY = e.touches.pageY;
-    } else {
-      startY = 0;
-    }
-  }, { passive: true });
-
-  window.addEventListener("touchmove", (e) => {
-    if (startY === 0) return;
-    currentY = e.touches.pageY;
-    const diff = currentY - startY;
-
-    if (diff > 0 && diff < 80) {
-      ptr.style.transform = `translateY(${diff - 50}px)`;
-      ptr.style.opacity = diff / 80;
-      ptr.innerText = diff > 60 ? "🔄 Release to refresh" : "⬇️ Pull to refresh";
-    }
-  }, { passive: true });
-
-  window.addEventListener("touchend", async () => {
-    const diff = currentY - startY;
-    startY = 0;
-    currentY = 0;
-
-    if (diff > 60) {
-      ptr.innerText = "⚡ Refreshing...";
-      ptr.style.transform = "translateY(0px)";
-      
-      let freshRecipes = await sbFetch();
-      ss({ recipes: freshRecipes || [], loading: false });
-      
-      setTimeout(() => {
-        ptr.style.transform = "translateY(-50px)";
-      }, 600);
-    } else {
-      ptr.style.transform = "translateY(-50px)";
-    }
-  });
 }
 
 init();

@@ -234,6 +234,23 @@ const SEED=[
 
 // ─── Supabase helpers ────────────────────────────────────────────────────────
 
+// Supabase may return jsonb/array fields as JSON strings if the column type is
+// text rather than jsonb. Parse them back to the expected JS types.
+function normalizeRecipe(r){
+  function jp(v,fb){
+    if(v===null||v===undefined) return fb;
+    if(typeof v==="string"){try{return JSON.parse(v);}catch{}}
+    return v;
+  }
+  return Object.assign({},r,{
+    schedule:    Array.isArray(r.schedule)?r.schedule:jp(r.schedule,[]),
+    tags:        Array.isArray(r.tags)?r.tags:jp(r.tags,[]),
+    steps:       Array.isArray(r.steps)?r.steps:jp(r.steps,[]),
+    ingredients: (r.ingredients&&typeof r.ingredients==="object"&&!Array.isArray(r.ingredients))?r.ingredients:jp(r.ingredients,{}),
+    macros:      (r.macros&&typeof r.macros==="object"&&!Array.isArray(r.macros))?r.macros:jp(r.macros,null),
+  });
+}
+
 async function sbFetch(){
   try{
     const ctrl=new AbortController();
@@ -242,7 +259,7 @@ async function sbFetch(){
     clearTimeout(tid);
     if(!r.ok){console.error("sbFetch error:",r.status,r.statusText);return null;}
     const d=await r.json();
-    return Array.isArray(d)?d:null;
+    return Array.isArray(d)?d.map(normalizeRecipe):null;
   }catch(e){console.error("sbFetch error:",e);return null;}
 }
 

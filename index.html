@@ -566,11 +566,29 @@ function showToast(msg){
 function getGroceryShortcut(){return localStorage.getItem("grocery_shortcut_name")||"";}
 function setGroceryShortcut(name){localStorage.setItem("grocery_shortcut_name",name.trim());}
 
+function dedupeIngredients(items){
+  var reAmt=/^[\d\s\/½⅓⅔¼¾⅛⅜⅝⅞\.]+\s*(cups?|tbsp|tsp|tablespoons?|teaspoons?|oz|lbs?|pounds?|ounces?|grams?|g|kg|ml|cloves?|pieces?|slices?|cans?|handfuls?|pinch|dashes?|sticks?|packages?)\.?\s*/i;
+  var reNum=/^[\d\/½⅓⅔¼¾⅛⅜⅝⅞\.\s]+\s+/;
+  function norm(item){
+    return item.toLowerCase()
+      .replace(/\([^)]*\)/g,'')        // strip (30g), (1/2 lemon)
+      .replace(reAmt,'')               // strip "2 tbsp", "100g"
+      .replace(reNum,'')               // strip remaining leading number
+      .replace(/,.*$/,'')              // strip ", minced", ", finely chopped"
+      .replace(/^(lots? of|a? ?handful of|pinch of|dash of|some)\s+/i,'')
+      .replace(/\s+/g,' ').trim();
+  }
+  var seen={};
+  return items.filter(function(item){
+    var k=norm(item);if(seen[k])return false;seen[k]=true;return true;
+  });
+}
 function shareIngredients(recipe){
   var items=[];
   Object.entries(recipe.ingredients).forEach(function(entry){
     entry[1].forEach(function(item){items.push(item);});
   });
+  items=dedupeIngredients(items);
   var shortcut=getGroceryShortcut();
   if(!shortcut){showGrocerySetup();return;}
   var text=items.join("\n");

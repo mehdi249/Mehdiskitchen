@@ -17,6 +17,21 @@ When the user shares a recipe screenshot, extract it and add it to the `PENDING_
 
 Do NOT use the URL import approach; it has length/formatting issues on mobile.
 
+**Every recipe added to `PENDING_RECIPES` must include a `grocery` field** — a flat, deduplicated, quantity-free list of ingredient names. Curate it manually from the screenshot at the same time as the recipe. Example:
+
+```js
+grocery: ["chicken thighs", "garlic", "lime juice", "honey", "tortillas", "cilantro"]
+```
+
+Rules for the grocery list:
+- No quantities or units ("garlic" not "3 cloves garlic")
+- No prep notes ("garlic" not "garlic, minced")
+- No duplicates across sections
+- Plain shopping-list names only
+- Also add `grocery` to any SEED entries that don't have one
+
+`sbStrip()` removes `grocery` before all Supabase writes (it's not a DB column). `applyGroceryLists()` merges it back from SEED/PENDING_RECIPES into recipes after every `sbFetch()`. User edits to the grocery list in the editor are persisted in localStorage (`recipe_grocery_lists`, key: `{id: [...]}`).
+
 ## source_url Field (Recipe Source Links)
 
 `source_url` is stored in **localStorage only** (key: `recipe_source_urls`, a `{id: url}` map) — it is NOT a column in the Supabase `recipes` table. 

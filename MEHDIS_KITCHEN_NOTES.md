@@ -71,11 +71,10 @@
 
 ### 1. Source Link per Recipe
 - User can paste an Instagram/TikTok URL when editing a recipe
-- Stored in **localStorage only** — NOT in Supabase (no DB column)
-- Key: `recipe_source_urls` → `{ id: url }` map
-- `sbStrip()` ensures it never reaches Supabase
+- Stored in **Supabase** as `source_url text` column — shared across all devices
+- `sbStrip()` does NOT remove it — flows through normally
 - Shows as "View Original Recipe" button in recipe detail view
-- Pre-populated in editor from localStorage
+- `migrateSourceUrls()` runs once on init to patch any URLs previously stored in localStorage into Supabase
 
 ### 2. Grocery List Export → iOS Reminders
 - "Add to Grocery List" button in each recipe's Ingredients header

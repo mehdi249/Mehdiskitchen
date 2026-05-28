@@ -34,15 +34,13 @@ Rules for the grocery list:
 
 ## source_url Field (Recipe Source Links)
 
-`source_url` is stored in **localStorage only** (key: `recipe_source_urls`, a `{id: url}` map) — it is NOT a column in the Supabase `recipes` table. 
+`source_url` is a **text column in the Supabase `recipes` table** — it flows through normally like any other field.
 
-- `sbStrip()` always removes it before any Supabase PATCH or POST
-- `saveSourceUrl(id, url)` — persists to localStorage after a successful save
-- `getSourceUrl(id)` — reads from localStorage
-- In `buildDetail`, use `recipe.source_url || getSourceUrl(recipe.id)` to display the link
-- In `buildEditorModal`, pre-populate with `getSourceUrl(form.id)` for existing recipes
-
-If the Supabase `recipes` table ever gets a `source_url` text column added, remove the localStorage logic and let it flow through normally.
+- `sbStrip()` does NOT remove it — it is saved to Supabase on every PATCH/POST
+- `getSourceUrl(id)` — reads from localStorage (legacy fallback only, for migration)
+- `migrateSourceUrls(recipes)` — runs once on init, patches any recipe that has a source URL in localStorage but not yet in Supabase, then clears the need for further migration
+- In `buildDetail`, use `recipe.source_url || getSourceUrl(recipe.id)` (localStorage fallback covers any unmigrated recipes)
+- In `buildEditorModal`, `if(form.id&&!form.source_url) form.source_url=getSourceUrl(form.id)` pre-populates from localStorage for any recipe not yet migrated
 
 ## Protecting User-Edited Recipe Data
 

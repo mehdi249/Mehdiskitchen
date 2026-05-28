@@ -491,7 +491,7 @@ async function sbFetch(){
 function sbStrip(obj,keepId){
   var b=Object.assign({},obj);
   if(!keepId)delete b.id;
-  delete b.created_at;delete b.source_url;delete b.grocery;
+  delete b.created_at;delete b.grocery;
   return b;
 }
 async function sbInsert(recipe){
@@ -518,8 +518,19 @@ async function sbSeed(){
   }catch{}
 }
 function getSourceUrls(){try{return JSON.parse(localStorage.getItem("recipe_source_urls")||"{}");}catch{return {};}}
-function saveSourceUrl(id,url){var m=getSourceUrls();if(url)m[id]=url;else delete m[id];localStorage.setItem("recipe_source_urls",JSON.stringify(m));}
 function getSourceUrl(id){return getSourceUrls()[id]||"";}
+async function migrateSourceUrls(recipes){
+  var stored=getSourceUrls();
+  var ids=Object.keys(stored).filter(function(id){
+    var r=recipes.find(function(r){return r.id===id;});
+    return r&&!r.source_url&&stored[id];
+  });
+  if(!ids.length)return false;
+  for(var i=0;i<ids.length;i++){
+    try{await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(ids[i]),{method:"PATCH",headers:{...sbH,"Prefer":"return=minimal"},body:JSON.stringify({source_url:stored[ids[i]]})});}catch{}
+  }
+  return true;
+}
 function getGroceryLists(){try{return JSON.parse(localStorage.getItem("recipe_grocery_lists")||"{}");}catch{return {};}}
 function saveGroceryList(id,arr){var m=getGroceryLists();if(arr&&arr.length)m[id]=arr;else delete m[id];localStorage.setItem("recipe_grocery_lists",JSON.stringify(m));}
 function getGroceryList(id){return getGroceryLists()[id]||null;}
@@ -1282,7 +1293,6 @@ function buildEditorModal(recipe){
     saveB.textContent="Saving...";saveB.disabled=true;
     var ok=(!isNew)?await sbUpdate(form):await sbInsert(form);
     if(ok){
-      saveSourceUrl(form.id,form.source_url||"");
       if(form.grocery&&form.grocery.length)saveGroceryList(form.id,form.grocery);
       var recipes=await sbFetch();
       recipes=applyGroceryLists(recipes||[]);
@@ -1708,6 +1718,8 @@ async function init(){
   if(!recipes||recipes.length===0){await sbSeed();recipes=await sbFetch();}
   await insertPending();
   recipes=await sbFetch()||recipes;
+  var migrated=await migrateSourceUrls(recipes||[]);
+  if(migrated)recipes=await sbFetch()||recipes;
   recipes=applyGroceryLists(recipes||[]);
   recipes=await checkUrlImport(recipes||[]);
   ss({recipes:recipes||[],loading:false});

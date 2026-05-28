@@ -571,23 +571,25 @@ function shareIngredients(recipe){
   Object.entries(recipe.ingredients).forEach(function(entry){
     entry[1].forEach(function(item){items.push(item);});
   });
+  var shortcut=getGroceryShortcut();
+  if(!shortcut){showGrocerySetup();return;}
   var text=items.join("\n");
-  // execCommand works on iOS without triggering a permission prompt
+  // execCommand copies without triggering iOS permission prompt
   var ta=document.createElement("textarea");
   ta.value=text;ta.style.cssText="position:fixed;left:-9999px;top:0;opacity:0;font-size:16px;";
   document.body.appendChild(ta);ta.focus();ta.select();
   var copied=false;try{copied=document.execCommand("copy");}catch(e){}
   document.body.removeChild(ta);
-  if(copied){
-    showToast("✦ Copied! Opening Reminders — paste into your grocery list");
-    setTimeout(function(){
-      var a=document.createElement("a");a.href="reminders://";
-      document.body.appendChild(a);a.click();document.body.removeChild(a);
-    },900);
-  } else {
-    navigator.clipboard.writeText(text).then(function(){
-      showToast("✦ Copied! Open Reminders and paste into your grocery list");
-    }).catch(function(){showToast("Could not copy — try again");});
+  var launch=function(){
+    var a=document.createElement("a");
+    a.href="shortcuts://run-shortcut?name="+encodeURIComponent(shortcut)+"&input=clipboard";
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+  };
+  if(copied){launch();}
+  else{
+    navigator.clipboard.writeText(text).then(launch).catch(function(){
+      showToast("Could not copy to clipboard — try again");
+    });
   }
 }
 
@@ -1001,7 +1003,9 @@ function buildDetail(recipe){
     var ingBtns=el("div","ing-btns");
     var shareB=btn("","share-ing-btn",function(){shareIngredients(recipe);});
     shareB.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3-3 3 3"/><path d="M12 8v8"/><rect x="3" y="14" width="18" height="7" rx="2"/></svg> Add to Grocery List';
-    ingBtns.append(shareB);
+    var setupB=btn("","ing-setup-btn",function(){showGrocerySetup();});
+    setupB.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+    ingBtns.append(shareB,setupB);
     ingHdr.append(st,ingBtns);sec.appendChild(ingHdr);
     Object.entries(recipe.ingredients).forEach(function(entry){
       var s=entry[0];var items=entry[1];

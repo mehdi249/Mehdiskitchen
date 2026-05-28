@@ -520,6 +520,18 @@ async function sbSeed(){
 function getSourceUrls(){try{return JSON.parse(localStorage.getItem("recipe_source_urls")||"{}");}catch{return {};}}
 function saveSourceUrl(id,url){var m=getSourceUrls();if(url)m[id]=url;else delete m[id];localStorage.setItem("recipe_source_urls",JSON.stringify(m));}
 function getSourceUrl(id){return getSourceUrls()[id]||"";}
+function getGroceryLists(){try{return JSON.parse(localStorage.getItem("recipe_grocery_lists")||"{}");}catch{return {};}}
+function saveGroceryList(id,arr){var m=getGroceryLists();if(arr&&arr.length)m[id]=arr;else delete m[id];localStorage.setItem("recipe_grocery_lists",JSON.stringify(m));}
+function getGroceryList(id){return getGroceryLists()[id]||null;}
+function applyGroceryLists(recipes){
+  var coded={};
+  SEED.forEach(function(r){if(r.grocery)coded[r.id]=r.grocery;});
+  PENDING_RECIPES.forEach(function(r){if(r.grocery)coded[r.id]=r.grocery;});
+  return recipes.map(function(r){
+    var gl=getGroceryList(r.id)||coded[r.id]||null;
+    return gl?Object.assign({},r,{grocery:gl}):r;
+  });
+}
 
 // ── STATE ──────────────────────────────────────────────────
 var S={
@@ -1244,7 +1256,22 @@ function buildEditorModal(recipe){
       w.appendChild(inp);mg.appendChild(w);
     });
     s6.appendChild(mg);body.appendChild(s6);
+    // Grocery List (editor only — hidden from recipe view)
+    var s7=el("div","esec");
+    s7.appendChild(Object.assign(el("p","esec-title"),{textContent:"Grocery List"}));
+    var ghelp=el("p","flbl");ghelp.style.cssText="color:var(--text2);font-size:12px;margin-bottom:8px;font-weight:normal;";
+    ghelp.textContent="Hidden from recipe view. One item per line, no quantities.";
+    s7.appendChild(ghelp);
+    var gta=document.createElement("textarea");
+    var _gl=getGroceryList(form.id)||(form.grocery&&form.grocery.length?form.grocery:null);
+    gta.value=_gl?_gl.join("\n"):"";
+    gta.placeholder="chicken thighs\ngarlic\nlime juice\n...";
+    gta.rows=7;
+    gta.oninput=function(e){form.grocery=e.target.value.split("\n").map(function(x){return x.trim();}).filter(Boolean);};
+    s7.appendChild(gta);body.appendChild(s7);
   }
+  // Seed form.grocery from localStorage or recipe field before first render
+  if(form.id){var _initGl=getGroceryList(form.id);if(_initGl)form.grocery=_initGl;}
   rebuild();
 
   var footer=el("div","editor-footer");
@@ -1256,7 +1283,9 @@ function buildEditorModal(recipe){
     var ok=(!isNew)?await sbUpdate(form):await sbInsert(form);
     if(ok){
       saveSourceUrl(form.id,form.source_url||"");
+      if(form.grocery&&form.grocery.length)saveGroceryList(form.id,form.grocery);
       var recipes=await sbFetch();
+      recipes=applyGroceryLists(recipes||[]);
       ss({recipes:recipes||S.recipes,showEditor:false,editingRecipe:null});
       showToast(isNew?"✦ Recipe added":"✦ Changes saved");
     } else {
@@ -1679,6 +1708,7 @@ async function init(){
   if(!recipes||recipes.length===0){await sbSeed();recipes=await sbFetch();}
   await insertPending();
   recipes=await sbFetch()||recipes;
+  recipes=applyGroceryLists(recipes||[]);
   recipes=await checkUrlImport(recipes||[]);
   ss({recipes:recipes||[],loading:false});
 }

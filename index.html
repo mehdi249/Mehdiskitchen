@@ -561,7 +561,7 @@ async function checkUrlImport(recipes){
     if(!exists){
       await sbInsert(recipe);
       var fresh=await sbFetch();
-      if(fresh)recipes=fresh;
+      if(fresh)recipes=applyGroceryLists(fresh);
       showToast("✦ "+recipe.name+" added");
     }
     window.history.replaceState({},"",window.location.pathname);
@@ -698,7 +698,7 @@ function imgFb(cls){
 async function doRefresh(btnEl){
   if(btnEl){btnEl.classList.add("spinning");}
   var fresh=await sbFetch();
-  if(fresh){ss({recipes:fresh});}
+  if(fresh){ss({recipes:applyGroceryLists(fresh)});}
   showToast("✦ Refreshed");
   if(btnEl){setTimeout(function(){btnEl.classList.remove("spinning");},600);}
 }
@@ -1539,7 +1539,7 @@ async function confirmDelete(id){
     const ok=await sbDelete(id);
     if(ok){
       const recipes=await sbFetch();
-      ss({recipes:recipes||S.recipes,view:"home",selected:null});
+      ss({recipes:applyGroceryLists(recipes||S.recipes),view:"home",selected:null});
       showToast("Recipe deleted");
     } else {
       showToast("Failed to delete — check Supabase permissions");
@@ -1600,7 +1600,7 @@ function initPullToRefresh(){
       ptr.textContent="Refreshing...";
       ptr.style.transform="translateY(0px)";
       var fresh=await sbFetch();
-      if(fresh)ss({recipes:fresh});
+      if(fresh)ss({recipes:applyGroceryLists(fresh)});
       showToast("✦ Refreshed");
       setTimeout(function(){ptr.style.transform="translateY(-50px)";ptr.style.opacity="0";},700);
     } else {

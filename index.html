@@ -572,16 +572,23 @@ function shareIngredients(recipe){
     entry[1].forEach(function(item){items.push(item);});
   });
   var text=items.join("\n");
-  navigator.clipboard.writeText(text).then(function(){
-    showToast("✦ Copied! Opening Reminders — just paste into your grocery list");
+  // execCommand works on iOS without triggering a permission prompt
+  var ta=document.createElement("textarea");
+  ta.value=text;ta.style.cssText="position:fixed;left:-9999px;top:0;opacity:0;font-size:16px;";
+  document.body.appendChild(ta);ta.focus();ta.select();
+  var copied=false;try{copied=document.execCommand("copy");}catch(e){}
+  document.body.removeChild(ta);
+  if(copied){
+    showToast("✦ Copied! Opening Reminders — paste into your grocery list");
     setTimeout(function(){
-      var a=document.createElement("a");
-      a.href="reminders://";
+      var a=document.createElement("a");a.href="reminders://";
       document.body.appendChild(a);a.click();document.body.removeChild(a);
-    },1200);
-  }).catch(function(){
-    showToast("Could not copy — try again");
-  });
+    },900);
+  } else {
+    navigator.clipboard.writeText(text).then(function(){
+      showToast("✦ Copied! Open Reminders and paste into your grocery list");
+    }).catch(function(){showToast("Could not copy — try again");});
+  }
 }
 
 function showGrocerySetup(){

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
 <meta name="theme-color" content="#080808"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
@@ -641,6 +641,33 @@ function shareIngredients(recipe){
   }
 }
 
+function shareWeekIngredients(){
+  var scheduled=S.recipes.filter(function(r){return r.schedule&&r.schedule.length>0;});
+  if(!scheduled.length){showToast("No recipes scheduled this week");return;}
+  var seen={};var items=[];
+  scheduled.forEach(function(r){
+    var list=r.grocery&&r.grocery.length?r.grocery:dedupeIngredients(
+      Object.values(r.ingredients||{}).reduce(function(a,b){return a.concat(b);},[])
+    );
+    list.forEach(function(item){var k=item.toLowerCase().trim();if(!seen[k]){seen[k]=1;items.push(item);}});
+  });
+  var shortcut=getGroceryShortcut();
+  if(!shortcut){showGrocerySetup();return;}
+  var text=items.join("\n");
+  var ta=document.createElement("textarea");
+  ta.value=text;ta.style.cssText="position:fixed;left:-9999px;top:0;opacity:0;font-size:16px;";
+  document.body.appendChild(ta);ta.focus();ta.select();
+  var copied=false;try{copied=document.execCommand("copy");}catch(e){}
+  document.body.removeChild(ta);
+  var launch=function(){
+    var a=document.createElement("a");
+    a.href="shortcuts://run-shortcut?name="+encodeURIComponent(shortcut)+"&input=clipboard";
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+  };
+  if(copied){launch();}
+  else{navigator.clipboard.writeText(text).then(launch).catch(function(){showToast("Could not copy to clipboard — try again");});}
+}
+
 function showGrocerySetup(){
   var ov=el("div","overlay");
   var sheet=el("div","sheet editor-sheet");
@@ -1087,9 +1114,11 @@ function buildDetail(recipe){
 // ── PLANNER PAGE ───────────────────────────────────────────
 function buildPlanner(){
   var page=el("div","planner-wrap");
-  var ph=el("div","sec-hdr");ph.style.padding="0 4px";
+  var ph=el("div","sec-hdr");ph.style.cssText="padding:0 4px;display:flex;align-items:center;justify-content:space-between;";
   var pt=el("span","sec-title");pt.innerHTML='Weekly Planner <span>starting today</span>';
-  ph.appendChild(pt);page.appendChild(ph);
+  var weekGrocB=btn("","share-ing-btn",function(){shareWeekIngredients();});
+  weekGrocB.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3-3 3 3"/><path d="M12 8v8"/><rect x="3" y="14" width="18" height="7" rx="2"/></svg> This Week';
+  ph.append(pt,weekGrocB);page.appendChild(ph);
   var today=todayName();
   orderedDays().forEach(function(day){
     var dw=el("div","pl-day");

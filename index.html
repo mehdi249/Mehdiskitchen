@@ -644,12 +644,19 @@ function shareIngredients(recipe){
 function shareWeekIngredients(){
   var scheduled=S.recipes.filter(function(r){return r.schedule&&r.schedule.length>0;});
   if(!scheduled.length){showToast("No recipes scheduled this week");return;}
+  var reAmt=/^[\d\s\/½⅓⅔¼¾⅛⅜⅝⅞\.]+\s*(cups?|tbsp|tsp|tablespoons?|teaspoons?|oz|lbs?|pounds?|ounces?|grams?|g|kg|ml|cloves?|pieces?|slices?|cans?|handfuls?|pinch|dashes?|sticks?|packages?)\.?\s*/i;
+  var reNum=/^[\d\/½⅓⅔¼¾⅛⅜⅝⅞\.\s]+\s+/;
+  function normName(s){
+    return s.toLowerCase().replace(/\([^)]*\)/g,'').replace(reAmt,'').replace(reNum,'')
+      .replace(/,.*$/,'').replace(/^(lots? of|a? ?handful of|pinch of|dash of|some)\s+/i,'')
+      .replace(/\s+/g,' ').trim();
+  }
   var seen={};var items=[];
   scheduled.forEach(function(r){
-    var list=r.grocery&&r.grocery.length?r.grocery:dedupeIngredients(
-      Object.values(r.ingredients||{}).reduce(function(a,b){return a.concat(b);},[])
-    );
-    list.forEach(function(item){var k=item.toLowerCase().trim();if(!seen[k]){seen[k]=1;items.push(item);}});
+    var list=r.grocery&&r.grocery.length
+      ? r.grocery
+      : Object.values(r.ingredients||{}).reduce(function(a,b){return a.concat(b);},[]).map(normName).filter(Boolean);
+    list.forEach(function(item){var k=normName(item);if(!seen[k]){seen[k]=1;items.push(item);}});
   });
   var shortcut=getGroceryShortcut();
   if(!shortcut){showGrocerySetup();return;}

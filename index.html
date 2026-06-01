@@ -466,6 +466,7 @@ header{
 // ── CONSTANTS ──────────────────────────────────────────────
 const SB_URL="https://uarjjjvrzzwsewrcprcc.supabase.co";
 const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmpqanZyenp3c2V3cmNwcmNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Mjg5NTEsImV4cCI6MjA5NTMwNDk1MX0.6I1GWrJeLa1rh7rUg6GTfvrvNdMHX3QRSf13uGqRDKI";
+const ADMIN_EMAIL="mehdiabbasi208@gmail.com";
 var _sbToken=SB_KEY;
 function sbH(){return{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+_sbToken};}
 const sbClient=supabase.createClient(SB_URL,SB_KEY);
@@ -1165,20 +1166,18 @@ function buildSignInModal(){
   var handle=el("div","sheet-handle");
   var body=el("div","pin-sheet");
   var title=el("h2","pin-title");title.textContent="Admin Access";
-  var sub=el("p","pin-sub");sub.textContent="Sign in to edit recipes";
-  var emailInp=document.createElement("input");
-  emailInp.type="email";emailInp.placeholder="Email";emailInp.className="pin-input";
-  emailInp.style.fontSize="15px";emailInp.style.letterSpacing="normal";emailInp.style.marginBottom="8px";
+  var sub=el("p","pin-sub");sub.textContent="Enter your passphrase";
   var pwInp=document.createElement("input");
-  pwInp.type="password";pwInp.placeholder="Password";pwInp.className="pin-input";
+  pwInp.type="password";pwInp.placeholder="Passphrase";pwInp.className="pin-input";
+  pwInp.style.fontSize="15px";pwInp.style.letterSpacing="normal";
   var err=el("p","pin-err");
   var btns=el("div","sheet-btns");
   var cancel=btn("Cancel","sbtn-cancel",function(){ss({showSignIn:false});});
   var ok=btn("Sign in","sbtn-ok",async function(){
     ok.textContent="…";ok.disabled=true;
-    var{error,data}=await sbClient.auth.signInWithPassword({email:emailInp.value.trim(),password:pwInp.value});
+    var{error,data}=await sbClient.auth.signInWithPassword({email:ADMIN_EMAIL,password:pwInp.value});
     if(error){
-      err.textContent=error.message||"Incorrect credentials";
+      err.textContent="Incorrect passphrase";
       pwInp.value="";ok.textContent="Sign in";ok.disabled=false;
     }else{
       _sbToken=data.session.access_token;
@@ -1187,10 +1186,10 @@ function buildSignInModal(){
   });
   pwInp.onkeydown=function(e){if(e.key==="Enter")ok.click();};
   btns.append(cancel,ok);
-  body.append(title,sub,emailInp,pwInp,err,btns);
+  body.append(title,sub,pwInp,err,btns);
   sheet.append(handle,body);ov.appendChild(sheet);
   ov.onclick=function(e){if(e.target===ov)ss({showSignIn:false});};
-  setTimeout(function(){emailInp.focus();},80);
+  setTimeout(function(){pwInp.focus();},80);
   return ov;
 }
 

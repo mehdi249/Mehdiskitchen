@@ -457,6 +457,7 @@ header{
   border-bottom:1px solid var(--border);
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
 <div id="ptr-indicator"></div>
@@ -465,8 +466,9 @@ header{
 // ── CONSTANTS ──────────────────────────────────────────────
 const SB_URL="https://uarjjjvrzzwsewrcprcc.supabase.co";
 const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmpqanZyenp3c2V3cmNwcmNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Mjg5NTEsImV4cCI6MjA5NTMwNDk1MX0.6I1GWrJeLa1rh7rUg6GTfvrvNdMHX3QRSf13uGqRDKI";
-const ADMIN_PIN="1234";
-const sbH={"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY};
+var _sbToken=SB_KEY;
+function sbH(){return{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+_sbToken};}
+const sbClient=supabase.createClient(SB_URL,SB_KEY);
 
 const CUISINE_COLORS={Peruvian:"#e8825a",Mexican:"#e05555",Italian:"#4caf72",Asian:"#d4a017",American:"#4a7fd4",Mediterranean:"#8e5fd4","Middle Eastern":"#d45fa0",Other:"#888"};
 const CUISINE_OPTIONS=["Peruvian","Mexican","Italian","Asian","American","Mediterranean","Middle Eastern","Other"];
@@ -484,7 +486,7 @@ const SEED=[
 // ── SUPABASE ───────────────────────────────────────────────
 async function sbFetch(){
   try{
-    const r=await fetch(SB_URL+"/rest/v1/recipes?select=*&order=created_at.asc",{headers:{...sbH,"Accept":"application/json"}});
+    const r=await fetch(SB_URL+"/rest/v1/recipes?select=*&order=created_at.asc",{headers:{...sbH(),"Accept":"application/json"}});
     return r.ok?await r.json():null;
   }catch{return null;}
 }
@@ -496,25 +498,25 @@ function sbStrip(obj,keepId){
 }
 async function sbInsert(recipe){
   try{
-    const r=await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(sbStrip(recipe,true))});
+    const r=await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH(),"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(sbStrip(recipe,true))});
     return r.ok;
   }catch{return false;}
 }
 async function sbUpdate(recipe){
   try{
-    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(recipe.id),{method:"PATCH",headers:{...sbH,"Prefer":"return=minimal"},body:JSON.stringify(sbStrip(recipe,false))});
+    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(recipe.id),{method:"PATCH",headers:{...sbH(),"Prefer":"return=minimal"},body:JSON.stringify(sbStrip(recipe,false))});
     return r.ok;
   }catch{return false;}
 }
 async function sbDelete(id){
   try{
-    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(id),{method:"DELETE",headers:{...sbH,"Prefer":"return=minimal"}});
+    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(id),{method:"DELETE",headers:{...sbH(),"Prefer":"return=minimal"}});
     return r.ok;
   }catch{return false;}
 }
 async function sbSeed(){
   try{
-    await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(SEED)});
+    await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH(),"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(SEED)});
   }catch{}
 }
 function getSourceUrls(){try{return JSON.parse(localStorage.getItem("recipe_source_urls")||"{}");}catch{return {};}}
@@ -527,7 +529,7 @@ async function migrateSourceUrls(recipes){
   });
   if(!ids.length)return false;
   for(var i=0;i<ids.length;i++){
-    try{await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(ids[i]),{method:"PATCH",headers:{...sbH,"Prefer":"return=minimal"},body:JSON.stringify({source_url:stored[ids[i]]})});}catch{}
+    try{await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(ids[i]),{method:"PATCH",headers:{...sbH(),"Prefer":"return=minimal"},body:JSON.stringify({source_url:stored[ids[i]]})});}catch{}
   }
   return true;
 }
@@ -550,7 +552,7 @@ var S={
   view:"home",selected:null,prevView:"home",
   isAdmin:false,
   filterCuisine:"All",filterTag:"All",search:"",
-  showPin:false,showEditor:false,editingRecipe:null,
+  showSignIn:false,showEditor:false,editingRecipe:null,
   showDevView:false
 };
 function ss(u){Object.assign(S,u);render();}
@@ -770,7 +772,7 @@ function render(){
   }
   app.appendChild(main);
   if(S.view!=="detail")app.appendChild(buildBnav());
-  if(S.showPin)app.appendChild(buildPinModal());
+  if(S.showSignIn)app.appendChild(buildSignInModal());
   if(S.showEditor)app.appendChild(buildEditorModal(S.editingRecipe));
   if(S.showDevView)app.appendChild(buildDevView());
 }
@@ -796,8 +798,8 @@ function buildHeader(){
 
   // Admin button
   var adminB=btn(S.isAdmin?"✦ Admin":"Admin",S.isAdmin?"admin-btn on":"admin-btn",function(){
-    if(S.isAdmin)ss({isAdmin:false});
-    else ss({showPin:true});
+    if(S.isAdmin){sbClient.auth.signOut().then(function(){_sbToken=SB_KEY;ss({isAdmin:false});});}
+    else ss({showSignIn:true});
   });
   right.appendChild(adminB);
 
@@ -837,7 +839,7 @@ function buildBnav(){
   addB.innerHTML='<svg class="plus-svg" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
   addB.onclick=function(){
     if(S.isAdmin)ss({showEditor:true,editingRecipe:null});
-    else ss({showPin:true});
+    else ss({showSignIn:true});
   };
   var ri=el("button","bnav-item"+(S.view==="recipes"?" on":""));
   ri.innerHTML='<span class="bnav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span><span>Recipes</span>';
@@ -1156,32 +1158,39 @@ function buildPlanner(){
   return page;
 }
 
-// ── PIN MODAL ──────────────────────────────────────────────
-function buildPinModal(){
+// ── SIGN-IN MODAL ──────────────────────────────────────────
+function buildSignInModal(){
   var ov=el("div","overlay");
   var sheet=el("div","sheet");
   var handle=el("div","sheet-handle");
   var body=el("div","pin-sheet");
   var title=el("h2","pin-title");title.textContent="Admin Access";
-  var sub=el("p","pin-sub");sub.textContent="Enter your PIN to continue";
-  var inp=document.createElement("input");
-  inp.type="password";inp.maxLength=4;inp.placeholder="....";inp.className="pin-input";inp.inputMode="numeric";
+  var sub=el("p","pin-sub");sub.textContent="Sign in to edit recipes";
+  var emailInp=document.createElement("input");
+  emailInp.type="email";emailInp.placeholder="Email";emailInp.className="pin-input";
+  emailInp.style.fontSize="15px";emailInp.style.letterSpacing="normal";emailInp.style.marginBottom="8px";
+  var pwInp=document.createElement("input");
+  pwInp.type="password";pwInp.placeholder="Password";pwInp.className="pin-input";
   var err=el("p","pin-err");
   var btns=el("div","sheet-btns");
-  var cancel=btn("Cancel","sbtn-cancel",function(){ss({showPin:false});});
-  var ok=btn("Enter","sbtn-ok",function(){
-    if(inp.value===ADMIN_PIN){ss({isAdmin:true,showPin:false});}
-    else{
-      inp.className="pin-input err";err.textContent="Incorrect PIN";inp.value="";
-      setTimeout(function(){inp.className="pin-input";err.textContent="";},1400);
+  var cancel=btn("Cancel","sbtn-cancel",function(){ss({showSignIn:false});});
+  var ok=btn("Sign in","sbtn-ok",async function(){
+    ok.textContent="…";ok.disabled=true;
+    var{error,data}=await sbClient.auth.signInWithPassword({email:emailInp.value.trim(),password:pwInp.value});
+    if(error){
+      err.textContent=error.message||"Incorrect credentials";
+      pwInp.value="";ok.textContent="Sign in";ok.disabled=false;
+    }else{
+      _sbToken=data.session.access_token;
+      ss({isAdmin:true,showSignIn:false});
     }
   });
-  inp.onkeydown=function(e){if(e.key==="Enter")ok.click();};
+  pwInp.onkeydown=function(e){if(e.key==="Enter")ok.click();};
   btns.append(cancel,ok);
-  body.append(title,sub,inp,err,btns);
+  body.append(title,sub,emailInp,pwInp,err,btns);
   sheet.append(handle,body);ov.appendChild(sheet);
-  ov.onclick=function(e){if(e.target===ov)ss({showPin:false});};
-  setTimeout(function(){inp.focus();},80);
+  ov.onclick=function(e){if(e.target===ov)ss({showSignIn:false});};
+  setTimeout(function(){emailInp.focus();},80);
   return ov;
 }
 
@@ -1796,11 +1805,18 @@ async function insertPending(){
   if(!PENDING_RECIPES.length)return;
   for(var i=0;i<PENDING_RECIPES.length;i++){
     var body=sbStrip(PENDING_RECIPES[i],true);
-    try{await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH,"Prefer":"resolution=ignore-duplicates"},body:JSON.stringify(body)});}catch{}
+    try{await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH(),"Prefer":"resolution=ignore-duplicates"},body:JSON.stringify(body)});}catch{}
   }
 }
 
 async function init(){
+  // Restore session so admin stays logged in after reload
+  var{data:{session}}=await sbClient.auth.getSession();
+  if(session){_sbToken=session.access_token;S.isAdmin=true;}
+  sbClient.auth.onAuthStateChange(function(_,session){
+    _sbToken=session?session.access_token:SB_KEY;
+    ss({isAdmin:!!session});
+  });
   render();
   initPullToRefresh();
   var recipes=await sbFetch();

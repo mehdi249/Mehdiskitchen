@@ -276,10 +276,6 @@ header{
 .pin-input{font-size:26px;letter-spacing:10px;text-align:center;padding:15px;border-radius:12px;width:100%;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text);font-family:var(--sans);font-weight:600;margin-bottom:6px;}
 .pin-input.err{border-color:var(--red);}
 .pin-err{font-size:12px;color:var(--red);text-align:center;min-height:18px;margin-bottom:14px;}
-.login-input{font-size:16px;text-align:left;padding:14px 16px;border-radius:12px;width:100%;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text);font-family:var(--sans);margin-bottom:6px;}
-.login-input.err{border-color:var(--red);}
-.otp-input{font-size:26px;letter-spacing:8px;text-align:center;padding:15px;border-radius:12px;width:100%;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text);font-family:var(--sans);font-weight:600;margin-bottom:6px;}
-.otp-input.err{border-color:var(--red);}
 .sheet-btns{display:flex;gap:10px;}
 .sbtn-cancel{flex:1;padding:14px;border-radius:11px;border:1px solid var(--border2);color:var(--text2);font-size:14px;}
 .sbtn-ok{flex:2;padding:14px;border-radius:11px;background:var(--gold);color:#080808;font-size:14px;font-weight:600;}
@@ -470,7 +466,10 @@ header{
 // ── CONSTANTS ──────────────────────────────────────────────
 const SB_URL="https://uarjjjvrzzwsewrcprcc.supabase.co";
 const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmpqanZyenp3c2V3cmNwcmNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Mjg5NTEsImV4cCI6MjA5NTMwNDk1MX0.6I1GWrJeLa1rh7rUg6GTfvrvNdMHX3QRSf13uGqRDKI";
-const sbH={"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY};
+const ADMIN_EMAIL="mehdiiaabbassii@gmail.com";
+var _sbToken=SB_KEY;
+function sbH(){return{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+_sbToken};}
+const sbClient=supabase.createClient(SB_URL,SB_KEY);
 
 const CUISINE_COLORS={Peruvian:"#e8825a",Mexican:"#e05555",Italian:"#4caf72",Asian:"#d4a017",American:"#4a7fd4",Mediterranean:"#8e5fd4","Middle Eastern":"#d45fa0",Other:"#888"};
 const CUISINE_OPTIONS=["Peruvian","Mexican","Italian","Asian","American","Mediterranean","Middle Eastern","Other"];
@@ -484,37 +483,6 @@ const SEED=[
   {id:"2",name:"Chipotle Honey Chicken Tacos",cuisine:"Mexican",tags:["High Protein"],type:"Main Course",schedule:["Tuesday"],image:"https://krollskorner.com/wp-content/uploads/2026/01/Honey-Chipotle-Chicken-Crispy-Tacos_HighRes-014-scaled.jpg",ingredients:{"Chipotle Honey Chicken":["2 lbs (907g) raw boneless skinless chicken thighs","3 chipotle peppers in adobo","3 tbsp adobo sauce","2 tbsp honey","Juice of 2 limes","5 garlic cloves","1 1/2 tbsp olive oil","1 tsp salt","1/2 tsp pepper"],"For The Cheese Pull":["2 cups reduced-fat mozzarella"],"Tacos":["6 low cal tortilla wraps","Cilantro","Pico de gallo"],"Green Goddess Sauce":["3/4 cup (170g) nonfat Greek yogurt","1/2 packed cup cilantro","Juice of 2 limes","1/4 cup mild pickled jalapeno","1 garlic clove","Salt and pepper","Splash of water"]},steps:["Blend chipotle peppers, adobo sauce, honey, lime juice, garlic, olive oil, salt and pepper into a smooth marinade.","Coat chicken thighs in the marinade and let sit for at least 20 minutes.","Sear chicken in a hot pan 5-7 min per side until cooked through and caramelised. Rest, then slice.","Blend all green goddess sauce ingredients until completely smooth.","Warm tortillas, load with sliced chicken, top with mozzarella, pico de gallo, cilantro, and green goddess sauce."],macros:{calories:342,protein:34,carbs:11,fat:18},
    grocery:["chicken thighs","chipotle peppers in adobo","adobo sauce","honey","lime juice","garlic","olive oil","salt","reduced-fat mozzarella","tortilla wraps","cilantro","pico de gallo","nonfat Greek yogurt","pickled jalapeno"]}
 ];
-
-// ── AUTH ──────────────────────────────────────────────────
-function getSess(){try{return JSON.parse(localStorage.getItem("mk_session")||"null");}catch{return null;}}
-function saveSess(s){if(s)localStorage.setItem("mk_session",JSON.stringify(s));else localStorage.removeItem("mk_session");}
-function sbWriteH(){var s=getSess();if(s&&s.access_token)return{...sbH,"Authorization":"Bearer "+s.access_token};return sbH;}
-async function sbSendOTP(email){
-  try{
-    var r=await fetch(SB_URL+"/auth/v1/otp",{method:"POST",headers:{"Content-Type":"application/json","apikey":SB_KEY},body:JSON.stringify({email,create_user:false})});
-    return r.ok;
-  }catch{return false;}
-}
-async function sbVerifyOTP(email,token){
-  try{
-    var r=await fetch(SB_URL+"/auth/v1/verify",{method:"POST",headers:{"Content-Type":"application/json","apikey":SB_KEY},body:JSON.stringify({type:"email",token,email})});
-    if(r.ok){var d=await r.json();saveSess({access_token:d.access_token,refresh_token:d.refresh_token,expires_at:Date.now()+(d.expires_in*1000)});return true;}
-    return false;
-  }catch{return false;}
-}
-async function sbRefreshSess(){
-  var s=getSess();if(!s||!s.refresh_token)return false;
-  try{
-    var r=await fetch(SB_URL+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{"Content-Type":"application/json","apikey":SB_KEY},body:JSON.stringify({refresh_token:s.refresh_token})});
-    if(r.ok){var d=await r.json();saveSess({access_token:d.access_token,refresh_token:d.refresh_token,expires_at:Date.now()+(d.expires_in*1000)});return true;}
-    saveSess(null);return false;
-  }catch{return false;}
-}
-async function restoreSession(){
-  var s=getSess();if(!s)return;
-  if(Date.now()<s.expires_at-60000){ss({isAdmin:true});return;}
-  if(await sbRefreshSess())ss({isAdmin:true});else saveSess(null);
-}
 
 // ── SUPABASE ───────────────────────────────────────────────
 async function sbFetch(){
@@ -531,25 +499,25 @@ function sbStrip(obj,keepId){
 }
 async function sbInsert(recipe){
   try{
-    const r=await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbWriteH(),"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(sbStrip(recipe,true))});
+    const r=await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH(),"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(sbStrip(recipe,true))});
     return r.ok;
   }catch{return false;}
 }
 async function sbUpdate(recipe){
   try{
-    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(recipe.id),{method:"PATCH",headers:{...sbWriteH(),"Prefer":"return=minimal"},body:JSON.stringify(sbStrip(recipe,false))});
+    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(recipe.id),{method:"PATCH",headers:{...sbH(),"Prefer":"return=minimal"},body:JSON.stringify(sbStrip(recipe,false))});
     return r.ok;
   }catch{return false;}
 }
 async function sbDelete(id){
   try{
-    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(id),{method:"DELETE",headers:{...sbWriteH(),"Prefer":"return=minimal"}});
+    const r=await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(id),{method:"DELETE",headers:{...sbH(),"Prefer":"return=minimal"}});
     return r.ok;
   }catch{return false;}
 }
 async function sbSeed(){
   try{
-    await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbWriteH(),"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(SEED)});
+    await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH(),"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(SEED)});
   }catch{}
 }
 function getSourceUrls(){try{return JSON.parse(localStorage.getItem("recipe_source_urls")||"{}");}catch{return {};}}
@@ -562,7 +530,7 @@ async function migrateSourceUrls(recipes){
   });
   if(!ids.length)return false;
   for(var i=0;i<ids.length;i++){
-    try{await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(ids[i]),{method:"PATCH",headers:{...sbWriteH(),"Prefer":"return=minimal"},body:JSON.stringify({source_url:stored[ids[i]]})});}catch{}
+    try{await fetch(SB_URL+"/rest/v1/recipes?id=eq."+encodeURIComponent(ids[i]),{method:"PATCH",headers:{...sbH(),"Prefer":"return=minimal"},body:JSON.stringify({source_url:stored[ids[i]]})});}catch{}
   }
   return true;
 }
@@ -585,7 +553,7 @@ var S={
   view:"home",selected:null,prevView:"home",
   isAdmin:false,
   filterCuisine:"All",filterTag:"All",search:"",
-  showLogin:false,showEditor:false,editingRecipe:null,
+  showSignIn:false,showEditor:false,editingRecipe:null,
   showDevView:false
 };
 function ss(u){Object.assign(S,u);render();}
@@ -805,7 +773,7 @@ function render(){
   }
   app.appendChild(main);
   if(S.view!=="detail")app.appendChild(buildBnav());
-  if(S.showLogin)app.appendChild(buildLoginModal());
+  if(S.showSignIn)app.appendChild(buildSignInModal());
   if(S.showEditor)app.appendChild(buildEditorModal(S.editingRecipe));
   if(S.showDevView)app.appendChild(buildDevView());
 }
@@ -831,8 +799,8 @@ function buildHeader(){
 
   // Admin button
   var adminB=btn(S.isAdmin?"✦ Admin":"Admin",S.isAdmin?"admin-btn on":"admin-btn",function(){
-    if(S.isAdmin){saveSess(null);ss({isAdmin:false});}
-    else ss({showLogin:true});
+    if(S.isAdmin){sbClient.auth.signOut().then(function(){_sbToken=SB_KEY;ss({isAdmin:false});});}
+    else ss({showSignIn:true});
   });
   right.appendChild(adminB);
 
@@ -1191,64 +1159,37 @@ function buildPlanner(){
   return page;
 }
 
-// ── LOGIN MODAL ────────────────────────────────────────────
-function buildLoginModal(){
-  var step=1,pendingEmail="";
+// ── SIGN-IN MODAL ──────────────────────────────────────────
+function buildSignInModal(){
   var ov=el("div","overlay");
   var sheet=el("div","sheet");
   var handle=el("div","sheet-handle");
   var body=el("div","pin-sheet");
   var title=el("h2","pin-title");title.textContent="Admin Access";
-  var sub=el("p","pin-sub");
-  var inp=document.createElement("input");
+  var sub=el("p","pin-sub");sub.textContent="Enter your passphrase";
+  var pwInp=document.createElement("input");
+  pwInp.type="password";pwInp.placeholder="Passphrase";pwInp.className="pin-input";
+  pwInp.style.fontSize="15px";pwInp.style.letterSpacing="normal";
   var err=el("p","pin-err");
   var btns=el("div","sheet-btns");
-  var cancelB=btn("Cancel","sbtn-cancel",function(){ss({showLogin:false});});
-  var okB=btn("Send Code","sbtn-ok",function(){});
-  btns.append(cancelB,okB);
-  body.append(title,sub,inp,err,btns);
+  var cancel=btn("Cancel","sbtn-cancel",function(){ss({showSignIn:false});});
+  var ok=btn("Sign in","sbtn-ok",async function(){
+    ok.textContent="…";ok.disabled=true;
+    var{error,data}=await sbClient.auth.signInWithPassword({email:ADMIN_EMAIL,password:pwInp.value});
+    if(error){
+      err.textContent="Incorrect passphrase";
+      pwInp.value="";ok.textContent="Sign in";ok.disabled=false;
+    }else{
+      _sbToken=data.session.access_token;
+      ss({isAdmin:true,showSignIn:false});
+    }
+  });
+  pwInp.onkeydown=function(e){if(e.key==="Enter")ok.click();};
+  btns.append(cancel,ok);
+  body.append(title,sub,pwInp,err,btns);
   sheet.append(handle,body);ov.appendChild(sheet);
-  ov.onclick=function(e){if(e.target===ov)ss({showLogin:false});};
-
-  function showStep1(){
-    step=1;
-    sub.textContent="Enter your email to receive a sign-in code";
-    inp.type="email";inp.placeholder="your@email.com";inp.className="login-input";inp.value="";inp.inputMode="email";inp.maxLength=200;
-    okB.textContent="Send Code";
-    okB.onclick=async function(){
-      var email=inp.value.trim();
-      if(!email){inp.className="login-input err";err.textContent="Enter your email";return;}
-      okB.disabled=true;okB.textContent="Sending…";
-      var ok=await sbSendOTP(email);
-      okB.disabled=false;
-      if(ok){pendingEmail=email;showStep2();}
-      else{inp.className="login-input err";err.textContent="Couldn't send code — check email and try again";okB.textContent="Send Code";}
-    };
-    inp.onkeydown=function(e){if(e.key==="Enter")okB.click();};
-    setTimeout(function(){inp.focus();},80);
-  }
-
-  function showStep2(){
-    step=2;
-    sub.textContent="Check your email for a 6-digit code";
-    inp.type="text";inp.placeholder="000000";inp.className="otp-input";inp.value="";inp.inputMode="numeric";inp.maxLength=6;
-    okB.textContent="Verify";
-    cancelB.textContent="Back";
-    cancelB.onclick=function(){showStep1();cancelB.textContent="Cancel";cancelB.onclick=function(){ss({showLogin:false});};};
-    okB.onclick=async function(){
-      var token=inp.value.trim();
-      if(token.length<6){inp.className="otp-input err";err.textContent="Enter the 6-digit code";return;}
-      okB.disabled=true;okB.textContent="Verifying…";
-      var ok=await sbVerifyOTP(pendingEmail,token);
-      okB.disabled=false;
-      if(ok){ss({isAdmin:true,showLogin:false});}
-      else{inp.className="otp-input err";err.textContent="Invalid or expired code";inp.value="";okB.textContent="Verify";}
-    };
-    inp.onkeydown=function(e){if(e.key==="Enter")okB.click();};
-    setTimeout(function(){inp.focus();},80);
-  }
-
-  showStep1();
+  ov.onclick=function(e){if(e.target===ov)ss({showSignIn:false});};
+  setTimeout(function(){pwInp.focus();},80);
   return ov;
 }
 
@@ -1863,7 +1804,7 @@ async function insertPending(){
   if(!PENDING_RECIPES.length)return;
   for(var i=0;i<PENDING_RECIPES.length;i++){
     var body=sbStrip(PENDING_RECIPES[i],true);
-    try{await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbWriteH(),"Prefer":"resolution=ignore-duplicates"},body:JSON.stringify(body)});}catch{}
+    try{await fetch(SB_URL+"/rest/v1/recipes",{method:"POST",headers:{...sbH(),"Prefer":"resolution=ignore-duplicates"},body:JSON.stringify(body)});}catch{}
   }
 }
 
@@ -1877,7 +1818,6 @@ async function init(){
   });
   render();
   initPullToRefresh();
-  await restoreSession();
   var recipes=await sbFetch();
   if(!recipes||recipes.length===0){await sbSeed();recipes=await sbFetch();}
   await insertPending();

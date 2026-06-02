@@ -461,6 +461,7 @@ header{
   border-bottom:1px solid var(--border);
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
 <div id="ptr-indicator"></div>
@@ -1867,6 +1868,13 @@ async function insertPending(){
 }
 
 async function init(){
+  // Restore session so admin stays logged in after reload
+  var{data:{session}}=await sbClient.auth.getSession();
+  if(session){_sbToken=session.access_token;S.isAdmin=true;}
+  sbClient.auth.onAuthStateChange(function(_,session){
+    _sbToken=session?session.access_token:SB_KEY;
+    ss({isAdmin:!!session});
+  });
   render();
   initPullToRefresh();
   await restoreSession();

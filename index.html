@@ -490,7 +490,7 @@ function saveSess(s){if(s)localStorage.setItem("mk_session",JSON.stringify(s));e
 function sbWriteH(){var s=getSess();if(s&&s.access_token)return{...sbH,"Authorization":"Bearer "+s.access_token};return sbH;}
 async function sbSendOTP(email){
   try{
-    var r=await fetch(SB_URL+"/auth/v1/otp",{method:"POST",headers:{"Content-Type":"application/json","apikey":SB_KEY},body:JSON.stringify({email,create_user:false})});
+    var r=await fetch(SB_URL+"/auth/v1/otp",{method:"POST",headers:{"Content-Type":"application/json","apikey":SB_KEY},body:JSON.stringify({email,create_user:true})});
     return r.ok;
   }catch{return false;}
 }

@@ -8,15 +8,15 @@ CREATE POLICY "Public reads"
   ON recipes FOR SELECT
   USING (true);
 
--- Only authenticated users can insert, update, or delete
+-- Only Mehdi's account can insert, update, or delete
 CREATE POLICY "Auth inserts"
   ON recipes FOR INSERT
-  WITH CHECK (auth.role() = 'authenticated');
+  WITH CHECK (auth.email() = 'mehdiiaabbasii@gmail.com');
 
 CREATE POLICY "Auth updates"
   ON recipes FOR UPDATE
-  USING (auth.role() = 'authenticated');
+  USING (auth.email() = 'mehdiiaabbasii@gmail.com');
 
 CREATE POLICY "Auth deletes"
   ON recipes FOR DELETE
-  USING (auth.role() = 'authenticated');
+  USING (auth.email() = 'mehdiiaabbasii@gmail.com');

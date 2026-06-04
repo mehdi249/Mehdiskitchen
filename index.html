@@ -221,6 +221,12 @@ header{
 .mac-v{font-family:var(--serif);font-size:22px;font-weight:400;color:var(--gold);display:block;}
 .mac-l{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:0.1em;margin-top:2px;}
 .sched-row{margin-bottom:22px;}
+.star-row{display:flex;align-items:center;gap:6px;margin-bottom:22px;}
+.star-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text2);}
+.star-btn{font-size:26px;background:none;border:none;padding:2px;cursor:pointer;line-height:1;color:var(--text3);transition:color .15s,transform .1s;}
+.star-btn.on{color:var(--gold);}
+.star-btn:active{transform:scale(1.25);}
+.rcard-stars{font-size:11px;color:var(--gold);letter-spacing:1px;margin-top:2px;}
 .sched-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text2);margin-bottom:8px;}
 .sched-days{display:flex;gap:6px;flex-wrap:wrap;}
 .sched-pill{font-size:11px;font-weight:500;padding:6px 13px;border-radius:100px;border:1px solid var(--border2);color:var(--text2);background:var(--bg3);letter-spacing:0.06em;transition:all .18s;cursor:pointer;}
@@ -531,6 +537,9 @@ async function migrateSourceUrls(recipes){
   }
   return true;
 }
+function getRatings(){try{return JSON.parse(localStorage.getItem("recipe_ratings")||"{}");}catch{return {};}}
+function saveRating(id,stars){var m=getRatings();if(stars)m[id]=stars;else delete m[id];localStorage.setItem("recipe_ratings",JSON.stringify(m));}
+function getRecipeRating(id){return getRatings()[id]||0;}
 function getGroceryLists(){try{return JSON.parse(localStorage.getItem("recipe_grocery_lists")||"{}");}catch{return {};}}
 function saveGroceryList(id,arr){var m=getGroceryLists();if(arr&&arr.length)m[id]=arr;else delete m[id];localStorage.setItem("recipe_grocery_lists",JSON.stringify(m));}
 function getGroceryList(id){return getGroceryLists()[id]||null;}
@@ -931,6 +940,8 @@ function buildRcard(recipe){
     cc.textContent=recipe.cuisine;top.appendChild(cc);
   }
   var name=el("p","rcard-name");name.textContent=recipe.name;top.appendChild(name);
+  var rr=getRecipeRating(recipe.id);
+  if(rr){var stEl=el("p","rcard-stars");stEl.textContent="★".repeat(rr)+"☆".repeat(5-rr);top.appendChild(stEl);}
   body.appendChild(top);
   var meta=el("div","rcard-meta");
   (recipe.tags||[]).forEach(function(t){var tg=el("span","rcard-tag gold");tg.textContent=t;meta.appendChild(tg);});
@@ -1027,6 +1038,26 @@ function buildDetail(recipe){
     recipe.tags.forEach(function(t){var tg=el("span","d-tag");tg.textContent=t;tr.appendChild(tg);});
     top.appendChild(tr);
   }
+  // Star rating
+  var starRow=el("div","star-row");
+  var starLbl=el("span","star-label");starLbl.textContent="Your rating";
+  starRow.appendChild(starLbl);
+  var currentRating=getRecipeRating(recipe.id);
+  var starBtns=[];
+  for(var si=1;si<=5;si++){
+    (function(n){
+      var sb=btn("★","star-btn"+(currentRating>=n?" on":""),function(){
+        var prev=getRecipeRating(recipe.id);
+        var next=prev===n?0:n;
+        saveRating(recipe.id,next);
+        starBtns.forEach(function(b,i){b.className="star-btn"+(next>i?" on":"");});
+        showToast(next?("Rated "+next+" star"+(next>1?"s":"")):"Rating removed");
+      });
+      starBtns.push(sb);
+      starRow.appendChild(sb);
+    })(si);
+  }
+  top.appendChild(starRow);
   if(recipe.macros){
     var mb=el("div","macros-row");
     [{v:recipe.macros.calories,l:"Cal"},{v:recipe.macros.protein+"g",l:"Protein"},{v:recipe.macros.carbs+"g",l:"Carbs"},{v:recipe.macros.fat+"g",l:"Fat"}].forEach(function(m){

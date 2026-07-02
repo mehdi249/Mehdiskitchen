@@ -1074,7 +1074,7 @@ function buildDetail(recipe){
     var srcRow=el("div","source-row");
     var srcA=document.createElement("a");
     srcA.href=_srcUrl;
-    srcA.target="_blank";srcA.rel="noopener noreferrer";
+    srcA.rel="noopener noreferrer";
     var srcIcon=el("span","source-icon");srcIcon.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
     var srcTxt=el("span");srcTxt.textContent="View Original Recipe";
     srcA.append(srcIcon,srcTxt);srcRow.appendChild(srcA);top.appendChild(srcRow);
@@ -1900,7 +1900,25 @@ const PENDING_RECIPES=[
    },
    steps:["Heat a pan on high heat. Sear the steak on ALL sides including the fat cap.","Drop the heat and add butter, whole garlic cloves and thyme or rosemary.","Once butter is foaming, baste the steak continuously until it reaches desired temperature. Rest before serving.","In the same pan, add a knob of butter and sauté shallots, garlic and smashed peppercorns until softened and fragrant.","Deglaze with cognac or rum and cook until most of it evaporates.","Add beef broth, heavy cream, Dijon mustard, Worcestershire sauce and a squeeze of lemon juice. Simmer until the sauce coats a spoon.","For frites: cut potatoes into desired shape and soak in an ice bath for at least 20 minutes to remove starch.","Dry thoroughly, coat with oil and your choice of seasonings.","Air fry at 400°F for 15-20 minutes, flipping halfway through.","Serve steak with frites and peppercorn sauce poured over."],
    macros:null,
-   grocery:["ribeye steak","unsalted butter","avocado oil","garlic","thyme","shallot","black peppercorns","cognac","beef broth","heavy cream","Dijon mustard","Worcestershire sauce","lemon juice","russet potatoes"]}
+   grocery:["ribeye steak","unsalted butter","avocado oil","garlic","thyme","shallot","black peppercorns","cognac","beef broth","heavy cream","Dijon mustard","Worcestershire sauce","lemon juice","russet potatoes"]},
+
+  {id:"grilled-hot-honey-chicken",name:"Grilled Hot Honey Chicken with Peach Salsa & Lemon Asparagus",cuisine:"American",tags:["High Protein","Quick"],type:"Main Course",schedule:[],image:"",source_url:"",
+   ingredients:{
+     "Chicken":["4 boneless skinless chicken breasts or thighs","1 tbsp olive oil","Salt and pepper to taste","Garlic powder to taste"],
+     "Hot Honey Sauce":["1/3 cup honey","2–3 tbsp hot sauce (adjust to taste)","1 tbsp butter","1/2 tsp red pepper flakes","1 clove garlic, minced"],
+     "Peach Salsa":["3–4 large peaches, diced","1 large jalapeño, deseeded & finely diced","1/4 cup red onion, diced","1/4 cup chopped cilantro","1 lime, juiced"],
+     "Grilled Lemon Asparagus":["1 bundle asparagus, ends trimmed","1½ tsp avocado oil or olive oil","Garlic salt, to taste","Black pepper, to taste","Lemon zest, to taste"]
+   },
+   steps:[
+     "Make peach salsa: combine diced peaches, jalapeño, red onion, and cilantro in a bowl. Squeeze lime juice over top and toss until coated. Taste and adjust lime as needed. Refrigerate until ready to serve.",
+     "For hot honey sauce: in a small saucepan over low heat, combine honey, hot sauce, butter, red pepper flakes, and garlic. Stir until butter is melted and everything is combined. Set aside.",
+     "Season chicken with olive oil, salt, pepper, and garlic powder. Grill over medium-high heat for 6–7 minutes per side until cooked through (165°F internal temp).",
+     "Slather grilled chicken generously with hot honey sauce while still hot.",
+     "For lemon asparagus: toss asparagus with olive oil, garlic salt, and black pepper. Heat grill (or grill pan) to medium-high and brush grates with oil. Grill 3–5 minutes until tender and slightly charred. Sprinkle lemon zest over the top.",
+     "Serve chicken over steamed rice with peach salsa spooned on top and grilled lemon asparagus on the side."
+   ],
+   macros:null,
+   grocery:["chicken breasts or thighs","olive oil","salt","black pepper","garlic powder","honey","hot sauce","butter","red pepper flakes","garlic","peaches","jalapeño","red onion","cilantro","lime","asparagus","avocado oil","garlic salt","lemon","rice"]}
 ];
 
 async function insertPending(){

@@ -752,8 +752,8 @@ function imgFb(cls){
 async function doRefresh(btnEl){
   if(btnEl){btnEl.classList.add("spinning");}
   var fresh=await sbFetch();
-  if(fresh){ss({recipes:applyGroceryLists(fresh)});}
-  showToast("✦ Refreshed");
+  if(fresh){ss({recipes:applyGroceryLists(fresh),loadError:false});showToast("✦ Refreshed");}
+  else{showToast("Couldn't reach the recipe database");}
   if(btnEl){setTimeout(function(){btnEl.classList.remove("spinning");},600);}
 }
 
@@ -768,6 +768,13 @@ function render(){
     var sp=el("div","spin");
     var tx=el("p","load-txt");tx.textContent="Loading your kitchen...";
     d.append(sp,tx);main.appendChild(d);
+  } else if(S.loadError&&!S.recipes.length&&S.view!=="detail"){
+    var d=el("div","loading");
+    var t1=el("p","empty-title");t1.textContent="Couldn't reach your recipes";
+    var t2=el("p","load-txt");t2.textContent="The recipe database didn't respond. Check your connection, then try again.";
+    var rb=el("button","sbtn-ok");rb.style.flex="none";rb.style.padding="12px 32px";rb.textContent="Retry";
+    rb.onclick=function(){ss({loading:true});init();};
+    d.append(t1,t2,rb);main.appendChild(d);
   } else if(S.view==="home"){
     main.appendChild(buildHome());
   } else if(S.view==="recipes"){
@@ -1424,7 +1431,7 @@ function buildDevView(){
      desc:"Postgres database. Table: recipes. Columns include: id, name, cuisine, tags, type, schedule, image, ingredients, steps, macros, source_url, created_at. Connected via anon public key.",
      actions:[{label:"Refresh now",color:"green",fn:function(){ss({showDevView:false});doRefresh(null);showToast("Refreshed from Supabase");}}]},
     {id:"sbfetch",  label:"sbFetch()",   sub:"GET /recipes",    color:"green", col:1,
-     desc:"Fetches all recipes ordered by created_at. Returns array or null on failure. Every result must go through applyGroceryLists() before entering state.",
+     desc:"Fetches all recipes ordered by created_at. Returns array or null on failure. If the first fetch in init() returns null (network down, or Supabase project paused for inactivity), init() stops and sets loadError, which shows a Could not reach your recipes screen with a Retry button; seeding/pending inserts are skipped. Every result must go through applyGroceryLists() before entering state.",
      actions:[{label:"Run fetch",color:"green",fn:async function(){var r=await sbFetch();showToast(r?"Fetched "+r.length+" recipes":"Fetch failed");}}]},
     {id:"sbwrite",  label:"sbInsert / Update / Delete", sub:"POST · PATCH · DELETE", color:"green", col:1,
      desc:"Write operations. All payloads go through sbStrip() which removes id, created_at, and grocery before writes. source_url is a real DB column and flows through normally. sbInsert uses merge-duplicates. sbUpdate and sbDelete add Prefer:return=minimal to avoid RLS failures.",
@@ -1999,16 +2006,17 @@ async function insertPending(){
 
 async function init(){
   render();
-  initPullToRefresh();
+  if(!window.__ptrInit){window.__ptrInit=true;initPullToRefresh();}
   var recipes=await sbFetch();
-  if(!recipes||recipes.length===0){await sbSeed();recipes=await sbFetch();}
+  if(recipes===null){ss({loading:false,loadError:true});return;}
+  if(recipes.length===0){await sbSeed();recipes=await sbFetch();}
   await insertPending();
   recipes=await sbFetch()||recipes;
   var migrated=await migrateSourceUrls(recipes||[]);
   if(migrated)recipes=await sbFetch()||recipes;
   recipes=applyGroceryLists(recipes||[]);
   recipes=await checkUrlImport(recipes||[]);
-  ss({recipes:recipes||[],loading:false});
+  ss({recipes:recipes||[],loading:false,loadError:false});
 }
 
 init();
